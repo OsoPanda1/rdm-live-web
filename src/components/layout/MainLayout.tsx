@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Navbar";
 import { FooterSection } from "@/components/FooterSection";
 import { RealitoOrb } from "@/components/RealitoOrb";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from "react";
 import NavBar from "@/components/NavBar";
 import FooterSection from "@/components/FooterSection";

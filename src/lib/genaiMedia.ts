@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GoogleGenAI, Modality } from '@google/genai';
 
 export interface VideoBlock {

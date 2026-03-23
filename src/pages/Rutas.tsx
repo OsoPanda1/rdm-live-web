@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { 

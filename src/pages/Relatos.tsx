@@ -8,7 +8,7 @@ import PageTransition from "@/components/PageTransition";
 import panteonImg from "@/assets/panteon-ingles.webp";
 import penasImg from "@/assets/penas-cargadas.webp";
 import minaImg from "@/assets/mina-acosta.webp";
-import leyendaVideo from "@/assets/leyenda1.mp4";
+const leyendaVideo = "";
 
 const legends = [
   {

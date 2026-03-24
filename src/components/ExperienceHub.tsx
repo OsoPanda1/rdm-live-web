@@ -1,37 +1,40 @@
 import { Compass, MapPin, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import pasteriasImg from "@/assets/pasterias.png";
+import plateriasImg from "@/assets/platerias.png";
+import artesaniasImg from "@/assets/artesanias.png";
+import sanitariosImg from "@/assets/sanitarios.png";
 
 const experiences = [
   {
-    title: "Mina de Acosta",
-    category: "Historia & Minería",
-    image: "https://picsum.photos/seed/mina/800/600",
-    description: "Un viaje a las profundidades de la historia minera de Real del Monte.",
-    rating: 4.9,
-  },
-  {
-    title: "Bosque del Hiloche",
-    category: "Ecoturismo",
-    image: "https://picsum.photos/seed/bosque/800/600",
-    description: "Senderos entre niebla y pinos centenarios.",
-    rating: 4.8,
-  },
-  {
-    title: "Museo del Paste",
+    title: "Pasterías del Monte",
     category: "Gastronomía",
-    image: "https://picsum.photos/seed/paste/800/600",
-    description: "El sabor que define a un pueblo y su herencia inglesa.",
+    image: pasteriasImg,
+    description: "Los pastes más auténticos con receta inglesa de 1824. Sabores clásicos y nuevas creaciones.",
     rating: 5.0,
   },
   {
-    title: "Panteón Inglés",
-    category: "Cultura",
-    image: "https://picsum.photos/seed/panteon/800/600",
-    description: "Un lugar de descanso eterno con vista a las montañas.",
+    title: "Platerías Artesanales",
+    category: "Artesanía & Joyería",
+    image: plateriasImg,
+    description: "Joyería artesanal en plata que refleja la herencia minera de Real del Monte.",
+    rating: 4.8,
+  },
+  {
+    title: "Mercado de Artesanías",
+    category: "Cultura & Compras",
+    image: artesaniasImg,
+    description: "Textiles, cerámica y arte popular de la sierra de Hidalgo.",
+    rating: 4.9,
+  },
+  {
+    title: "Servicios al Visitante",
+    category: "Información",
+    image: sanitariosImg,
+    description: "Sanitarios públicos, puntos de información turística y primeros auxilios.",
     rating: 4.7,
   },
 ];
-
 export default function ExperienceHub() {
   return (
     <div className="space-y-12">

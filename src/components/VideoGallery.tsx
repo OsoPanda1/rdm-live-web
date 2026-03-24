@@ -2,9 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX, X } from "lucide-react";
 
-import heroVideo from "@/assets/hero-video.mp4";
-import ctaVideo from "@/assets/RDM Digital_Call To Action_2_2026-03-03 05_52_52.mp4";
-import leyendaVideo from "@/assets/leyenda1.mp4";
+// Videos not yet available — use empty strings as placeholder
+const heroVideo = "";
+const ctaVideo = "";
+const leyendaVideo = "";
 
 import minaImg from "@/assets/mina-acosta.webp";
 import panteonImg from "@/assets/panteon-ingles.webp";

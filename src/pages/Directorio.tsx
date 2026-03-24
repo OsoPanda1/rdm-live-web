@@ -9,24 +9,24 @@ import { AuroraBackground, TextReveal } from "@/components/VisualEffects";
 import { motion } from "framer-motion";
 import { Search, Store, Sparkles } from "lucide-react";
 
-import pasteImg from "@/assets/paste.webp";
-import panteonImg from "@/assets/panteon-ingles.webp";
+import pasteriasImg from "@/assets/pasterias.png";
+import plateriasImg from "@/assets/platerias.png";
+import artesaniasImg from "@/assets/artesanias.png";
+import sanitariosImg from "@/assets/sanitarios.png";
 import minaImg from "@/assets/mina-acosta.webp";
 import callesImg from "@/assets/calles-colonial.webp";
 import rdm1 from "@/assets/rdm1.jpeg";
 import rdm2 from "@/assets/rdm2.jpeg";
-import rdm3 from "@/assets/rdm01.jpg";
-import rdm4 from "@/assets/rdm02.jpg";
 
 const businesses = [
-  { name: "Pastes El Portal", category: "Pastes", description: "Los pastes mas tradicionales desde 1985. Sabores clasicos y nuevas creaciones.", image: pasteImg, isPremium: true, rating: 4.9, phone: "771 123 4567" },
+  { name: "Pastes El Portal", category: "Pastes", description: "Los pastes mas tradicionales desde 1985. Sabores clasicos y nuevas creaciones.", image: pasteriasImg, isPremium: true, rating: 4.9, phone: "771 123 4567" },
   { name: "Hotel Real de Minas", category: "Hospedaje", description: "Hotel boutique en casona colonial restaurada con vista a la montana.", image: callesImg, isPremium: true, rating: 4.7, phone: "771 234 5678" },
   { name: "Tours Mineros RDM", category: "Tours", description: "Recorridos guiados por las minas historicas con expertos en historia local.", image: minaImg, isPremium: false, rating: 4.5 },
   { name: "Cafe La Neblina", category: "Restaurante", description: "Cafe artesanal de altura con los mejores postres y vista al bosque.", image: rdm1, isPremium: false, rating: 4.4 },
-  { name: "Artesanias del Monte", category: "Souvenir", description: "Artesanias locales, textiles y recuerdos autenticos hechos a mano.", image: rdm2, isPremium: true, rating: 4.6, phone: "771 345 6789" },
-  { name: "Posada La Escondida", category: "Hospedaje", description: "Cabanas rusticas entre pinos con chimenea y desayuno incluido.", image: rdm3, isPremium: false, rating: 4.3 },
-  { name: "La Casona Hostal", category: "Hospedaje", description: "Alojamiento economico en el corazon del centro historico.", image: rdm4, isPremium: false, rating: 4.2 },
-  { name: "Restaurant Los Murmullos", category: "Restaurante", description: "Comida tradicional hidalguense con ingredientes locales frescos.", image: panteonImg, isPremium: true, rating: 4.5 },
+  { name: "Artesanias del Monte", category: "Souvenir", description: "Artesanias locales, textiles y recuerdos autenticos hechos a mano.", image: artesaniasImg, isPremium: true, rating: 4.6, phone: "771 345 6789" },
+  { name: "Platerías Artesanales", category: "Souvenir", description: "Joyería artesanal en plata, herencia minera de Real del Monte.", image: plateriasImg, isPremium: false, rating: 4.3 },
+  { name: "Servicios Turísticos", category: "Tours", description: "Información turística, sanitarios y puntos de asistencia al visitante.", image: sanitariosImg, isPremium: false, rating: 4.2 },
+  { name: "Restaurant Los Murmullos", category: "Restaurante", description: "Comida tradicional hidalguense con ingredientes locales frescos.", image: rdm2, isPremium: true, rating: 4.5 },
 ];
 
 const categories = ["Todos", "Pastes", "Hospedaje", "Restaurante", "Tours", "Souvenir"];

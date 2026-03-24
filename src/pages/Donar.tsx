@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState } from "react";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 
 const suggestedAmounts = [50, 100, 250, 500];

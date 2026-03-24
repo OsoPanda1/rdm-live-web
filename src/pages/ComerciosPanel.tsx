@@ -1,5 +1,5 @@
 // @ts-nocheck
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 
 export default function ComerciosPanel() {

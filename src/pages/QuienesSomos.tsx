@@ -6,7 +6,7 @@
 
 import { motion } from "framer-motion";
 import NavBar from "@/components/Navbar";
-import FooterSection from "@/components/FooterSection";
+import { FooterSection } from "@/components/FooterSection";
 import RealitoOrb from "@/components/RealitoOrb";
 
 const QuienesSomos = () => (

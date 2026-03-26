@@ -85,6 +85,12 @@ const MetaverseHome = lazy(() => import("./pages/MetaverseHome"));
 const Register = lazy(() => import("./pages/Register"));
 const Login = lazy(() => import("./pages/Login"));
 
+// ===== Civilizational Core pages =====
+const Guardian = lazy(() => import("./pages/Guardian"));
+const Atlas = lazy(() => import("./pages/Atlas"));
+const DevHub = lazy(() => import("./pages/DevHub"));
+const Feed = lazy(() => import("./pages/Feed"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

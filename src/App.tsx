@@ -193,6 +193,12 @@ const AnimatedRoutes = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
+          {/* === Civilizational Core Routes === */}
+          <Route path="/guardian" element={<Guardian />} />
+          <Route path="/atlas" element={<Atlas />} />
+          <Route path="/devhub" element={<DevHub />} />
+          <Route path="/feed" element={<Feed />} />
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>

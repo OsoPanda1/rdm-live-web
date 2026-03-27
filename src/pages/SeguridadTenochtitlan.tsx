@@ -140,6 +140,38 @@ function LayerRings({ activeCentinel }: { activeCentinel: string | null }) {
 }
 
 /* ── Main Component ── */
+const SystemModeBadge = () => {
+  const { mode, aiDecision } = useSystemMode(15000);
+  const config = {
+    NORMAL: { color: "hsl(145,50%,50%)", label: "NOMINAL", bg: "hsla(145,50%,50%,0.1)" },
+    SAFE: { color: "hsl(43,80%,55%)", label: "MODO SEGURO", bg: "hsla(43,80%,55%,0.1)" },
+    EMERGENCY: { color: "hsl(0,70%,55%)", label: "EMERGENCIA", bg: "hsla(0,70%,55%,0.1)" },
+  }[mode];
+
+  return (
+    <motion.div
+      className="rounded-xl border p-4 flex items-center gap-3"
+      style={{ borderColor: `${config.color}40`, background: config.bg }}
+      animate={{ borderColor: [`${config.color}40`, `${config.color}80`, `${config.color}40`] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      <motion.div
+        className="w-3 h-3 rounded-full"
+        style={{ background: config.color }}
+        animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      />
+      <div>
+        <div className="text-xs font-bold tracking-wider" style={{ color: config.color }}>{config.label}</div>
+        <div className="text-[10px] text-muted-foreground">
+          {aiDecision ? aiDecision.reasoning : "Sistema operando correctamente"}
+        </div>
+      </div>
+      <Activity className="w-4 h-4 ml-auto" style={{ color: config.color }} />
+    </motion.div>
+  );
+};
+
 const SeguridadTenochtitlan = () => {
   const [activeCentinel, setActiveCentinel] = useState<string | null>("anubis");
 
@@ -148,6 +180,9 @@ const SeguridadTenochtitlan = () => {
       title="Sistema TENOCHTITLAN"
       subtitle="Arquitectura Defensiva Avanzada — Seguridad Multicapa Civilizatoria"
     >
+      {/* Live System Mode */}
+      <SystemModeBadge />
+
       <InfoBox type="warning" title="Principio Fundamental">
         "TAMV no se defiende atacando. Se defiende siendo imposible de capturar."
       </InfoBox>

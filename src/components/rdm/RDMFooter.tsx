@@ -36,6 +36,10 @@ export function RDMFooter() {
                 { to: "/mapa", label: "Mapa Inteligente" },
                 { to: "/directorio", label: "Directorio" },
                 { to: "/eventos", label: "Eventos" },
+                { to: "/arquitectura", label: "Arquitectura" },
+                { to: "/seguridad-tenochtitlan", label: "Seguridad" },
+                { to: "/quienes-somos", label: "Quiénes Somos" },
+                { to: "/guardian", label: "Gobernanza" },
               ].map((link) => (
                 <Link key={link.to} to={link.to} className="block text-sm text-[hsl(215_13%_42%)] hover:text-[hsl(var(--rdm-amber))] transition-colors">{link.label}</Link>
               ))}

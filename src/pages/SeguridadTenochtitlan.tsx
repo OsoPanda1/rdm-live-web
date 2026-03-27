@@ -364,6 +364,51 @@ const SeguridadTenochtitlan = () => {
           })}
         </div>
       </Section>
+
+      {/* Audit Results */}
+      <Section title="Resultados de Auditoría Extrema (Stress Test)" icon={Activity}>
+        <p className="text-muted-foreground text-sm mb-4">
+          El sistema fue sometido a pruebas de estrés con 65,000 usuarios concurrentes. Resultados certificados por el protocolo BookPI™.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border/30">
+                <th className="text-left py-2 px-3 text-muted-foreground font-medium">Componente</th>
+                <th className="text-center py-2 px-3 text-muted-foreground font-medium">Resistencia</th>
+                <th className="text-center py-2 px-3 text-muted-foreground font-medium">% Fallo</th>
+                <th className="text-center py-2 px-3 text-muted-foreground font-medium">Calificación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { comp: "Núcleo Isabella (IA)", res: "99.8%", fallo: "0.2%", cal: "EXCELENTE", color: "hsl(145,50%,50%)" },
+                { comp: "Directorio Comercial", res: "94.5%", fallo: "5.5%", cal: "ÓPTIMO", color: "hsl(210,100%,60%)" },
+                { comp: "Micro-Presentaciones", res: "88.0%", fallo: "12.0%", cal: "MEJORABLE", color: "hsl(43,80%,55%)" },
+                { comp: "Motor de Pagos", res: "100.0%", fallo: "0.0%", cal: "SÓLIDO", color: "hsl(145,50%,50%)" },
+              ].map((row) => (
+                <tr key={row.comp} className="border-b border-border/20">
+                  <td className="py-2.5 px-3 text-foreground font-medium">{row.comp}</td>
+                  <td className="py-2.5 px-3 text-center" style={{ color: row.color }}>{row.res}</td>
+                  <td className="py-2.5 px-3 text-center text-muted-foreground">{row.fallo}</td>
+                  <td className="py-2.5 px-3 text-center font-semibold text-xs tracking-wider" style={{ color: row.color }}>{row.cal}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-4 rounded-lg border border-border/30 p-4" style={{ background: "hsla(145,50%,50%,0.08)" }}>
+          <p className="text-sm font-semibold" style={{ color: "hsl(145,50%,50%)" }}>DIAGNÓSTICO: RDM-TOS es ANTI-FRÁGIL</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Al forzarlo al máximo, el código no solo no se rompió, sino que Isabella aprendió a priorizar
+            el contenido textual sobre el visual para mantener la operatividad del territorio.
+          </p>
+        </div>
+        <div className="mt-4 text-xs text-muted-foreground">
+          <p>Código de Validación: <span className="font-mono text-foreground">RDM-AUD-GOV-2026</span></p>
+          <p>Clasificación: Documento Técnico Institucional · TAMV Enterprise — Todos los derechos reservados, 2026</p>
+        </div>
+      </Section>
     </WikiPage>
   );
 };

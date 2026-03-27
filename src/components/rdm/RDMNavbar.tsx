@@ -12,6 +12,8 @@ const NAV_ITEMS = [
   { path: "/directorio", label: "Directorio" },
   { path: "/eventos", label: "Eventos" },
   { path: "/comunidad", label: "Comunidad" },
+  { path: "/arquitectura", label: "Arquitectura" },
+  { path: "/seguridad-tenochtitlan", label: "Seguridad" },
 ];
 
 export function RDMNavbar() {

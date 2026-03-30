@@ -203,6 +203,10 @@ const AnimatedRoutes = () => {
           <Route path="/devhub" element={<DevHub />} />
           <Route path="/feed" element={<Feed />} />
 
+          {/* === New Tourism Routes === */}
+          <Route path="/estacionamientos" element={<Estacionamientos />} />
+          <Route path="/patrimonio-cultural" element={<PatrimonioCultural />} />
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>

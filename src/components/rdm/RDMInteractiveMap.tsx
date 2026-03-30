@@ -64,6 +64,11 @@ export function RDMInteractiveMap() {
       const marker = L.marker([site.lat, site.lng], { icon: L.divIcon({ className: "rdm-map-marker", html: `<div class="rdm-map-pin" style="--pin-color: ${color}"></div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) }).addTo(markersLayerRef.current);
       marker.bindPopup(`<div class="rdm-popup-card"><div class="rdm-popup-kicker"><span class="rdm-popup-dot" style="background:${color}"></span>${site.category}</div><h3 class="rdm-popup-title">${site.name}</h3><p class="rdm-popup-desc">${site.description ?? "Experiencia territorial."}</p><div class="rdm-popup-meta"><span>★ ${(site.rating ?? 4.5).toFixed(1)}</span></div></div>`, { className: "rdm-popup" });
     });
+    // Parking markers
+    ESTACIONAMIENTOS.forEach((est) => {
+      const marker = L.marker([est.lat, est.lng], { icon: L.divIcon({ className: "rdm-map-marker", html: `<div class="rdm-map-pin" style="--pin-color: hsl(210 100% 55%)"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) }).addTo(markersLayerRef.current);
+      marker.bindPopup(`<div class="rdm-popup-card"><div class="rdm-popup-kicker"><span class="rdm-popup-dot" style="background:hsl(210 100% 55%)"></span>estacionamiento</div><h3 class="rdm-popup-title">${est.nombre}</h3><p class="rdm-popup-desc">${est.capacidad}</p></div>`, { className: "rdm-popup" });
+    });
     if (filteredPlaces.length > 1) {
       const bounds = L.latLngBounds(filteredPlaces.map((p) => [p.lat, p.lng]));
       leafletMapRef.current.fitBounds(bounds, { padding: [24, 24], maxZoom: 16 });

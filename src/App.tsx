@@ -91,6 +91,10 @@ const Atlas = lazy(() => import("./pages/Atlas"));
 const DevHub = lazy(() => import("./pages/DevHub"));
 const Feed = lazy(() => import("./pages/Feed"));
 
+// ===== New Tourism pages =====
+const Estacionamientos = lazy(() => import("./pages/Estacionamientos"));
+const PatrimonioCultural = lazy(() => import("./pages/PatrimonioCultural"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -198,6 +202,10 @@ const AnimatedRoutes = () => {
           <Route path="/atlas" element={<Atlas />} />
           <Route path="/devhub" element={<DevHub />} />
           <Route path="/feed" element={<Feed />} />
+
+          {/* === New Tourism Routes === */}
+          <Route path="/estacionamientos" element={<Estacionamientos />} />
+          <Route path="/patrimonio-cultural" element={<PatrimonioCultural />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

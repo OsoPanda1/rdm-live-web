@@ -1,8 +1,9 @@
 // @ts-nocheck
 import { useEffect, useRef, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Navigation, MapPin, Search } from "lucide-react";
+import { Navigation, MapPin, Search, Car } from "lucide-react";
 import { REAL_DEL_MONTE_SITES, CATEGORY_COLORS } from "@/lib/rdm-data";
+import { ESTACIONAMIENTOS, ALL_TERRITORIAL_SITES } from "@/data/rdm-territorial";
 import "leaflet/dist/leaflet.css";
 
 type MapPlace = { id: string; name: string; category: string; lat: number; lng: number; rating: number | null; description: string | null; };
@@ -22,7 +23,10 @@ export function RDMInteractiveMap() {
   const leafletLibRef = useRef<any>(null);
   const markersLayerRef = useRef<any>(null);
 
-  const [places] = useState<MapPlace[]>(REAL_DEL_MONTE_SITES.map(s => ({ ...s, rating: s.rating, description: s.description })));
+  const [places] = useState<MapPlace[]>([
+    ...REAL_DEL_MONTE_SITES.map(s => ({ ...s, rating: s.rating, description: s.description })),
+    ...ALL_TERRITORIAL_SITES.map(s => ({ id: s.id, name: s.nombre, category: s.categoria === "naturaleza" ? "aventura" : s.categoria === "museo" ? "historia" : "cultura", lat: s.lat, lng: s.lng, rating: null, description: s.descripcion })),
+  ]);
   const [mapReady, setMapReady] = useState(false);
   const [selectedMood, setSelectedMood] = useState<MoodFilter>("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,6 +63,11 @@ export function RDMInteractiveMap() {
       const color = CATEGORY_COLORS[site.category] ?? "hsl(24 72% 50%)";
       const marker = L.marker([site.lat, site.lng], { icon: L.divIcon({ className: "rdm-map-marker", html: `<div class="rdm-map-pin" style="--pin-color: ${color}"></div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) }).addTo(markersLayerRef.current);
       marker.bindPopup(`<div class="rdm-popup-card"><div class="rdm-popup-kicker"><span class="rdm-popup-dot" style="background:${color}"></span>${site.category}</div><h3 class="rdm-popup-title">${site.name}</h3><p class="rdm-popup-desc">${site.description ?? "Experiencia territorial."}</p><div class="rdm-popup-meta"><span>★ ${(site.rating ?? 4.5).toFixed(1)}</span></div></div>`, { className: "rdm-popup" });
+    });
+    // Parking markers
+    ESTACIONAMIENTOS.forEach((est) => {
+      const marker = L.marker([est.lat, est.lng], { icon: L.divIcon({ className: "rdm-map-marker", html: `<div class="rdm-map-pin" style="--pin-color: hsl(210 100% 55%)"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) }).addTo(markersLayerRef.current);
+      marker.bindPopup(`<div class="rdm-popup-card"><div class="rdm-popup-kicker"><span class="rdm-popup-dot" style="background:hsl(210 100% 55%)"></span>estacionamiento</div><h3 class="rdm-popup-title">${est.nombre}</h3><p class="rdm-popup-desc">${est.capacidad}</p></div>`, { className: "rdm-popup" });
     });
     if (filteredPlaces.length > 1) {
       const bounds = L.latLngBounds(filteredPlaces.map((p) => [p.lat, p.lng]));

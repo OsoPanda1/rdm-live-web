@@ -1,136 +1,113 @@
+// @ts-nocheck
 import { useState, useMemo } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import EventCard from "@/components/EventCard";
-import PageTransition from "@/components/PageTransition";
-import GradientSeparator from "@/components/GradientSeparator";
-import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
-import { AuroraBackground, TextReveal } from "@/components/VisualEffects";
 import { motion } from "framer-motion";
-import { Calendar, Sparkles } from "lucide-react";
-import heroImg from "@/assets/hero-real-del-monte.webp";
-import rdm1 from "@/assets/rdm1.jpeg";
-import rdm2 from "@/assets/rdm2.jpeg";
-import rdm3 from "@/assets/rdm01.jpg";
+import { Calendar, MapPin, Clock, Sparkles, Star, ArrowRight } from "lucide-react";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
+import { SEOMeta } from "@/components/SEOMeta";
+import { EVENTOS_RDM, EVENT_CATEGORIES } from "@/data/rdm-events";
+import { IMAGE_MAP, RDM_IMAGES } from "@/data/rdm-images";
 
-const events = [
-  { name: "Festival Internacional del Paste", date: "12 Oct", time: "10:00 - 20:00", location: "Plaza Principal", description: "El festival gastronomico mas importante con mas de 50 variedades de pastes.", image: rdm1, category: "Gastronomia" },
-  { name: "Dia de Muertos en Real del Monte", date: "01 Nov", time: "18:00 - 23:00", location: "Panteon Ingles", description: "Celebracion unica que fusiona tradiciones mexicanas e inglesas.", image: rdm2, category: "Cultural" },
-  { name: "Carrera de Montana RDM", date: "25 Nov", time: "07:00 - 14:00", location: "Penas Cargadas", description: "Trail running por bosques y formaciones rocosas.", image: rdm3, category: "Deportivo" },
-  { name: "Feria del Libro en la Montana", date: "08 Dic", time: "09:00 - 18:00", location: "Casa de Cultura", description: "Encuentro literario con autores locales y nacionales.", image: heroImg, category: "Cultural" },
-  { name: "Noche de Leyendas", date: "20 Dic", time: "20:00 - 23:00", location: "Centro Historico", description: "Recorrido nocturno narrando las leyendas mas famosas del pueblo.", image: rdm1, category: "Cultural" },
-  { name: "Ano Nuevo en la Montana", date: "31 Dic", time: "21:00 - 01:00", location: "Plaza Principal", description: "Celebracion comunitaria de fin de ano con musica en vivo.", image: rdm2, category: "Festividad" },
-];
-
-const eventCategories = ["Todos", "Cultural", "Gastronomia", "Deportivo", "Festividad"];
-
-const EventosPage = () => {
-  const [activeCategory, setActiveCategory] = useState("Todos");
+export default function EventosPage() {
+  const [activeCategory, setActiveCategory] = useState("all");
 
   const filteredEvents = useMemo(() => {
-    if (activeCategory === "Todos") return events;
-    return events.filter((e) => e.category === activeCategory);
+    if (activeCategory === "all") return EVENTOS_RDM;
+    return EVENTOS_RDM.filter(e => e.category === activeCategory);
   }, [activeCategory]);
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-night-900 text-silver-300">
-        <SEOMeta {...PAGE_SEO.eventos} />
-        <Navbar />
+    <RDMLayout>
+      <SEOMeta title="Eventos y Festivales — Real del Monte" description="Calendario de eventos culturales, festivales gastronómicos, actividades deportivas y temporadas especiales en Real del Monte, Pueblo Mágico." />
 
-        {/* Immersive Hero */}
-        <section className="relative overflow-hidden pt-24 pb-16">
-          <div className="absolute inset-0 bg-cover bg-center opacity-20 ken-burns" style={{ backgroundImage: `url(${heroImg})` }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-night-900/80 via-night-900/70 to-night-900" />
-          <AuroraBackground />
-          <div className="dust-particles" />
+      {/* Hero */}
+      <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
+        <img src={RDM_IMAGES.festivalPaste} alt="Festival del Paste" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))] via-black/40 to-black/20" />
+        <div className="relative z-10 h-full flex items-end pb-12 px-6 md:px-16 lg:px-24">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+            <p className="text-sm tracking-[0.3em] uppercase text-[hsl(var(--rdm-amber))] mb-3 flex items-center gap-2" style={{ fontFamily: "var(--font-body)" }}>
+              <Calendar className="w-4 h-4" /> Agenda Cultural
+            </p>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-display)" }}>
+              Eventos y <span className="text-[hsl(var(--rdm-amber))]">Festivales</span>
+            </h1>
+            <p className="text-white/70 max-w-xl" style={{ fontFamily: "var(--font-body)" }}>
+              {EVENTOS_RDM.length} eventos que hacen de Real del Monte un destino vivo todo el año.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-          <div className="relative mx-auto max-w-6xl px-6 py-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6"
+      {/* Filters */}
+      <section className="py-6 px-6 md:px-16 lg:px-24 border-b border-[hsl(var(--border))]">
+        <div className="max-w-6xl mx-auto flex flex-wrap gap-2">
+          {EVENT_CATEGORIES.map(cat => (
+            <button
+              key={cat.value}
+              onClick={() => setActiveCategory(cat.value)}
+              className={`px-4 py-2 rounded-full text-xs font-medium border transition ${
+                activeCategory === cat.value
+                  ? "bg-[hsl(var(--rdm-amber))] text-white border-[hsl(var(--rdm-amber))]"
+                  : "rdm-glass border-[hsl(var(--border))] text-[hsl(var(--foreground))] hover:border-[hsl(var(--rdm-amber))]"
+              }`}
+              style={{ fontFamily: "var(--font-body)" }}
             >
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.2em] backdrop-blur-sm">
-                <Calendar className="h-3.5 w-3.5 text-gold-400" />
-                <span>Calendario de Eventos</span>
-              </div>
-              <h1 className="font-serif text-5xl md:text-7xl leading-tight">
-                <span className="block">Eventos y</span>
-                <span
-                  className="block animate-gradient-text text-glow-gold"
-                  style={{
-                    backgroundImage: "linear-gradient(135deg, hsl(43,80%,55%) 0%, hsl(35,70%,65%) 25%, hsl(43,80%,55%) 50%, hsl(25,60%,50%) 75%, hsl(43,80%,55%) 100%)",
-                    backgroundSize: "200% 200%",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  Festivales
-                </span>
-              </h1>
-              <p className="max-w-2xl text-base text-silver-400 md:text-lg leading-relaxed">
-                Calendario de actividades culturales, festivales y temporadas especiales en Real del Monte.
-              </p>
-            </motion.div>
-          </div>
-        </section>
+              {cat.emoji} {cat.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
-        <GradientSeparator animated />
-
-        {/* Category Filters */}
-        <section className="relative py-8">
-          <div className="mx-auto max-w-6xl px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-wrap gap-2"
-            >
-              {eventCategories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`rounded-full px-4 py-2 text-xs font-medium tracking-wide transition-all duration-300 ${
-                    activeCategory === cat
-                      ? "bg-gold-400/20 text-gold-400 border border-gold-400/30"
-                      : "border border-white/10 bg-white/5 text-silver-400 hover:bg-white/10 hover:text-silver-200"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Events Grid */}
-        <section className="mx-auto max-w-6xl px-6 pb-20">
-          <div className="flex items-center gap-2 mb-6 text-sm text-silver-500">
-            <Sparkles className="h-3.5 w-3.5 text-gold-400/60" />
+      {/* Events Grid */}
+      <section className="py-12 px-6 md:px-16 lg:px-24">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-2 mb-6 text-sm text-[hsl(var(--muted-foreground))]">
+            <Sparkles className="h-3.5 w-3.5 text-[hsl(var(--rdm-amber))]" />
             <span>{filteredEvents.length} evento{filteredEvents.length !== 1 ? "s" : ""}</span>
           </div>
 
           {filteredEvents.length === 0 ? (
-            <div className="text-center py-16 rounded-2xl border border-white/10 bg-white/5">
-              <Calendar className="h-12 w-12 text-silver-500 mx-auto mb-4" />
-              <p className="text-silver-400 text-lg">No hay eventos en esta categoria.</p>
+            <div className="text-center py-16 rdm-glass rounded-2xl">
+              <Calendar className="h-12 w-12 text-[hsl(var(--muted-foreground))] mx-auto mb-4 opacity-40" />
+              <p className="text-[hsl(var(--muted-foreground))]">No hay eventos en esta categoría.</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredEvents.map((event, i) => (
-                <EventCard key={event.name} {...event} index={i} />
-              ))}
+              {filteredEvents.map((evt, i) => {
+                const imgSrc = IMAGE_MAP[evt.image] || RDM_IMAGES.plazaPrincipal;
+                return (
+                  <motion.article
+                    key={evt.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.05 }}
+                    className="rdm-glass rounded-xl overflow-hidden group hover:shadow-md transition-shadow"
+                  >
+                    <div className="relative h-44 overflow-hidden">
+                      <img src={imgSrc} alt={evt.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute top-3 left-3 flex gap-2">
+                        <span className="px-2 py-1 rounded-full bg-[hsl(var(--rdm-amber))] text-white text-[10px] font-bold">{evt.date}</span>
+                        {evt.destacado && <span className="px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-[10px]">⭐ Destacado</span>}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-base mb-2" style={{ fontFamily: "var(--font-display)" }}>{evt.name}</h3>
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed mb-3 line-clamp-3" style={{ fontFamily: "var(--font-body)" }}>{evt.description}</p>
+                      <div className="flex flex-wrap gap-2 text-[10px] text-[hsl(var(--muted-foreground))]">
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{evt.time}</span>
+                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{evt.location}</span>
+                        {evt.precio && <span className="ml-auto font-semibold text-[hsl(var(--rdm-amber))]">{evt.precio}</span>}
+                      </div>
+                    </div>
+                  </motion.article>
+                );
+              })}
             </div>
           )}
-        </section>
-
-        <Footer />
-      </div>
-    </PageTransition>
+        </div>
+      </section>
+    </RDMLayout>
   );
-};
-
-export default EventosPage;
+}

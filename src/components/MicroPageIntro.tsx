@@ -11,30 +11,48 @@ const ROUTE_LABELS: Record<string, string> = {
   "/directorio": "Directorio Local",
   "/eventos": "Agenda Cultural",
   "/comunidad": "Comunidad",
-  "/historia": "Historia",
-  "/cultura": "Cultura",
-  "/relatos": "Relatos",
-  "/ecoturismo": "Ecoturismo",
+  "/historia": "Historia Minera",
+  "/cultura": "Cultura Viva",
+  "/relatos": "Relatos y Leyendas",
+  "/ecoturismo": "Ecoturismo y Naturaleza",
   "/gastronomia": "Gastronomía",
-  "/arte": "Arte",
+  "/arte": "Arte y Artesanías",
   "/dichos": "Dichos Mineros",
   "/dichos-mineros": "Dichos Mineros",
   "/catalogo": "Catálogo",
   "/negocios": "Portal de Negocios",
   "/apoya": "Apoya RDM",
+  "/patrimonio-cultural": "Patrimonio Cultural",
+  "/estacionamientos": "Dónde Estacionar",
+  "/registro-comercio": "Registra tu Comercio",
+  "/comercios": "Directorio Comercial",
+  "/quienes-somos": "Quiénes Somos",
+  "/biografia-ceo": "Biografía del Fundador",
+  "/arquitectura": "Arquitectura del Sistema",
+  "/seguridad-tenochtitlan": "Seguridad TENOCHTITLAN",
+  "/mapa-vivo": "Mapa Territorial Vivo",
+  "/paquetes": "Paquetes Turísticos",
+  "/transporte-local": "Transporte Local",
+  "/shuttle-cdmx-rdm": "Shuttle CDMX ↔ RDM",
+  "/donar": "Dona al Proyecto",
+  "/comunidad-social": "Muro Social",
+  "/experiencias": "Experiencias",
 };
 
 export default function MicroPageIntro() {
   const location = useLocation();
   const [visible, setVisible] = useState(false);
 
-  const label = useMemo(() => ROUTE_LABELS[location.pathname] ?? "Real del Monte Explorer", [location.pathname]);
+  const label = useMemo(() => ROUTE_LABELS[location.pathname] ?? null, [location.pathname]);
 
   useEffect(() => {
+    if (!label) return;
     setVisible(true);
     const id = window.setTimeout(() => setVisible(false), 2400);
     return () => window.clearTimeout(id);
-  }, [location.pathname]);
+  }, [location.pathname, label]);
+
+  if (!label) return null;
 
   return (
     <AnimatePresence>
@@ -47,13 +65,13 @@ export default function MicroPageIntro() {
           transition={{ duration: 0.35 }}
           className="pointer-events-none fixed left-1/2 top-20 z-[60] w-[92vw] max-w-md -translate-x-1/2"
         >
-          <div className="glass-dark rounded-2xl border border-white/15 px-4 py-3 shadow-elevated backdrop-blur-xl">
+          <div className="rounded-2xl border border-[hsl(var(--border)/0.3)] bg-[hsl(var(--card)/0.9)] px-4 py-3 shadow-lg backdrop-blur-xl">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-white/50">Micro presentación</p>
-                <p className="truncate font-serif text-base text-white">{label}</p>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[hsl(var(--muted-foreground))]">Navegando</p>
+                <p className="truncate text-base font-semibold text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-display)" }}>{label}</p>
               </div>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gold-500/15 text-gold-400">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--rdm-amber)/0.15)] text-[hsl(var(--rdm-amber))]">
                 <Sparkles className="h-4 w-4" />
               </div>
             </div>

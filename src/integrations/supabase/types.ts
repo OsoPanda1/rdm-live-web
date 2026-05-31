@@ -10,99 +10,11 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      forum_comments: {
-        Row: {
-          author_email: string | null
-          author_name: string
-          content: string
-          created_at: string
-          id: string
-          likes: number
-          post_id: string
-        }
-        Insert: {
-          author_email?: string | null
-          author_name?: string
-          content: string
-          created_at?: string
-          id?: string
-          likes?: number
-          post_id: string
-        }
-        Update: {
-          author_email?: string | null
-          author_name?: string
-          content?: string
-          created_at?: string
-          id?: string
-          likes?: number
-          post_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "forum_comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "forum_posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      forum_posts: {
-        Row: {
-          author_avatar: string | null
-          author_email: string | null
-          author_name: string
-          category: string
-          content: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_approved: boolean
-          likes: number
-          place_name: string | null
-          title: string
-          updated_at: string
-          video_url: string | null
-        }
-        Insert: {
-          author_avatar?: string | null
-          author_email?: string | null
-          author_name?: string
-          category?: string
-          content: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_approved?: boolean
-          likes?: number
-          place_name?: string | null
-          title: string
-          updated_at?: string
-          video_url?: string | null
-        }
-        Update: {
-          author_avatar?: string | null
-          author_email?: string | null
-          author_name?: string
-          category?: string
-          content?: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_approved?: boolean
-          likes?: number
-          place_name?: string | null
-          title?: string
-          updated_at?: string
-          video_url?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never

@@ -54,9 +54,11 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_url: string | null
           likes: number
           place_name: string | null
           title: string
+          video_url: string | null
         }
         Insert: {
           author_avatar?: string | null
@@ -65,9 +67,11 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_url?: string | null
           likes?: number
           place_name?: string | null
           title: string
+          video_url?: string | null
         }
         Update: {
           author_avatar?: string | null
@@ -76,9 +80,11 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           likes?: number
           place_name?: string | null
           title?: string
+          video_url?: string | null
         }
         Relationships: []
       }

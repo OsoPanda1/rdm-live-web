@@ -83,24 +83,16 @@ export class FederationBus {
 
     const oferta = await this.generarOfertaGastronomica(payload.hotelId);
 
-    const registro = {
-      author_name: 'federation-bus',
-      title: `Cross-sell ${payload.turistaId}`,
-      content: JSON.stringify({
-        origen_federacion: Federacion.HOSPEDAJE,
-        destino_federacion: Federacion.GASTRONOMIA,
-        tipo_evento: 'cross_sell_automatico',
-        valor_estimado_mxn: payload.noches * 250,
-        metadata: {
-          hotelId: payload.hotelId,
-          oferta,
-          protocol: 'EOCT-KERNEL-B',
-        },
-      }),
-    };
-
-    const { error } = await supabaseAdmin.from('forum_posts').insert(registro);
-    if (error) console.error('Error en Ledger de Plusvalía:', error);
+    // Ledger entry kept in-memory only (no dedicated cross-sell table yet)
+    console.info('[LEDGER] cross_sell_automatico', {
+      turistaId: payload.turistaId,
+      origen_federacion: Federacion.HOSPEDAJE,
+      destino_federacion: Federacion.GASTRONOMIA,
+      valor_estimado_mxn: payload.noches * 250,
+      hotelId: payload.hotelId,
+      oferta,
+      protocol: 'EOCT-KERNEL-B',
+    });
 
     await this.publisher.publish(
       'REALITO_TRIGGER',

@@ -84,10 +84,11 @@ const VideoTrailer = () => {
               </>
             ) : (
               <video
-                src="/video/leyenda1.mp4"
+                src={leyendaVideo}
                 className="w-full h-full object-cover"
                 controls
                 autoPlay
+                playsInline
               />
             )}
           </div>

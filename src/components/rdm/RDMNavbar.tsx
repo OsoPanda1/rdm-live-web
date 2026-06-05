@@ -21,6 +21,7 @@ const MAS_LINKS = [
   { path: "/arte", label: "Arte y Artesanías" },
   { path: "/cultura", label: "Cultura" },
   { path: "/relatos", label: "Leyendas" },
+  { path: "/atlas-maximus", label: "Atlas Maximus" },
   { path: "/dichos-mineros", label: "Dichos Mineros" },
 ];
 

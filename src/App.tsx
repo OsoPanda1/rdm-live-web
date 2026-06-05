@@ -224,6 +224,8 @@ const AnimatedRoutes = () => {
           <Route path="/capitulos/cementerio" element={<AtlasCementerio />} />
           <Route path="/capitulos/calles" element={<AtlasCalles />} />
           <Route path="/capitulos/leyendas" element={<AtlasLeyendas />} />
+          <Route path="/atlas-maximus" element={<AtlasMaximus />} />
+          <Route path="/corpus" element={<AtlasMaximus />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

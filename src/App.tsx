@@ -232,6 +232,11 @@ const AnimatedRoutes = () => {
           <Route path="/ecosistema-ltos" element={<EcosistemaLTOS />} />
           <Route path="/repos" element={<EcosistemaLTOS />} />
 
+          {/* === Auth + Gamification === */}
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/ranking" element={<Leaderboard />} />
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -23,6 +23,7 @@ const MAS_LINKS = [
   { path: "/relatos", label: "Leyendas" },
   { path: "/atlas-maximus", label: "Atlas Maximus" },
   { path: "/dichos-mineros", label: "Dichos Mineros" },
+  { path: "/ecosistema-ltos", label: "Ecosistema LTOS" },
 ];
 
 export function RDMNavbar() {

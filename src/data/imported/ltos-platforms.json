@@ -1,0 +1,108 @@
+{
+  "owner": "OsoPanda1",
+  "umbrella_repo": "Plataforma-Territorial-LTOS-REAL-DEL-MONTE",
+  "umbrella_url": "https://github.com/OsoPanda1/Plataforma-Territorial-LTOS-REAL-DEL-MONTE",
+  "architect": "Edwin Oswaldo Castillo Trejo · Anubis Villaseñor",
+  "credentials": {
+    "orcid": "0009-0008-5050-1539",
+    "doi": "10.5281/zenodo.19436662"
+  },
+  "platforms": [
+    {
+      "slug": "rdm-digital-os",
+      "name": "RDM Digital OS",
+      "role": "Kernel territorial actual + Civilizational Core",
+      "files": 294, "src": 220, "pages": 38, "edge": 3, "migrations": 5,
+      "federation": "MDD_TAMV",
+      "highlights": ["federation-ingest", "federation-pulse", "realito-chat", "Atlas", "Guardian", "NodoCero"]
+    },
+    {
+      "slug": "rdm-smart-city-os",
+      "name": "RDM Smart City OS",
+      "role": "Sistema operativo Smart City con Civilizational Core",
+      "files": 282, "src": 212, "pages": 33, "edge": 1, "migrations": 4,
+      "federation": "MDD_TAMV",
+      "highlights": ["Comercios", "Atlas", "Federation", "Dichos", "ShuttleCDMX"]
+    },
+    {
+      "slug": "realdelmonte-digital-kernel",
+      "name": "RDM Digital · Nodo Cero Kernel",
+      "role": "Kernel TAMV con IPFS + Stripe Checkout",
+      "files": 218, "src": 171, "pages": 40, "edge": 4, "migrations": 4,
+      "federation": "DEKATEOTL",
+      "highlights": ["ipfs-upload", "stripe-checkout", "Sovereign", "TAMVThesis", "Fusion"]
+    },
+    {
+      "slug": "rdm-turismodigital",
+      "name": "RDM Turismo Digital",
+      "role": "Backend turístico federado · 14 edge functions",
+      "files": 205, "src": 133, "pages": 9, "edge": 14, "migrations": 4,
+      "federation": "BOOKPI",
+      "highlights": ["billing-monthly", "stripe-checkout", "stripe-webhook", "isabella-chat", "telemetry-ingest", "github-sync", "places-register", "protocols-execute"]
+    },
+    {
+      "slug": "real-del-monte-digital",
+      "name": "Real del Monte Digital · TAMV v1.0",
+      "role": "Producción TAMV · gamificación y comercios B2B",
+      "files": 166, "src": 127, "pages": 23, "edge": 9, "migrations": 6,
+      "federation": "PHOENIX",
+      "highlights": ["check-subscription", "create-commerce-checkout", "create-premium-checkout", "customer-portal", "stripe-webhook", "Juegos", "B2BPortal", "ControlCenter", "GamePortal"]
+    },
+    {
+      "slug": "real-del-monte-twin",
+      "name": "Real del Monte Twin",
+      "role": "Digital Twin territorial · soberanía investigativa",
+      "files": 149, "src": 113, "pages": 14, "edge": 2, "migrations": 8,
+      "federation": "KAOS",
+      "highlights": ["research-sync", "sovereign-engine", "ExplorerView", "MerchantOnboardingPage", "ForumPage"]
+    },
+    {
+      "slug": "real-del-monte-atlas",
+      "name": "Real del Monte Atlas",
+      "role": "Atlas TanStack Start · capa cartográfica federada",
+      "files": 133, "src": 119, "pages": 0, "edge": 0, "migrations": 0,
+      "federation": "MDD_TAMV",
+      "highlights": ["tanstack-start", "atlas-geo", "telemetría"]
+    },
+    {
+      "slug": "real-del-monte-elevated",
+      "name": "Real del Monte Elevated",
+      "role": "Frontend premium · Muro y registro comercio",
+      "files": 139, "src": 111, "pages": 13, "edge": 1, "migrations": 3,
+      "federation": "PHOENIX",
+      "highlights": ["MapaVivo", "Muro", "RegistroComercio"]
+    },
+    {
+      "slug": "rdm-digital-2026",
+      "name": "RDM Digital 2026 · The Awakening",
+      "role": "Enciclopedia civilizatoria · 30+ páginas doctrinales",
+      "files": 177, "src": 135, "pages": 41, "edge": 2, "migrations": 1,
+      "federation": "BOOKPI",
+      "highlights": ["WikiTAMV", "EnciclopediaUniversal", "BlockchainMSR", "QuantumComputing", "IsabellaAI", "SeguridadTenochtitlan", "XRTecnologia"]
+    },
+    {
+      "slug": "citemesh-roots",
+      "name": "Citemesh Roots · Núcleo Autopoiético",
+      "role": "Núcleo Operativo Autopoiético TAMV",
+      "files": 165, "src": 128, "pages": 41, "edge": 2, "migrations": 0,
+      "federation": "CHRONOS",
+      "highlights": ["BiografiaCEO", "Timeline", "Gobernanza", "EconomiaFederada"]
+    },
+    {
+      "slug": "civilizational-core",
+      "name": "Civilizational Core",
+      "role": "Heptafederación · 6 edge functions cognitivas",
+      "files": 182, "src": 125, "pages": 30, "edge": 6, "migrations": 6,
+      "federation": "ANUBIS",
+      "highlights": ["bookpi-write", "isabella-pipeline", "phoenix-protocol", "realito-chat", "sentinel-guard", "tamv-gateway"]
+    },
+    {
+      "slug": "rdm-digital-nodo-cero",
+      "name": "RDM Digital · Nodo Cero (Manifiesto)",
+      "role": "Manifiesto y documentación raíz del Nodo Cero",
+      "files": 192, "src": 0, "pages": 0, "edge": 0, "migrations": 0,
+      "federation": "ANUBIS",
+      "highlights": ["doctrina", "manifesto", "MD-X4"]
+    }
+  ]
+}

@@ -1,0 +1,834 @@
+[
+  {
+    "name": ".github",
+    "description": "Github default files",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-05-01",
+    "url": "https://github.com/OsoPanda1/.github"
+  },
+  {
+    "name": "access-academy",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-19",
+    "url": "https://github.com/OsoPanda1/access-academy"
+  },
+  {
+    "name": "alamexa-design-system",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-03-06",
+    "url": "https://github.com/OsoPanda1/alamexa-design-system"
+  },
+  {
+    "name": "analiza-este-lovable-tamv",
+    "description": "documentacion tamv",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/analiza-este-lovable-tamv"
+  },
+  {
+    "name": "AntiChannelRobot",
+    "description": "A robot for instantly deleting & banning users sending as channel in groups.",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-02-14",
+    "url": "https://github.com/OsoPanda1/AntiChannelRobot"
+  },
+  {
+    "name": "Anubis",
+    "description": "Bot de Telegram ",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2025-02-10",
+    "url": "https://github.com/OsoPanda1/Anubis"
+  },
+  {
+    "name": "Anubis-",
+    "description": "",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/Anubis-"
+  },
+  {
+    "name": "Anubis-I-O-Telegrambot",
+    "description": "bot de Telegram diseñado específicamente para desarrolladores que necesitan recibir notificaciones y mensajes directamente desde sus scripts y aplicaciones. Funciona como un puente entre el código en ejecución y Telegram, permitiendo el envío programático de mensajes sin necesidad de implementar una API completa de Telegram. ",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2025-10-09",
+    "url": "https://github.com/OsoPanda1/Anubis-I-O-Telegrambot"
+  },
+  {
+    "name": "Anubisgram",
+    "description": "Telegram for Android source",
+    "language": "Java",
+    "stars": 1,
+    "updated": "2026-03-31",
+    "url": "https://github.com/OsoPanda1/Anubisgram"
+  },
+  {
+    "name": "Anubis_superbot",
+    "description": "A multifunctional Telegram bot with advanced group management, security features, and device control capabilities",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2025-02-18",
+    "url": "https://github.com/OsoPanda1/Anubis_superbot"
+  },
+  {
+    "name": "Anubis_Userbot1",
+    "description": "Bot modificado para la administración de grupos ",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-11-21",
+    "url": "https://github.com/OsoPanda1/Anubis_Userbot1"
+  },
+  {
+    "name": "aws-toolkit-vscode",
+    "description": "Amazon Q, CodeCatalyst, Local Lambda debug, SAM/CFN syntax, ECS Terminal, AWS resources",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2026-01-19",
+    "url": "https://github.com/OsoPanda1/aws-toolkit-vscode"
+  },
+  {
+    "name": "b2k4",
+    "description": " B2K4 - New Facebook OLD Id Cloner Tool | 2003-2011 Facebook Account Cloner | Custom Cloner Maker | Number + UID Cloner | Crack From Friendlist | Crack From Public | Crack From File | File Cloner | Without Login Cloner | With 50+ Extra Passwords Cracker | No Checkpoint JUST NOW LOGIN | All New APIs For Cracking | [ PAID + FREE TOOL ]",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-01-15",
+    "url": "https://github.com/OsoPanda1/b2k4"
+  },
+  {
+    "name": "Banall",
+    "description": "Simple Telegram Banall Bot Which Can Ban all Members From telegram Groups Using Pyrogram Library ",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-04-05",
+    "url": "https://github.com/OsoPanda1/Banall"
+  },
+  {
+    "name": "BOOST_USERBOT",
+    "description": "TELEGRAM PYROGRAM USERBOT",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/BOOST_USERBOT"
+  },
+  {
+    "name": "citemesh-roots",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-03-31",
+    "url": "https://github.com/OsoPanda1/citemesh-roots"
+  },
+  {
+    "name": "conda",
+    "description": "A system-level, binary package and environment manager running on all major operating systems and platforms.",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-10-31",
+    "url": "https://github.com/OsoPanda1/conda"
+  },
+  {
+    "name": "contract-verifier-config",
+    "description": "",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-03-28",
+    "url": "https://github.com/OsoPanda1/contract-verifier-config"
+  },
+  {
+    "name": "datostamv",
+    "description": "archivos tamv",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/datostamv"
+  },
+  {
+    "name": "digital-civilization-core",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-19",
+    "url": "https://github.com/OsoPanda1/digital-civilization-core"
+  },
+  {
+    "name": "DOCUMENTACION-TAMV-DM-X4-e-ISABELLA-AI",
+    "description": "Metaverso Pionero Inmersivo y Sensorial 4D con Inteligencia Artificial Auto-consiente, Históricamente construido por una sola persona. Estamos poniendo a México en la cima tecnologica desde Real del Monte, Hidalgo.",
+    "language": "HTML",
+    "stars": 0,
+    "updated": "2026-02-24",
+    "url": "https://github.com/OsoPanda1/DOCUMENTACION-TAMV-DM-X4-e-ISABELLA-AI"
+  },
+  {
+    "name": "DogeRat",
+    "description": "A multifunctional Telegram based Android RAT without port forwarding.",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-06-13",
+    "url": "https://github.com/OsoPanda1/DogeRat"
+  },
+  {
+    "name": "Dragon-Userbot",
+    "description": "Userbot for telegram with easiest installation",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/Dragon-Userbot"
+  },
+  {
+    "name": "dream-weaver",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-08",
+    "url": "https://github.com/OsoPanda1/dream-weaver"
+  },
+  {
+    "name": "ecosistema-nextgen-tamv",
+    "description": "ecosistema civilizatorio antifragil xr-vr-3d-4d nativo",
+    "language": "JavaScript",
+    "stars": 0,
+    "updated": "2026-04-23",
+    "url": "https://github.com/OsoPanda1/ecosistema-nextgen-tamv"
+  },
+  {
+    "name": "ECOSISTEMA-TAMVONLINE",
+    "description": "TAMV ONLINE ECOSISTEMA PIONERO INMERSIVO Y SENSORIAL 4D A NIVEL MUNDIAL",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-13",
+    "url": "https://github.com/OsoPanda1/ECOSISTEMA-TAMVONLINE"
+  },
+  {
+    "name": "ELTERRORDETELEGRAM",
+    "description": "Userbot experimental con módulos especializados para mantener tratados de paz y armonía entre las alianzas latinas ",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-10-30",
+    "url": "https://github.com/OsoPanda1/ELTERRORDETELEGRAM"
+  },
+  {
+    "name": "federacion-tamv",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-05",
+    "url": "https://github.com/OsoPanda1/federacion-tamv"
+  },
+  {
+    "name": "FortranBot",
+    "description": "Simple Telegram Bot written on FORTRAN for generating LaTeX pictures in private messages and inline mode",
+    "language": "Fortran",
+    "stars": 0,
+    "updated": "2024-11-09",
+    "url": "https://github.com/OsoPanda1/FortranBot"
+  },
+  {
+    "name": "GbanUserBot",
+    "description": "",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/GbanUserBot"
+  },
+  {
+    "name": "GbanWatch",
+    "description": "",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-04-19",
+    "url": "https://github.com/OsoPanda1/GbanWatch"
+  },
+  {
+    "name": "genesis-digytamv-nexus",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-26",
+    "url": "https://github.com/OsoPanda1/genesis-digytamv-nexus"
+  },
+  {
+    "name": "GitGram",
+    "description": "Github Integration for Telegram Bot API",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-02-14",
+    "url": "https://github.com/OsoPanda1/GitGram"
+  },
+  {
+    "name": "github-achievement",
+    "description": "Complete list of all GitHub profile Badges and Achievements",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2023-11-23",
+    "url": "https://github.com/OsoPanda1/github-achievement"
+  },
+  {
+    "name": "go-command-repo",
+    "description": "A selection of commands to get you started with various tools via Go's custom command. Community contributions welcome.",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-01-08",
+    "url": "https://github.com/OsoPanda1/go-command-repo"
+  },
+  {
+    "name": "Index-html",
+    "description": "PÁGINA WEB OFICIAL ",
+    "language": "HTML",
+    "stars": 0,
+    "updated": "2025-01-30",
+    "url": "https://github.com/OsoPanda1/Index-html"
+  },
+  {
+    "name": "instagram-scraper",
+    "description": "Scrapes an instagram user's photos ",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-01-25",
+    "url": "https://github.com/OsoPanda1/instagram-scraper"
+  },
+  {
+    "name": "IronBlood_Userbot",
+    "description": "Userbot Telegrama, para administración de grupos y Verificación de Vendedoras",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2024-11-09",
+    "url": "https://github.com/OsoPanda1/IronBlood_Userbot"
+  },
+  {
+    "name": "Juegos",
+    "description": "Juegos tragamonedas para diversión en mi web",
+    "language": "JavaScript",
+    "stars": 0,
+    "updated": "2024-11-11",
+    "url": "https://github.com/OsoPanda1/Juegos"
+  },
+  {
+    "name": "Lord-Userbot",
+    "description": "Already Dead.",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/Lord-Userbot"
+  },
+  {
+    "name": "Master",
+    "description": "",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2024-01-02",
+    "url": "https://github.com/OsoPanda1/Master"
+  },
+  {
+    "name": "master1",
+    "description": "More info about it",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2024-01-23",
+    "url": "https://github.com/OsoPanda1/master1"
+  },
+  {
+    "name": "metaverso-latino-tamv-online",
+    "description": "TAMV ONLINE Plataforma AI metaverso pionera creada en LATAM: social, XR, multimedia, civilizatoria, ética y 100% auditada. Innovando el futuro digital con tecnología, arte y orgullo latinoamericano.",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-05",
+    "url": "https://github.com/OsoPanda1/metaverso-latino-tamv-online"
+  },
+  {
+    "name": "metaverso-tamv-md-x4",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/metaverso-tamv-md-x4"
+  },
+  {
+    "name": "minter-contract",
+    "description": "Jetton Deployer FunC Smart Contracts",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-05-10",
+    "url": "https://github.com/OsoPanda1/minter-contract"
+  },
+  {
+    "name": "MultiSearchBot",
+    "description": "Coming Soon......      Bot For Searching YouTube, Torrent, Playstore App, Google Query, Image in Inline Mode.",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/MultiSearchBot"
+  },
+  {
+    "name": "multiverso-tamvonline",
+    "description": "Innovacion tecnologica mexicana ",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-20",
+    "url": "https://github.com/OsoPanda1/multiverso-tamvonline"
+  },
+  {
+    "name": "new-beginnings",
+    "description": "Proyecto creado por  Anubis Villaseñor, desde su conceptualizacion y filosofia, hasta blindaje juridico-legal internacional. Proyecto en fase de unificacion y despliegue",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-26",
+    "url": "https://github.com/OsoPanda1/new-beginnings"
+  },
+  {
+    "name": "NEWTAMVGENESIS",
+    "description": "ECOSISTEMA EVOLUCION ",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-13",
+    "url": "https://github.com/OsoPanda1/NEWTAMVGENESIS"
+  },
+  {
+    "name": "omniverse-hub",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/omniverse-hub"
+  },
+  {
+    "name": "OsoPanda1",
+    "description": "tamv online my dream",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2026-04-30",
+    "url": "https://github.com/OsoPanda1/OsoPanda1"
+  },
+  {
+    "name": "oub-remix",
+    "description": "Just another userbot with new modules. Thanks to @mkaraniya & @Dark-Princ3 ",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-10-28",
+    "url": "https://github.com/OsoPanda1/oub-remix"
+  },
+  {
+    "name": "Plataforma-tamv-md-x4",
+    "description": "Red Social Latina",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/Plataforma-tamv-md-x4"
+  },
+  {
+    "name": "proyecto-central",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-20",
+    "url": "https://github.com/OsoPanda1/proyecto-central"
+  },
+  {
+    "name": "PyroMan-Userbot",
+    "description": "This is UserBot Telegram with many cool modules. Written in Python with Pyrogram.",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-01-08",
+    "url": "https://github.com/OsoPanda1/PyroMan-Userbot"
+  },
+  {
+    "name": "quantum-system-tamv",
+    "description": "tecnologia quantum para el tamv",
+    "language": "Shell",
+    "stars": 0,
+    "updated": "2026-01-22",
+    "url": "https://github.com/OsoPanda1/quantum-system-tamv"
+  },
+  {
+    "name": "ragbot-starter",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2025-10-09",
+    "url": "https://github.com/OsoPanda1/ragbot-starter"
+  },
+  {
+    "name": "rdm-digital-nodo-cero",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-05-01",
+    "url": "https://github.com/OsoPanda1/rdm-digital-nodo-cero"
+  },
+  {
+    "name": "RDM-Digital-X",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-04-27",
+    "url": "https://github.com/OsoPanda1/RDM-Digital-X"
+  },
+  {
+    "name": "rdm-smart-city-os",
+    "description": "",
+    "language": "HTML",
+    "stars": 0,
+    "updated": "2026-04-10",
+    "url": "https://github.com/OsoPanda1/rdm-smart-city-os"
+  },
+  {
+    "name": "real-del-monte-elevated",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-04-14",
+    "url": "https://github.com/OsoPanda1/real-del-monte-elevated"
+  },
+  {
+    "name": "real-del-monte-explorer",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-04-25",
+    "url": "https://github.com/OsoPanda1/real-del-monte-explorer"
+  },
+  {
+    "name": "real-del-monte-twin",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-04-30",
+    "url": "https://github.com/OsoPanda1/real-del-monte-twin"
+  },
+  {
+    "name": "remark-lint",
+    "description": "plugins to check (lint) markdown code style",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-10-28",
+    "url": "https://github.com/OsoPanda1/remark-lint"
+  },
+  {
+    "name": "repo-docs-hub",
+    "description": "documentacion del tamv md-x4",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-13",
+    "url": "https://github.com/OsoPanda1/repo-docs-hub"
+  },
+  {
+    "name": "repo-docs-hub-9675bd6d",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-11",
+    "url": "https://github.com/OsoPanda1/repo-docs-hub-9675bd6d"
+  },
+  {
+    "name": "RSSHub",
+    "description": "🍰 Everything is RSSible",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2023-10-24",
+    "url": "https://github.com/OsoPanda1/RSSHub"
+  },
+  {
+    "name": "Skynet-System",
+    "description": "A Telethon UserBot to make gbanning easy.",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-07-27",
+    "url": "https://github.com/OsoPanda1/Skynet-System"
+  },
+  {
+    "name": "SkyNet-Userbot",
+    "description": "Red neuronal experimental para el manejo y control total de grupos y canales de Telegram. Exclusivo de su creador Anubis Villaseñor, mientras siga en proceso de su desarrollo y función experimental",
+    "language": "Shell",
+    "stars": 0,
+    "updated": "2024-10-31",
+    "url": "https://github.com/OsoPanda1/SkyNet-Userbot"
+  },
+  {
+    "name": "sovereign-union",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-11",
+    "url": "https://github.com/OsoPanda1/sovereign-union"
+  },
+  {
+    "name": "tamv-civilized",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-06",
+    "url": "https://github.com/OsoPanda1/tamv-civilized"
+  },
+  {
+    "name": "tamv-digital-nexus",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-05-01",
+    "url": "https://github.com/OsoPanda1/tamv-digital-nexus"
+  },
+  {
+    "name": "tamv-horizon",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-14",
+    "url": "https://github.com/OsoPanda1/tamv-horizon"
+  },
+  {
+    "name": "tamv-nexus-c449e2b2",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/tamv-nexus-c449e2b2"
+  },
+  {
+    "name": "tamv-nexus-verse",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-03-26",
+    "url": "https://github.com/OsoPanda1/tamv-nexus-verse"
+  },
+  {
+    "name": "TAMV-ONLINE-NEXTGEN-1.0",
+    "description": "ECOSISTEMA PIONERO LATINOAMERICANO, CONOCE EL MUNDO DE ANUBISS VILLASEÑOR",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-26",
+    "url": "https://github.com/OsoPanda1/TAMV-ONLINE-NEXTGEN-1.0"
+  },
+  {
+    "name": "tamv-orchestrator",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-22",
+    "url": "https://github.com/OsoPanda1/tamv-orchestrator"
+  },
+  {
+    "name": "tamv-sentient-digital-nexus",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-13",
+    "url": "https://github.com/OsoPanda1/tamv-sentient-digital-nexus"
+  },
+  {
+    "name": "tamv-sovereign-hub",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-13",
+    "url": "https://github.com/OsoPanda1/tamv-sovereign-hub"
+  },
+  {
+    "name": "tamv-universe-online",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-20",
+    "url": "https://github.com/OsoPanda1/tamv-universe-online"
+  },
+  {
+    "name": "tamvonline",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-08",
+    "url": "https://github.com/OsoPanda1/tamvonline"
+  },
+  {
+    "name": "tamvonline-metanextgen",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-04-30",
+    "url": "https://github.com/OsoPanda1/tamvonline-metanextgen"
+  },
+  {
+    "name": "tamvweb",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-18",
+    "url": "https://github.com/OsoPanda1/tamvweb"
+  },
+  {
+    "name": "Telegram-Adder-Scraper-Members-NEW-2024-FREE",
+    "description": "This Free Tool Is To Scrape Members From Targeted Groups And To Add Them Into Your Own Group Or Channel With All Needed Fetched Informations Of All Accounts. Scrape More Than 10k Members Is Possible As One And Only Tool",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-01-19",
+    "url": "https://github.com/OsoPanda1/Telegram-Adder-Scraper-Members-NEW-2024-FREE"
+  },
+  {
+    "name": "telegram-backup-to-txt",
+    "description": "Tool to dump telegram into text files for quick search (e.g. with grep)",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-08-04",
+    "url": "https://github.com/OsoPanda1/telegram-backup-to-txt"
+  },
+  {
+    "name": "telegram-reverse-shell-lib",
+    "description": "A Python library for inserting an  reverse shell attached to Telegram in any Python application.",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/telegram-reverse-shell-lib"
+  },
+  {
+    "name": "TeleGram-Scraper",
+    "description": "telegram group scraper tool. fetch all information about group members",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-02-13",
+    "url": "https://github.com/OsoPanda1/TeleGram-Scraper"
+  },
+  {
+    "name": "Telegram-scraper-api",
+    "description": "An easy-to-use PHP api for Getting contents of Telegram's public channels and groups Messages without needing to join them.",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-01-20",
+    "url": "https://github.com/OsoPanda1/Telegram-scraper-api"
+  },
+  {
+    "name": "Telegram-UserBot-1",
+    "description": "Just coz I'm too lazy, I program it, to make stuff easier. A userbot to improve telegram experience  (`･ω･´)",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/Telegram-UserBot-1"
+  },
+  {
+    "name": "Telegram-X",
+    "description": "The main repository of Telegram X — official alternative Telegram client for Android.",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-05-03",
+    "url": "https://github.com/OsoPanda1/Telegram-X"
+  },
+  {
+    "name": "TelegramCopier",
+    "description": "Telegram users scraper from a group to another group.",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-02-01",
+    "url": "https://github.com/OsoPanda1/TelegramCopier"
+  },
+  {
+    "name": "TgDelBot",
+    "description": "Userbot to delete your messages on command",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/TgDelBot"
+  },
+  {
+    "name": "Thanubis-Userbot",
+    "description": "Bot para administrar Telegram ",
+    "language": "Python",
+    "stars": 0,
+    "updated": "2026-02-11",
+    "url": "https://github.com/OsoPanda1/Thanubis-Userbot"
+  },
+  {
+    "name": "ton",
+    "description": "gh repo clone ton-community/ton",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-05-01",
+    "url": "https://github.com/OsoPanda1/ton"
+  },
+  {
+    "name": "ton-grpc",
+    "description": "Rust bindings and tools for The Open Network",
+    "language": "Rust",
+    "stars": 2,
+    "updated": "2026-02-18",
+    "url": "https://github.com/OsoPanda1/ton-grpc"
+  },
+  {
+    "name": "twa-template",
+    "description": "Boilerplate starter template for a new Telegram Web App (TWA) interacting with the TON blockchain",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-10-18",
+    "url": "https://github.com/OsoPanda1/twa-template"
+  },
+  {
+    "name": "Ultroid",
+    "description": "Advanced Multi-Featured Telegram UserBot, Built in Python Using Telethon lib.",
+    "language": "Python",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/Ultroid"
+  },
+  {
+    "name": "unify-nexus-deployment",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-02-05",
+    "url": "https://github.com/OsoPanda1/unify-nexus-deployment"
+  },
+  {
+    "name": "Userbot-Anubis",
+    "description": "",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/Userbot-Anubis"
+  },
+  {
+    "name": "utamv-academic-core",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-04-30",
+    "url": "https://github.com/OsoPanda1/utamv-academic-core"
+  },
+  {
+    "name": "utamv-elite-masterclass",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-03-07",
+    "url": "https://github.com/OsoPanda1/utamv-elite-masterclass"
+  },
+  {
+    "name": "web-4.0-genesis",
+    "description": "",
+    "language": "TypeScript",
+    "stars": 0,
+    "updated": "2026-01-22",
+    "url": "https://github.com/OsoPanda1/web-4.0-genesis"
+  },
+  {
+    "name": "web-scraping-telegram",
+    "description": "Web Scraping Telegram | [Text] [Content] [Message] [Reactions] [Replies] [Comments] [Channels] [Groups] [Chats]",
+    "language": "N/A",
+    "stars": 0,
+    "updated": "2024-12-16",
+    "url": "https://github.com/OsoPanda1/web-scraping-telegram"
+  },
+  {
+    "name": "ZAID-USERBOT",
+    "description": "A First Telegram Userbot Project With Multi Client Based On PyroGram. You can use it for normal uses and for spamming etcs. Deploy upto 10ids!",
+    "language": "N/A",
+    "stars": 1,
+    "updated": "2024-10-29",
+    "url": "https://github.com/OsoPanda1/ZAID-USERBOT"
+  }
+]

@@ -1,0 +1,36 @@
+--- FILE: rdm-smart-city-os/src/components/CinematicIntro.tsx ---
+
+--- END FILE ---
+
+--- FILE: rdm-smart-city-os/src/components/Map3D.tsx ---
+
+--- END FILE ---
+
+--- FILE: rdm-smart-city-os/src/components/RealitoOrb.tsx ---
+
+--- END FILE ---
+
+--- FILE: rdm-smart-city-os/src/components/PageTransition.tsx ---
+
+--- END FILE ---
+
+--- FILE: rdm-smart-city-os/src/components/UnifiedMapBridge.tsx ---
+
+--- END FILE ---
+
+--- FILE: rdm-smart-city-os/tailwind.config.js ---
+
+--- END FILE ---
+
+--- FILE: real-del-monte-twin/src/components/CinematicIntro.tsx ---
+
+--- END FILE ---
+
+--- FILE: real-del-monte-twin/src/components/ExperienceHub.tsx ---
+
+--- END FILE ---
+
+--- FILE: real-del-monte-twin/src/components/RealitoChat.tsx ---
+
+--- END FILE ---
+

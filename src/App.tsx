@@ -9,6 +9,8 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import CinematicIntro from "@/components/CinematicIntro";
 import MicroPageIntro from "@/components/MicroPageIntro";
 import RealitoChatLauncher from "./components/RealitoChatLauncher";
+import AmbientLayer from "@/components/AmbientLayer";
+import LiveTelemetryBadge from "@/components/LiveTelemetryBadge";
 import { RDMAuthProvider } from "@/contexts/RDMAuthContext";
 
 // ===== Mother repo pages =====
@@ -262,6 +264,7 @@ const AppInner = () => {
   return (
     <ErrorBoundary>
       <TooltipProvider>
+        <AmbientLayer />
         <Toaster />
         <Sonner />
         {showIntro && !introComplete && (
@@ -271,6 +274,7 @@ const AppInner = () => {
           <>
             <MicroPageIntro />
             <AnimatedRoutes />
+            <LiveTelemetryBadge />
           </>
         )}
         <RealitoChatLauncher />

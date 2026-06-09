@@ -53,10 +53,34 @@ Actualizado: **Etapas 1-3 del refactor federado completadas** (façades en `pack
 - Dos versiones de `ScoringEngine`, `ExperienceOrchestrator`, `prometheus`: consolidar en Etapa 4.
 - Pendientes funcionales: Bloque A (cableado mapa+comercios) · Bloque B (páginas /federation, /nodocero, /realito-ai, /mitos, /transporte) · Bloque C (Stripe live).
 
-## Próxima Etapa (4)
+## Etapa 4 — Hardening y observabilidad (parcial, ejecutada)
 
-- Mover `supabase/` → `infra/supabase/`.
-- Consolidar `infra/metrics/`.
-- Resolver duplicidades de scoring/orchestrator/prometheus eligiendo versión canónica.
-- Eliminar re-exports puente legacy en `src/core/geo/index.ts`, `src/lib/kernel.ts`, etc.
-- Mover archivos físicamente de `src/` → `packages/*/src/` y `services/*/src/`.
+Aplicando el skill RDM LIVOS (Evidence Gate + Change Governance + Anti-overengineering), los moves físicos planeados se **defieren** con justificación documentada:
+
+| Acción planeada | Decisión | Razón |
+|---|---|---|
+| Mover `supabase/` → `infra/supabase/` | **Rechazada** | Lovable gestiona edge functions en la ruta `supabase/`; mover rompe deploy automático. Beneficio cosmético < riesgo P0. |
+| Mover archivos físicos `src/` → `packages/*` | **Diferida** | Aliases + façades cubren el contrato. Mover físico requiere reescribir >200 imports sin beneficio runtime. |
+| Consolidar duplicidades scoring/orchestrator | **Diferida** | Evidence Gate: no hay prueba de cuál versión es la canónica. Requiere QA manual. |
+| Eliminar re-exports puente legacy | **Diferida** | Acoplado a los moves físicos. |
+
+### Hardening aplicado (Etapa 4 ✅)
+
+- **SECURITY DEFINER**: `award_points` y `handle_new_user` revocados de `PUBLIC/anon/authenticated`. `has_role` se mantiene público (lo invocan políticas RLS).
+- **CHECK constraints anti-abuso**: `forum_posts` (title≤200, content≤5000, author≤80), `forum_comments` (content≤2000).
+- **`activity_log` INSERT**: whitelist regex `^[a-z][a-z0-9_]{0,63}$` + límites de longitud en `action`/`target_type` para prevenir poisoning del audit trail.
+- **Índices de performance**: `idx_point_transactions_user_action_created` (acelera cooldown de `award-points`) e `idx_activity_log_user_created`.
+- **Memoria de seguridad**: actualizada con decisiones permanentes para evitar re-flaggear hallazgos contextuales.
+
+### Riesgos aceptados documentados (skill: Confidence Protocol)
+
+- Foro público anónimo (`forum_posts`/`forum_comments` con `WITH CHECK (true)`): mitigado por trigger + CHECKs.
+- `has_role` ejecutable por anon: requerido por RLS, sin efectos secundarios.
+- Realtime channels sin RLS: no se usan suscripciones privadas en el proyecto.
+
+### Próximo ciclo (cuando haya QA dedicado)
+
+1. Auditoría de versiones duplicadas (ScoringEngine v1/v2, ExperienceOrchestrator v1/v2, prometheus core/infra) — elegir canónica con evidencia de uso.
+2. Mover archivos físicos a `packages/*/src/` en lotes pequeños con tests de smoke por ruta.
+3. Reemplazar progresivamente `@ts-nocheck` en `data/imported/*` con tipos del schema generado.
+

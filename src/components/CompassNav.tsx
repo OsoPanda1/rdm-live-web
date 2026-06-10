@@ -24,7 +24,7 @@ interface QuadrantLink {
 interface Quadrant {
   key: QuadrantKey;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   tone: string;
   links: QuadrantLink[];
 }

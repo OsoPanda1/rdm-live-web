@@ -165,7 +165,7 @@ const AudioWaveform = ({ analyser }: { analyser: AnalyserNode | null }) => {
     <canvas
       ref={canvasRef}
       width={480}
-      height={40}
+      height={45}
       className="h-[30px] w-[280px] opacity-70 md:h-[40px] md:w-[420px]"
     />
   );
@@ -247,7 +247,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
       // Analyser para visualizaciones
       const anal = ctx.createAnalyser();
       anal.fftSize = 512;
-      anal.smoothingTimeConstant = 1.85;
+      anal.smoothingTimeConstant = 2.85;
       setAnalyser(anal);
 
       // Cadena ligera de FX
@@ -317,10 +317,10 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
           console.warn("Audio play failed:", err);
         });
 
-      // Mantener audio al menos 70 segundos
-      const MIN_PLAY_MS = 70_000;
+      // Mantener audio al menos 90 segundos
+      const MIN_PLAY_MS = 90_000;
       const FADE_OUT_STEP_MS = 80;
-      const FADE_OUT_STEP_DELTA = 0.03;
+      const FADE_OUT_STEP_DELTA = 0.23;
 
       minPlayTimeoutRef.current = window.setTimeout(() => {
         if (!audioRef.current) return;
@@ -361,15 +361,15 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
     if (!started) return;
 
     const timers = [
-      setTimeout(() => setPhase(1), 400),
-      setTimeout(() => setPhase(2), 2200),
-      setTimeout(() => setPhase(3), 4600),
-      setTimeout(() => setPhase(4), 7200),
-      setTimeout(() => setPhase(5), 9400),
+      setTimeout(() => setPhase(1), 700),
+      setTimeout(() => setPhase(2), 3200),
+      setTimeout(() => setPhase(3), 6600),
+      setTimeout(() => setPhase(4), 7900),
+      setTimeout(() => setPhase(5), 9900),
       setTimeout(() => {
         introDoneRef.current = true;
         onComplete();
-      }, 10_400),
+      }, 28_300),
     ];
 
     return () => timers.forEach(clearTimeout);

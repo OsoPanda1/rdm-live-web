@@ -9,3 +9,5 @@ export * from "@/core/geo/bbox";
 export * from "@/core/geo/lru-cache";
 export * from "@/core/geo/spatial-index";
 export * from "@/core/geo/geo-unified";
+
+export * from "./haversine";

@@ -27,6 +27,8 @@ export default defineConfig(({ mode }) => ({
       "@culture": path.resolve(__dirname, "./services/culture/src"),
       "@app-web": path.resolve(__dirname, "./apps/web/src"),
       "@app-admin": path.resolve(__dirname, "./apps/admin/src"),
+      "@infra/ai-provider": path.resolve(__dirname, "./infra/ai-provider/src"),
+      "@territorial-sensing": path.resolve(__dirname, "./services/territorial-sensing/src"),
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },

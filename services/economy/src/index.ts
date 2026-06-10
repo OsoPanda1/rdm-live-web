@@ -14,3 +14,5 @@ export type AwardPointsRequest = {
   points: number;
   metadata?: Record<string, unknown>;
 };
+
+export * from "./retention";

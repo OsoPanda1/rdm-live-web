@@ -10,4 +10,5 @@ export * from "@/core/geo/lru-cache";
 export * from "@/core/geo/spatial-index";
 export * from "@/core/geo/geo-unified";
 
-export * from "./haversine";
+// Re-export local haversine evitando colisión con GeoPoint de geo-unified.
+export { haversineKm as haversineKmLocal } from "./haversine";

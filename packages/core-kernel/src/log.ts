@@ -60,11 +60,12 @@ export function log(
 ) {
   const mergedCtx = ctx ?? DEFAULT_CONTEXT;
 
+  const sanitizedCtx = sanitize(mergedCtx) as Record<string, unknown>;
   const payload = {
     ts: new Date().toISOString(),
     level,
     message,
-    ...sanitize(mergedCtx),
+    ...sanitizedCtx,
     extra: sanitize(extra),
   };
 

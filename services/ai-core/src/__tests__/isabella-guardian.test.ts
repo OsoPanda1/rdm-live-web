@@ -9,7 +9,7 @@ describe("ai-core · guardIsabellaPrompt", () => {
   it("bloquea datos sensibles", () => {
     const decision = guardIsabellaPrompt("Mi contraseña es 1234, ayúdame");
     expect(decision.allow).toBe(false);
-    if (!decision.allow) {
+    if (decision.allow === false) {
       expect(decision.reason).toBe("SensitiveData");
       expect(decision.safeMessage).toContain("privacidad");
     }

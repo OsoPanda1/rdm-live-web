@@ -38,6 +38,7 @@ export default function SearchOverlay() {
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const lastFocusRef = useRef<HTMLElement | null>(null);
   const navigate = useNavigate();
 
   const hits = useMemo(() => searchTourism(query, 24), [query]);
@@ -49,7 +50,10 @@ export default function SearchOverlay() {
         e.preventDefault();
         setOpen((v) => !v);
       }
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape" && open) {
+        e.preventDefault();
+        setOpen(false);
+      }
     };
     window.addEventListener("keydown", handler);
     const opener = () => setOpen(true);
@@ -58,13 +62,16 @@ export default function SearchOverlay() {
       window.removeEventListener("keydown", handler);
       window.removeEventListener(SEARCH_OPEN_EVENT, opener);
     };
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     if (open) {
+      lastFocusRef.current = (document.activeElement as HTMLElement) ?? null;
       setQuery("");
       setCursor(0);
       requestAnimationFrame(() => inputRef.current?.focus());
+    } else {
+      lastFocusRef.current?.focus?.();
     }
   }, [open]);
 
@@ -125,6 +132,11 @@ export default function SearchOverlay() {
                 onKeyDown={onKeyNav}
                 placeholder="Busca minas, pastes, leyendas, plazas, rutas…"
                 className="flex-1 bg-transparent text-base outline-none placeholder:text-[hsl(var(--muted-foreground))]"
+                role="combobox"
+                aria-expanded={hits.length > 0}
+                aria-controls="search-overlay-listbox"
+                aria-activedescendant={hits[cursor] ? `search-hit-${hits[cursor].id}` : undefined}
+                aria-autocomplete="list"
               />
               <kbd className="hidden sm:inline-flex text-[10px] tracking-widest uppercase px-2 py-1 rounded border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]">
                 Esc
@@ -139,7 +151,12 @@ export default function SearchOverlay() {
             </div>
 
             {/* Results */}
-            <div className="max-h-[60vh] overflow-y-auto py-2">
+            <div
+              id="search-overlay-listbox"
+              role="listbox"
+              aria-label="Resultados de búsqueda"
+              className="max-h-[60vh] overflow-y-auto py-2"
+            >
               {hits.length === 0 && (
                 <div className="px-6 py-10 text-center text-sm text-[hsl(var(--muted-foreground))]">
                   Sin resultados para «{query}». Prueba con <em>paste</em>, <em>Acosta</em> o <em>panteón</em>.

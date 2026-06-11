@@ -168,9 +168,12 @@ export default function SearchOverlay() {
                 return (
                   <button
                     key={hit.id}
+                    id={`search-hit-${hit.id}`}
+                    role="option"
+                    aria-selected={active}
                     onMouseEnter={() => setCursor(i)}
                     onClick={() => go(hit)}
-                    className={`group w-full text-left flex items-start gap-3 px-5 py-3 transition-colors ${
+                    className={`group w-full text-left flex items-start gap-3 px-5 py-3 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--electric))] ${
                       active ? "bg-[hsl(var(--electric)/0.08)]" : "hover:bg-[hsl(var(--muted)/0.5)]"
                     }`}
                   >

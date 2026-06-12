@@ -153,6 +153,7 @@ const AnimatedRoutes = () => {
           <Route path="/apoya" element={<Apoya />} />
           <Route path="/reglamento" element={<Reglamento />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/musica" element={<AdminMusica />} />
           <Route path="/dichos" element={<Dichos />} />
           <Route path="/dichos-mineros" element={<Dichos />} />
           <Route path="/catalogo" element={<Catalogo />} />

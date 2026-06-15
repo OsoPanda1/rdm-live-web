@@ -1,68 +1,33 @@
 name: CI
-on:
-push:
-branches: [ main ]
-pull_request:
-branches: [ main ]
-
-jobs:
-build-and-test:
-runs-on: ubuntu-latest
-
-steps:
-- name: Checkout
-uses: actions/checkout@v4
-
-- name: Use Node
-uses: actions/setup-node@v4
-with:
-node-version: 20
-cache: "npm"
-
-- name: Install deps
-run: npm ci --legacy-peer-deps
-
-- name: Lint
-run: npm run lint
-
-- name: Test
-run: npm test
-
-- name: Build
-run: npm run build name: CI
 
 on:
-push:
-branches: [main]
-pull_request:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-test-and-build:
-runs-on: ubuntu-latest
-steps:
-- name: Checkout
-uses: actions/checkout@v4
-with:
-submodules: recursive
+  build-and-test:
+    runs-on: ubuntu-latest
 
-- name: Setup Node
-uses: actions/setup-node@v4
-with:
-node-version: 20
-cache: npm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-- name: Install root deps
-run: npm ci
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
 
-- name: Install server deps
-run: npm ci
-working-directory: server
+      - name: Install deps
+        run: npm ci --legacy-peer-deps
 
-- name: Install submodule deps
-run: |
-for dir in packages/*; do
-if [ -f "$dir/package.json" ]; then
-echo "Installing deps in $dir"
-(cd "$dir" && npm ci 2>/dev/null || npm install 2>/dev/null || echo "skip $dir")
-fi
-done
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

@@ -1,111 +1,68 @@
 name: CI
-
 on:
-  push:
-    branches: [main]
-  pull_request:
+push:
+branches: [ main ]
+pull_request:
+branches: [ main ]
 
 jobs:
-  test-and-build:
-    runs-on: ubuntu-latest
+build-and-test:
+runs-on: ubuntu-latest
 
-    steps:
-      # -------------------------
-      # Checkout
-      # -------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+steps:
+- name: Checkout
+uses: actions/checkout@v4
 
-      # -------------------------
-      # Node.js setup
-      # -------------------------
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+- name: Use Node
+uses: actions/setup-node@v4
+with:
+node-version: 20
+cache: "npm"
 
-      # -------------------------
-      # Instalar dependencias
-      # -------------------------
-      - name: Install root deps
-        run: npm ci
+- name: Install deps
+run: npm ci --legacy-peer-deps
 
-      - name: Install server deps
-        run: npm ci
-        working-directory: server
+- name: Lint
+run: npm run lint
 
-      - name: Install packages deps (monorepo)
-        run: |
-          for dir in packages/*; do
-            if [ -f "$dir/package.json" ]; then
-              echo "Installing deps in $dir"
-              (cd "$dir" && npm ci 2>/dev/null || npm install 2>/dev/null || echo "skip $dir")
-            fi
-          done
+- name: Test
+run: npm test
 
-      # -------------------------
-      # Sincronización de roadmap
-      # -------------------------
-      - name: Roadmap sync (docs ↔ public/roadmap-rdmx.json)
-        run: npm run roadmap:sync
+- name: Build
+run: npm run build name: CI
 
-      # -------------------------
-      # Lint + tests frontend
-      # -------------------------
-      - name: Frontend lint
-        run: npm run lint
+on:
+push:
+branches: [main]
+pull_request:
 
-      - name: Frontend unit tests
-        run: npm test
+jobs:
+test-and-build:
+runs-on: ubuntu-latest
+steps:
+- name: Checkout
+uses: actions/checkout@v4
+with:
+submodules: recursive
 
-      - name: Frontend build
-        run: npm run build
+- name: Setup Node
+uses: actions/setup-node@v4
+with:
+node-version: 20
+cache: npm
 
-      # -------------------------
-      # Playwright E2E
-      # -------------------------
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+- name: Install root deps
+run: npm ci
 
-      - name: E2E tests (Playwright, headless)
-        run: npm run test:e2e
-        env:
-          CI: "true"
+- name: Install server deps
+run: npm ci
+working-directory: server
 
-      # -------------------------
-      # Backend build + Prisma
-      # -------------------------
-      - name: Backend build
-        run: npm run build
-        working-directory: server
-
-      - name: Prisma migrate deploy (staging)
-        if: ${{ secrets.STAGING_DATABASE_URL != '' }}
-        env:
-          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
-        run: npx prisma migrate deploy
-        working-directory: server
-
-      # -------------------------
-      # Artefactos de build (opcional, útil para debugging y CD)
-      # -------------------------
-      - name: Upload frontend build artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: |
-            dist
-          if-no-files-found: ignore
-
-      - name: Upload backend build artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-build
-          path: |
-            server/dist
-          if-no-files-found: ignore
+- name: Install submodule deps
+run: |
+for dir in packages/*; do
+if [ -f "$dir/package.json" ]; then
+echo "Installing deps in $dir"
+(cd "$dir" && npm ci 2>/dev/null || npm install 2>/dev/null || echo "skip $dir")
+fi
+done

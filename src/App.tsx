@@ -17,6 +17,7 @@ import SearchOverlay from '@/components/SearchOverlay'
 import CompassNav from '@/components/CompassNav'
 import SmartSidebar from '@/components/SmartSidebar'
 import { RDMAuthProvider, useRDMAuth } from '@/contexts/RDMAuthContext'
+import { logUIError } from '@/integrations/telemetry/uiTelemetry'
 
 // ===== Mother repo pages =====
 const Index = lazy(() => import('./pages/Index'))
@@ -162,11 +163,35 @@ const AuthStatusBanner = () => {
   )
 }
 
+// Telemetría simple por ruta (por ejemplo, errores de lazy import)
+const useRouteErrorTelemetry = () => {
+  const location = useLocation()
+
+  const reportLazyError = (error: unknown) => {
+    const message =
+      error instanceof Error ? error.message : 'Error desconocido en lazy route'
+    logUIError({
+      level: 'error',
+      source: 'lazy-import',
+      message,
+      route: location.pathname,
+      details: { error },
+      timestamp: new Date().toISOString(),
+    })
+  }
+
+  return { reportLazyError }
+}
+
 const AnimatedRoutes = () => {
   const location = useLocation()
+  const { reportLazyError } = useRouteErrorTelemetry()
+
   return (
     <AnimatePresence mode="wait">
-      <Suspense fallback={<RouteFallback />}>
+      <Suspense
+        fallback={<RouteFallback />}
+      >
         <Routes location={location} key={location.pathname}>
           {/* === Core RDM Routes === */}
           <Route path="/" element={<Index />} />
@@ -294,16 +319,18 @@ const AppInner = () => {
   }, [])
 
   const [showIntro] = useState(() => {
-    if (typeof window !== 'undefined') {
-      if (sessionStorage.getItem('rdm_intro_shown')) return false
-      sessionStorage.setItem('rdm_intro_shown', 'true')
-      return true
+    const isBrowser = typeof window !== 'undefined'
+    if (!isBrowser) {
+      return false
     }
-    return false
+
+    if (sessionStorage.getItem('rdm_intro_shown')) return false
+    sessionStorage.setItem('rdm_intro_shown', 'true')
+    return true
   })
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary boundaryId="AppRoot">
       <TooltipProvider>
         <AmbientLayer />
         {/* Banner global de estado de auth/Supabase */}

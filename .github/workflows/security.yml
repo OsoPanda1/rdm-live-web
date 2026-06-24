@@ -48,8 +48,8 @@ jobs:
         with:
           node-version: 20
       - run: npm ci --legacy-peer-deps
-      - run: npm audit --audit-level=high || true
-      - run: npx --yes better-npm-audit audit --level high || true
+      - run: npm audit --audit-level=high
+      - run: npx --yes better-npm-audit audit --level high
 
   codeql:
     name: CodeQL (JS/TS)

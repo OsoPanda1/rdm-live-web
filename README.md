@@ -4,6 +4,8 @@ Plataforma territorial soberana para turismo, cultura, economía local y memoria
 
 ---
 
+> **Norma de producción:** antes de promover RDM Digital a producción institucional, todo cambio debe alinearse con el [Manual extremo RDM Digital](docs/rdm-operational-hardening-manual.md).
+
 ## 1. Visión y propósito
 
 Real del Monte Digital Hub es un **sistema operativo territorial** (LTOS) que conecta patrimonio minero, experiencias turísticas, comercio local y capas de inteligencia artificial en una sola infraestructura abierta y auditable.

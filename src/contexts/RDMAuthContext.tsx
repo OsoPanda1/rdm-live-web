@@ -11,7 +11,6 @@ import {
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
-import { lovable } from '@/integrations/lovable'
 
 export interface Profile {
   id: string
@@ -255,15 +254,15 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     setError(null)
     try {
+      const redirectUrl =
+        import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_REDIRECT_URL ??
+        (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined)
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          // Cloudflare Workers no tiene window; usamos fallback seguro.
-          emailRedirectTo:
-            typeof window !== 'undefined'
-              ? `${window.location.origin}/`
-              : 'https://rdm.example',
+          emailRedirectTo: redirectUrl,
           data: { display_name: displayName },
         },
       })
@@ -289,22 +288,26 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
   const signInGoogle = async () => {
     setError(null)
 
+    if (!supabase) {
+      const msg = '[auth] Supabase no disponible; Google OAuth deshabilitado.'
+      setError(msg)
+      return { error: msg }
+    }
+
     try {
-      const res = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri:
-          typeof window !== 'undefined'
-            ? window.location.origin
-            : 'https://rdm.example',
+      const redirectTo =
+        import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_REDIRECT_URL ??
+        (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined)
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo },
       })
 
-      if (res.error) {
-        const msg =
-          res.error instanceof Error
-            ? res.error.message
-            : String(res.error)
-        const wrapped = `[auth] Error en signInGoogle (Lovable OAuth): ${msg}`
-        setError(wrapped)
-        return { error: wrapped }
+      if (error) {
+        const msg = `[auth] Error en Google OAuth: ${error.message}`
+        setError(msg)
+        return { error: msg }
       }
 
       return { error: null }

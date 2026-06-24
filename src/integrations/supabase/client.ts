@@ -4,62 +4,54 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from './types'
 
-// Variables de entorno (Vite):
-//   VITE_SUPABASE_URL
-//   VITE_SUPABASE_PUBLISHABLE_KEY
-// Deben estar definidas en tu .env.local y en el panel de Cloudflare (Pages/Workers).
+// Variables de entorno (Vite expone solo vars con prefijo VITE_):
+//   VITE_SUPABASE_URL         → URL del proyecto Supabase
+//   VITE_SUPABASE_ANON_KEY    → clave pública anónima (o publishable key)
+//
+// Fallbacks: también acepta NEXT_PUBLIC_ para compatibilidad multi-entorno.
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ??
+  import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_URL
+
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ??
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 const isDev = import.meta.env.DEV
-const mode = import.meta.env.MODE
 
-// Storage seguro según entorno (browser vs workers/SSR).
-// En Cloudflare Workers no existe window; en Pages estático sí.
+// Storage seguro (browser vs Workers/SSR).
 const storage =
   typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
     ? window.localStorage
     : undefined
 
-// Log temprano en desarrollo/preview si la configuración está incompleta.
-// No rompe el bundle, pero te avisa claramente.
-if ((!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) && (isDev || mode === 'development')) {
+if ((!SUPABASE_URL || !SUPABASE_ANON_KEY) && isDev) {
   // eslint-disable-next-line no-console
-  console.error(
-    '[supabase] Configuración incompleta: faltan VITE_SUPABASE_URL o VITE_SUPABASE_PUBLISHABLE_KEY. ' +
-      'El cliente se inicializará de forma protegida, pero cualquier uso real fallará hasta que configures las variables.',
+  console.warn(
+    '[supabase] Configuración incompleta: asegúrate de definir ' +
+    'VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en .env.development.local.',
   )
 }
 
-// En producción (incluyendo Cloudflare Pages/Workers en modo build): si faltan, lanzamos error explícito.
-if ((!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) && !isDev && mode !== 'development') {
-  throw new Error(
-    '[supabase] Configuración inválida en producción: faltan VITE_SUPABASE_URL o VITE_SUPABASE_PUBLISHABLE_KEY. ' +
-      'Revisa tus variables de entorno en Cloudflare y en tu configuración de build.',
-  )
-}
-
-// Declaración global para singleton (evita recrear el cliente en HMR o múltiples imports).
+// Declaración global para singleton (Vite HMR safe).
 declare global {
   // eslint-disable-next-line no-var
   var __supabase__: SupabaseClient<Database> | undefined
 }
 
-// Factory segura: sólo crea el cliente si la configuración es válida.
-// Si se intenta usar supabase sin configuración mínima, falla con un error claro.
 function createSupabaseClient(): SupabaseClient<Database> {
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    throw new Error(
-      '[supabase] Intento de inicializar el cliente sin configuración válida. ' +
-        'Asegúrate de definir VITE_SUPABASE_URL y VITE_SUPABASE_PUBLISHABLE_KEY antes de usar supabase.',
-    )
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    // Devuelve un cliente placeholder para no romper tree-shaking ni SSR.
+    // Las llamadas reales fallarán con mensajes claros de Supabase.
+    return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
+      auth: { persistSession: false },
+    })
   }
 
-  return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  return createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
-      // En navegador, persistimos sesión en localStorage; en Workers/SSR esto será undefined,
-      // que es aceptable y evita romper entornos sin window. [web:120][web:121]
       storage,
       persistSession: true,
       autoRefreshToken: true,
@@ -68,7 +60,7 @@ function createSupabaseClient(): SupabaseClient<Database> {
   })
 }
 
-// Singleton protegido con globalThis: compatible con Vite HMR y con Cloudflare.
+// Singleton protegido con globalThis.
 export const supabase: SupabaseClient<Database> =
   globalThis.__supabase__ ?? createSupabaseClient()
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import introAudioSrc from "@/assets/rdmintro.mp3";
+import introAudioSrc from "@/assets/tumirada.mp3";
 
 interface CinematicIntroProps {
   onComplete: () => void;
@@ -30,7 +30,7 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
       const { width: w, height: h } = canvas;
       ctx.clearRect(0, 0, w, h);
 
-      const barW = (w / BAR_COUNT) * 0.6;
+      const barW = (w / BAR_COUNT) * 0.8;
       const gap = (w / BAR_COUNT) * 0.4;
 
       for (let i = 0; i < BAR_COUNT; i++) {
@@ -44,9 +44,9 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
         const y = h - barH;
 
         const grad = ctx.createLinearGradient(x, h, x, y);
-        grad.addColorStop(0, `hsla(43, 75%, 65%, ${0.4 + rawVal * 0.9})`);
+        grad.addColorStop(0, `hsla(43, 75%, 65%, ${0.3 + rawVal * 1.3})`);
         grad.addColorStop(0.5, `hsla(210, 80%, 65%, ${0.45 + rawVal * 0.4})`);
-        grad.addColorStop(1, `hsla(280, 60%, 70%, ${0.3 + rawVal * 0.4})`);
+        grad.addColorStop(1, `hsla(280, 60%, 70%, ${0.3 + rawVal * 1.4})`);
 
         ctx.fillStyle = grad;
         ctx.shadowBlur = rawVal > 0.55 ? 14 : 4;
@@ -65,7 +65,7 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
         ctx.fill();
 
         ctx.save();
-        ctx.globalAlpha = 0.16;
+        ctx.globalAlpha = 0.36;
         ctx.scale(1, -0.35);
         ctx.translate(0, -h * 2 - 6);
         ctx.fillStyle = grad;
@@ -93,8 +93,8 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
     <canvas
       ref={canvasRef}
       width={480}
-      height={72}
-      className="h-[50px] w-[280px] md:h-[72px] md:w-[420px]"
+      height={70}
+      className="h-[70px] w-[290px] md:h-[72px] md:w-[420px]"
     />
   );
 };
@@ -122,9 +122,9 @@ const AudioWaveform = ({ analyser }: { analyser: AnalyserNode | null }) => {
       const { width: w, height: h } = canvas;
       ctx.clearRect(0, 0, w, h);
 
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.strokeStyle = "hsla(210, 100%, 75%, 0.85)";
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 15;
       ctx.shadowColor = "hsla(210, 100%, 65%, 0.8)";
 
       ctx.beginPath();

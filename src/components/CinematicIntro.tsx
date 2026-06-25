@@ -30,8 +30,8 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
       const { width: w, height: h } = canvas
       ctx.clearRect(0, 0, w, h)
 
-      const barW = (w / BAR_COUNT) * 0.8
-      const gap = (w / BAR_COUNT) * 0.4
+      const barW = (w / BAR_COUNT) * 0.7
+      const gap = (w / BAR_COUNT) * 0.5
 
       for (let i = 0; i < BAR_COUNT; i++) {
         const binIndex = Math.floor(
@@ -45,7 +45,7 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
 
         const grad = ctx.createLinearGradient(x, h, x, y)
         grad.addColorStop(0, `hsla(43, 75%, 65%, ${0.3 + rawVal * 1.3})`)
-        grad.addColorStop(0.5, `hsla(210, 80%, 65%, ${0.45 + rawVal * 0.4})`)
+        grad.addColorStop(0.5, `hsla(210, 80%, 65%, ${0.45 + rawVal * 0.5})`)
         grad.addColorStop(1, `hsla(280, 60%, 70%, ${0.3 + rawVal * 1.4})`)
 
         ctx.fillStyle = grad
@@ -92,9 +92,9 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
   return (
     <canvas
       ref={canvasRef}
-      width={520}
+      width={530}
       height={80}
-      className="h-[70px] w-[320px] md:h-[80px] md:w-[520px]"
+      className="h-[70px] w-[320px] md:h-[80px] md:w-[530px]"
     />
   )
 }

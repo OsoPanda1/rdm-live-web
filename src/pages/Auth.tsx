@@ -1,3 +1,4 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { z } from "zod";
@@ -7,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import PageTransition from "@/components/PageTransition";
 import { Loader2, Mail, Lock, User as UserIcon, Mountain } from "lucide-react";
 import { useRDMAuth } from "@/contexts/RDMAuthContext";
 
@@ -81,7 +81,7 @@ export default function Auth() {
   };
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-accent/10 p-4">
         <Card className="w-full max-w-md shadow-2xl border-border/50">
           <CardHeader className="text-center space-y-2">
@@ -174,6 +174,6 @@ export default function Auth() {
           </CardFooter>
         </Card>
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }

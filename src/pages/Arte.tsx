@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
 import { Palette, Gem, Scissors, Brush, CircleDot, Award } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import callesImg from "@/assets/calles-colonial.webp";
 import minaImg from "@/assets/mina-acosta.webp";
@@ -92,10 +90,9 @@ const workshops = [
 
 const ArtePage = () => {
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
         <SEOMeta {...PAGE_SEO.arte} />
-        <Navbar />
         
         {/* Hero */}
         <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
@@ -305,9 +302,8 @@ const ArtePage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

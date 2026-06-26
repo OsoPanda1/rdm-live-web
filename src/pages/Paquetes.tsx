@@ -1,10 +1,8 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 // @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Compass, Clock, Zap } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
 import { ModuleCinematicIntro } from "@/components/ModuleCinematicIntro";
 import { PackageCard } from "@/components/packages/PackageCard";
 import { ElegantPagination } from "@/components/ElegantPagination";
@@ -52,9 +50,8 @@ export default function Paquetes() {
   }
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen">
-        <Navbar />
         <div className="container mx-auto px-4 md:px-8 pt-24 pb-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
             <div className="flex items-center gap-3 mb-2">
@@ -86,8 +83,7 @@ export default function Paquetes() {
 
           <ElegantPagination page={page} totalPages={totalPages} onChange={setPage} />
         </div>
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }

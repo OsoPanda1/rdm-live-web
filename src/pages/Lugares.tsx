@@ -1,7 +1,5 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import PlaceCard from "@/components/PlaceCard";
-import PageTransition from "@/components/PageTransition";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import { motion } from "framer-motion";
 
@@ -29,10 +27,9 @@ const allPlaces = [
 
 const LugaresPage = () => {
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
         <SEOMeta {...PAGE_SEO.lugares} />
-        <Navbar />
         <div className="pt-24 pb-20">
           <div className="container mx-auto px-4 md:px-8">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
@@ -46,9 +43,8 @@ const LugaresPage = () => {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

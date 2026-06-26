@@ -1,8 +1,7 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Medal, Crown } from "lucide-react";
-import PageTransition from "@/components/PageTransition";
-import { RDMNavbar } from "@/components/rdm/RDMNavbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,9 +32,8 @@ export default function Leaderboard() {
   };
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
-        <RDMNavbar />
         <div className="container mx-auto px-4 md:px-8 pt-24 pb-16 max-w-3xl">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center">
             <Trophy className="h-12 w-12 mx-auto text-[hsl(var(--rdm-amber))] mb-3" />
@@ -77,6 +75,6 @@ export default function Leaderboard() {
           </Card>
         </div>
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }

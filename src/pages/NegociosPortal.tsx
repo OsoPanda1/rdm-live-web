@@ -1,7 +1,5 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { FormEvent, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -121,9 +119,8 @@ export default function NegociosPortal() {
   };
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-night-900 text-silver-300">
-        <Navbar />
+    <RDMLayout>
+      <div className="min-h-screen bg-background">
         <main className="mx-auto max-w-5xl px-4 pb-16 pt-24 md:px-6">
           <h1 className="font-serif text-3xl text-gold-400">Portal de comercios RDM Digital</h1>
           <p className="mt-2 text-sm text-silver-500">Alta de negocios, acceso para comercios y pago online mensual para aparecer en el catálogo.</p>
@@ -224,8 +221,7 @@ export default function NegociosPortal() {
             </Tabs>
           </div>
         </main>
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }

@@ -5,9 +5,7 @@ import {
   Crown, Flame, Moon, Sun, Wind, Heart, Star, Globe,
   Church, BookOpen, Flower2, GlassWater, Gift, Scroll
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import { TextReveal, ParallaxImage, StaggerContainer, StaggerItem, GlowCard } from "@/components/VisualEffects";
 import { Button } from "@/components/ui/button";
@@ -330,10 +328,9 @@ const CulturaPage = () => {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div ref={containerRef} className="min-h-screen bg-background overflow-x-hidden">
         <SEOMeta {...PAGE_SEO.cultura} />
-        <Navbar />
         
         {/* Hero Section */}
         <div className="relative h-[85vh] min-h-[600px] overflow-hidden">
@@ -781,9 +778,8 @@ const CulturaPage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

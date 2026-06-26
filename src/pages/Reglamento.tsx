@@ -1,10 +1,10 @@
-import PageTransition from '@/components/PageTransition';
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta } from '@/components/SEOMeta';
 import { Shield, Heart, AlertTriangle, FileText, Mail } from 'lucide-react';
 
 const Reglamento = () => {
   return (
-    <PageTransition>
+    <RDMLayout>
       <SEOMeta title="Reglamento - Normas de la Comunidad" />
       
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 py-16">
@@ -237,7 +237,7 @@ const Reglamento = () => {
           </div>
         </div>
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

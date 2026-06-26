@@ -1,3 +1,4 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 // @ts-nocheck
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -6,9 +7,6 @@ import {
   Store, Truck, Star, Check, Sparkles, Clock, Percent,
   ArrowRight, Shield, Users, TrendingUp, MapPin
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
 import { SEOMeta } from "@/components/SEOMeta";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -161,13 +159,12 @@ const CatalogoPage = () => {
   const [showEarlyBird, setShowEarlyBird] = useState(true);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
         <SEOMeta
           title="Catálogo de Negocios - Únete a RDM Digital"
           description="Registra tu negocio en el catálogo digital de Real del Monte. Precios accesibles para hoteles, restaurantes, pasterías, cafeterías y más."
         />
-        <Navbar />
 
         {/* Hero */}
         <div className="relative pt-24 pb-16 overflow-hidden">
@@ -415,9 +412,8 @@ const CatalogoPage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

@@ -7,9 +7,7 @@ import {
   Info, CheckCircle2, AlertCircle, Route, Map,
   Thermometer, Backpack, Droplets, Sun, Wind
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import { TextReveal, StaggerContainer, StaggerItem, GlowCard } from "@/components/VisualEffects";
 import { Button } from "@/components/ui/button";
@@ -775,10 +773,9 @@ const RutasPage = () => {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div ref={containerRef} className="min-h-screen bg-background overflow-x-hidden">
         <SEOMeta {...PAGE_SEO.rutas} />
-        <Navbar />
         
         {/* Hero Section */}
         <div className="relative h-[70vh] min-h-[500px] overflow-hidden">
@@ -958,9 +955,8 @@ const RutasPage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

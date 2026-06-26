@@ -1,10 +1,8 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Ghost, Heart, Moon, Star, TreePine, Scroll, Play, X } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import { SEOMeta } from "@/components/SEOMeta";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
 import panteonImg from "@/assets/panteon-ingles.webp";
 import penasImg from "@/assets/penas-cargadas.webp";
 import minaImg from "@/assets/mina-acosta.webp";
@@ -128,10 +126,9 @@ const RelatosPage = () => {
   }, []);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <SEOMeta title="Relatos y Leyendas" description="Leyendas, misterios y relatos de tradición oral de Real del Monte, Pueblo Mágico." />
       <div className="min-h-screen bg-background">
-        <Navbar />
         
         {/* Video Modal */}
         {showVideo && (
@@ -335,9 +332,8 @@ const RelatosPage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

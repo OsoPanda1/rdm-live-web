@@ -1,8 +1,6 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
 import SEOMeta from "@/components/SEOMeta";
 import GradientSeparator from "@/components/GradientSeparator";
 import { Button } from "@/components/ui/button";
@@ -175,13 +173,12 @@ const Comunidad = () => {
   };
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <SEOMeta 
         title="Foro Comunitario"
         description="Comparte tus experiencias, fotos y recuerdos de Real del Monte. Foro público para visitantes y locales."
       />
       <div className="min-h-screen bg-background overflow-x-hidden">
-        <Navbar />
 
         {/* Hero */}
         <div className="relative pt-28 pb-16 overflow-hidden">
@@ -454,9 +451,8 @@ const Comunidad = () => {
         </AnimatePresence>
 
         <div className="container mx-auto px-4 md:px-8"><GradientSeparator /></div>
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

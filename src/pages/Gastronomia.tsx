@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, MapPin, Star, Utensils, Flame, Coffee, ChefHat, Sparkles } from "lucide-react";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import PageTransition from "@/components/PageTransition";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { PAGE_SEO, SEOMeta } from "@/components/SEOMeta";
 import { AuroraBackground, TextReveal, StaggerContainer, StaggerItem } from "@/components/VisualEffects";
 import GradientSeparator from "@/components/GradientSeparator";
@@ -69,10 +67,9 @@ export default function GastronomiaPage() {
   }, []);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <SEOMeta {...PAGE_SEO.gastronomia} />
-      <div className="min-h-screen bg-night-900 text-silver-300">
-        <Navbar />
+      <div className="min-h-screen bg-background text-foreground">
 
         {/* Immersive Hero */}
         <section className="relative overflow-hidden pt-24 min-h-[70vh] flex items-center">
@@ -244,8 +241,7 @@ export default function GastronomiaPage() {
           )}
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }

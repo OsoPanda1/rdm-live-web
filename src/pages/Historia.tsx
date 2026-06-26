@@ -6,9 +6,7 @@ import {
   Building2, Scale, Landmark, Sparkles, MapPin, Ghost, AlertTriangle,
   Eye, Shield, Heart, Calendar
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import { TextReveal, ParallaxImage, StaggerContainer, StaggerItem } from "@/components/VisualEffects";
 import { Button } from "@/components/ui/button";
@@ -305,10 +303,9 @@ const HistoriaPage = () => {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div ref={containerRef} className="min-h-screen bg-background overflow-x-hidden">
         <SEOMeta {...PAGE_SEO.historia} />
-        <Navbar />
         
         {/* Hero Section with Parallax */}
         <div className="relative h-[85vh] min-h-[600px] overflow-hidden">
@@ -703,7 +700,7 @@ const HistoriaPage = () => {
                 </div>
                 <div className="glass rounded-2xl p-6 ml-13">
                   <p className="text-muted-foreground leading-relaxed mb-4">
-                    Bell no fue un payaso convencional. Descartó la estridencia del clown rojo para abrazar al Pierrot melancólico. Se maquilló de blanco espectral, vistió el traje holgado y nació el <em>"huácaro"</em>. Su comedia no era de pastelazos, sino de crítica social finísima.
+                    Bell no fue un payaso convencional. Descartó la estridencia del clown rojo para abrazar al Pierrot melancólico. Se maquilló de blanco espectral, vistió el traje holgado y nació el <em>"huácaro"</em>. Su comedia no era de pastelazos, sino de crítica social fin��sima.
                   </p>
                   <p className="text-muted-foreground leading-relaxed mb-4">
                     Con el Circo Orrín, Bell se convirtió en una deidad popular. <strong>Juan de Dios Peza</strong>, en <em>El Monitor Republicano</em>, sentenció: <em>"Es más popular que el pulque"</em>. Llenaba plazas enteras. Incluso el <strong>General Porfirio Díaz</strong>, un hombre de semblante pétreo, acudía a su palco solo para doblegarse ante la risa.
@@ -896,9 +893,8 @@ const HistoriaPage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

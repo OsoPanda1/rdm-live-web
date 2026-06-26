@@ -1,12 +1,10 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Quote, Heart, Sparkles, Lightbulb, Users, Clock, 
   Search, Filter, ChevronDown, Volume2, Share2, BookOpen
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -493,9 +491,8 @@ const DichosPage = () => {
   const featuredDichos = [...DICHOS].sort((a, b) => b.likes - a.likes).slice(0, 3);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
-        <Navbar />
         
         {/* Hero Section */}
         <div className="relative h-[50vh] min-h-[400px] overflow-hidden bg-gradient-to-b from-amber-900/20 to-background">
@@ -760,9 +757,8 @@ const DichosPage = () => {
           </section>
         </div>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

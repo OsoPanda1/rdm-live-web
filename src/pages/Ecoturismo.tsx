@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
 import { TreePine, Mountain, Footprints, Tent, Camera, Binoculars, Sun, CloudFog } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import penasImg from "@/assets/penas-cargadas.webp";
 import callesImg from "@/assets/calles-colonial.webp";
@@ -101,10 +99,9 @@ const tips = [
 
 const EcoturismoPage = () => {
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
         <SEOMeta {...PAGE_SEO.ecoturismo} />
-        <Navbar />
         
         {/* Hero */}
         <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
@@ -346,9 +343,8 @@ const EcoturismoPage = () => {
           </div>
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

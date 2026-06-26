@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: 24
+  NODE_VERSION: 20
   CI: true
 
 jobs:
@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [22, 24]
+        node: [18, 20]
     steps:
       - name: Hardened checkout
         uses: actions/checkout@v5
@@ -78,10 +78,10 @@ jobs:
         run: npm run build
 
       - name: Upload dist artifact
-        if: matrix.node == 24
-        uses: actions/upload-artifact@v5
+        if: matrix.node == 20
+        uses: actions/upload-artifact@v4
         with:
-          name: dist-node24
+          name: dist-node20
           path: dist
           if-no-files-found: error
           retention-days: 7

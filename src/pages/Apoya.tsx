@@ -1,3 +1,4 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { paymentsApi } from '../lib/api';
@@ -7,9 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/components/ui/use-toast';
-import PageTransition from '@/components/PageTransition';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { Heart, Star, Zap, Loader2, CheckCircle } from 'lucide-react';
 
 const Apoya = () => {
@@ -62,9 +60,8 @@ const Apoya = () => {
 
   if (businessUpgrade) {
     return (
-      <PageTransition>
+      <RDMLayout>
         <div className="min-h-screen bg-background">
-          <Navbar />
           <div className="pt-28 pb-16 container mx-auto px-4">
             <Card className="max-w-md mx-auto text-center border-0 shadow-2xl">
               <CardHeader>
@@ -76,16 +73,14 @@ const Apoya = () => {
               </CardHeader>
             </Card>
           </div>
-          <Footer />
         </div>
-      </PageTransition>
+      </RDMLayout>
     );
   }
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
-        <Navbar />
         <div className="pt-28 pb-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -177,9 +172,8 @@ const Apoya = () => {
             </Card>
           </div>
         </div>
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

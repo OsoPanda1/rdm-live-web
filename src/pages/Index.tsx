@@ -39,7 +39,7 @@ const Index = () => {
   const destacados = EVENTOS_RDM.filter(e => e.destacado).slice(0, 3);
 
   return (
-    <RDMLayout hideNav>
+    <RDMLayout>
       <SEOMeta
         title="RDM Digital — Guía Turística de Real del Monte, Pueblo Mágico"
         description="Descubre Real del Monte, Pueblo Mágico de Hidalgo. Guía turística digital con mapa interactivo, rutas, gastronomía, historia minera y eventos culturales."

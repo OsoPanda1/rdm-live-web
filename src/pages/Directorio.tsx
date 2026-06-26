@@ -1,8 +1,6 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState, useMemo } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import BusinessCard from "@/components/BusinessCard";
-import PageTransition from "@/components/PageTransition";
 import GradientSeparator from "@/components/GradientSeparator";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import { AuroraBackground, TextReveal } from "@/components/VisualEffects";
@@ -46,10 +44,9 @@ const DirectorioPage = () => {
   }, [searchQuery, activeCategory]);
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <SEOMeta {...(PAGE_SEO.directorio ?? { title: "Directorio de Negocios | RDM Digital", description: "Comercios, hoteles, restaurantes y servicios de Real del Monte." })} />
-      <div className="min-h-screen bg-night-900 text-silver-300">
-        <Navbar />
+      <div className="min-h-screen bg-background">
 
         {/* Immersive Hero */}
         <section className="relative overflow-hidden pt-24 pb-16">
@@ -157,9 +154,8 @@ const DirectorioPage = () => {
           )}
         </section>
 
-        <Footer />
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 };
 

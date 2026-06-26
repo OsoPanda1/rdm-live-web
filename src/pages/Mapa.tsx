@@ -1,15 +1,11 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import TerritorialSVGMap from "@/components/map/TerritorialSVGMap";
 import POIDetailPanel from "@/components/map/POIDetailPanel";
 import { Award, Filter, Layers, LocateFixed, MapPin, Phone, Radar, Search, Star, Zap, Compass, Activity, Cpu, DatabaseZap, Workflow } from "lucide-react";
 import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
-import GradientSeparator from "@/components/GradientSeparator";
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { PAGE_SEO, SEOMeta } from "@/components/SEOMeta";
-import { AuroraBackground } from "@/components/VisualEffects";
 import { Link } from "react-router-dom";
 import { Map2DPanel } from "@/components/map/Map2DPanel";
 import { MapSyncProvider, useMapSync } from "@/hooks/useMapSync";
@@ -112,17 +108,12 @@ function MapaPageContent() {
   ] as const;
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <SEOMeta {...PAGE_SEO.mapa} />
-      <div className="min-h-screen bg-night-900 text-silver-300 cinematic-gradient">
-        <Navbar />
 
-        {/* Immersive Hero */}
-        <section className="relative overflow-hidden pt-24 pb-10">
-          <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${callesImg})` }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-night-900/80 via-night-900/70 to-night-900" />
-          <AuroraBackground />
-          <div className="dust-particles" />
+        {/* Hero del Mapa */}
+        <section className="relative overflow-hidden pt-24 pb-10 bg-[hsl(var(--background))]">
+          <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: `url(${callesImg})` }} />
 
           <div className="relative mx-auto max-w-7xl px-4 py-12 md:px-6">
             <motion.div
@@ -132,39 +123,30 @@ function MapaPageContent() {
               className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
             >
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.2em] backdrop-blur-sm">
-                  <Compass className="h-3.5 w-3.5 text-gold-400" />
-                  <span>Gemelo Digital en Tiempo Real</span>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--rdm-amber)/0.3)] bg-[hsl(var(--rdm-amber)/0.08)] px-4 py-2 text-xs uppercase tracking-[0.2em]">
+                  <Compass className="h-3.5 w-3.5 text-[hsl(var(--rdm-amber))]" />
+                  <span className="text-[hsl(var(--foreground))]">Gemelo Digital en Tiempo Real</span>
                 </div>
-                <h1 className="font-serif text-4xl md:text-6xl leading-tight">
-                  <span className="block">Mapa</span>
-                  <span
-                    className="block animate-gradient-text text-glow-gold"
-                    style={{
-                      backgroundImage: "linear-gradient(135deg, hsl(43,80%,55%) 0%, hsl(35,70%,65%) 25%, hsl(43,80%,55%) 50%, hsl(25,60%,50%) 75%, hsl(43,80%,55%) 100%)",
-                      backgroundSize: "200% 200%",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    Inteligente
-                  </span>
+                <h1 className="text-4xl md:text-6xl leading-tight font-bold" style={{ fontFamily: "var(--font-display)" }}>
+                  <span className="block text-[hsl(var(--foreground))]">Mapa</span>
+                  <span className="block text-[hsl(var(--rdm-amber))]">Inteligente</span>
                 </h1>
-                <p className="max-w-2xl text-base text-silver-400 md:text-lg leading-relaxed">
-                  Infraestructura cartografica con clustering dinamico, sincronizacion 2D/3D y visual neblinoso cinematografico.
+                <p className="max-w-2xl text-base text-[hsl(var(--muted-foreground))] md:text-lg leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                  Infraestructura cartográfica con clustering dinámico, sincronización 2D/3D y gemelo digital territorial.
                 </p>
               </div>
-              <div className="inline-flex rounded-full border border-white/15 bg-white/5 p-1 text-xs">
+              <div className="inline-flex rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] p-1 text-xs">
                 <button
                   onClick={() => setMode("2d")}
-                  className={`rounded-full px-4 py-2 transition ${mode === "2d" ? "bg-gold-500 text-night-900" : "text-silver-300 hover:bg-white/10"}`}
+                  className={`rounded-full px-4 py-2 transition font-medium ${mode === "2d" ? "bg-[hsl(var(--rdm-amber))] text-white" : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"}`}
+                  style={{ fontFamily: "var(--font-body)" }}
                 >
                   Vista 2D
                 </button>
                 <button
                   onClick={() => setMode("3d")}
-                  className={`rounded-full px-4 py-2 transition ${mode === "3d" ? "bg-gold-500 text-night-900" : "text-silver-300 hover:bg-white/10"}`}
+                  className={`rounded-full px-4 py-2 transition font-medium ${mode === "3d" ? "bg-[hsl(var(--rdm-amber))] text-white" : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"}`}
+                  style={{ fontFamily: "var(--font-body)" }}
                 >
                   Gemelo 3D
                 </button>
@@ -173,20 +155,18 @@ function MapaPageContent() {
           </div>
         </section>
 
-        <GradientSeparator animated />
-
         <main className="mx-auto max-w-7xl space-y-5 px-4 pb-12 md:px-6">
 
           <section className="grid gap-4 md:grid-cols-3">
             {stats.map((item) => (
-              <div key={item.label} className="glass-dark rounded-2xl border border-white/10 p-4">
+              <div key={item.label} className="rdm-glass rounded-2xl border border-[hsl(var(--border)/0.4)] p-4">
                 <div className="flex items-center gap-3">
-                  <div className="rounded-xl bg-white/5 p-2">
-                    <item.icon className="h-5 w-5 text-gold-400" />
+                  <div className="rounded-xl bg-[hsl(var(--rdm-amber)/0.1)] p-2">
+                    <item.icon className="h-5 w-5 text-[hsl(var(--rdm-amber))]" />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-silver-500">{item.label}</p>
-                    <p className="text-xl font-semibold text-silver-200">{item.value}</p>
+                    <p className="text-xs uppercase tracking-wide text-[hsl(var(--muted-foreground))]">{item.label}</p>
+                    <p className="text-xl font-semibold text-[hsl(var(--foreground))]">{item.value}</p>
                   </div>
                 </div>
               </div>
@@ -197,10 +177,10 @@ function MapaPageContent() {
           <section className="space-y-3">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.28em] text-gold-400">Capa simbólica</p>
-                <h2 className="font-serif text-2xl md:text-3xl text-silver-200">Mapa Soberano del Nodo Cero</h2>
+                <p className="text-[10px] uppercase tracking-[0.28em] text-[hsl(var(--rdm-amber))]">Capa simbólica</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-display)" }}>Mapa Soberano del Nodo Cero</h2>
               </div>
-              <p className="text-xs text-silver-400 max-w-md">
+              <p className="text-xs text-[hsl(var(--muted-foreground))] max-w-md" style={{ fontFamily: "var(--font-body)" }}>
                 Vista narrativa de las federaciones territoriales. Cada POI revela su memoria al posar el cursor.
               </p>
             </div>
@@ -215,34 +195,37 @@ function MapaPageContent() {
 
           <section className="grid gap-6 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-8">
-              <div className="glass-dark rounded-2xl border border-white/10 p-4">
+              <div className="rdm-glass rounded-2xl border border-[hsl(var(--border)/0.4)] p-4">
                 <div className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
-                  <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-night-800/80 px-3 py-2">
-                    <Search className="h-4 w-4 text-silver-500" />
+                  <div className="flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2">
+                    <Search className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                     <input
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder="Buscar lugares, comercios o experiencias..."
-                      className="w-full bg-transparent text-sm text-silver-200 outline-none placeholder:text-silver-500"
+                      className="w-full bg-transparent text-sm text-[hsl(var(--foreground))] outline-none placeholder:text-[hsl(var(--muted-foreground))]"
+                      style={{ fontFamily: "var(--font-body)" }}
                     />
                   </div>
                   <button
                     className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${
                       filter === "place"
-                        ? "border-gold-500/60 bg-gold-500/20 text-gold-300"
-                        : "border-white/10 bg-white/5 text-silver-300 hover:border-white/20"
+                        ? "border-[hsl(var(--rdm-amber)/0.6)] bg-[hsl(var(--rdm-amber)/0.15)] text-[hsl(var(--rdm-amber))]"
+                        : "border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--rdm-amber)/0.3)]"
                     }`}
                     onClick={() => handleFilterChange("place")}
+                    style={{ fontFamily: "var(--font-body)" }}
                   >
                     <Filter className="h-4 w-4" /> Lugares
                   </button>
                   <button
                     className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${
                       filter === "business"
-                        ? "border-gold-500/60 bg-gold-500/20 text-gold-300"
-                        : "border-white/10 bg-white/5 text-silver-300 hover:border-white/20"
+                        ? "border-[hsl(var(--rdm-amber)/0.6)] bg-[hsl(var(--rdm-amber)/0.15)] text-[hsl(var(--rdm-amber))]"
+                        : "border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--rdm-amber)/0.3)]"
                     }`}
                     onClick={() => handleFilterChange("business")}
+                    style={{ fontFamily: "var(--font-body)" }}
                   >
                     <Layers className="h-4 w-4" /> Negocios
                   </button>
@@ -254,9 +237,10 @@ function MapaPageContent() {
                       onClick={() => handleFilterChange(item as "all" | MarkerType)}
                       className={`rounded-full border px-3 py-1.5 ${
                         filter === item
-                          ? "border-gold-500/60 bg-gold-500/20 text-gold-300"
-                          : "border-white/10 bg-white/5 text-silver-400 hover:border-white/20"
+                          ? "border-[hsl(var(--rdm-amber)/0.6)] bg-[hsl(var(--rdm-amber)/0.15)] text-[hsl(var(--rdm-amber))]"
+                          : "border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] text-[hsl(var(--muted-foreground))]"
                       }`}
+                      style={{ fontFamily: "var(--font-body)" }}
                     >
                       {item === "all" ? "Todo" : item === "place" ? "Lugares" : "Negocios"}
                     </button>
@@ -276,7 +260,7 @@ function MapaPageContent() {
                 ) : (
                   <Suspense
                     fallback={
-                      <div className="flex h-[420px] items-center justify-center bg-night-900/70 text-sm text-silver-400 md:h-[640px]">
+                      <div className="flex h-[420px] items-center justify-center bg-[hsl(var(--muted)/0.5)] text-sm text-[hsl(var(--muted-foreground))] md:h-[640px]">
                         Cargando Gemelo Digital 3D...
                       </div>
                     }
@@ -288,27 +272,27 @@ function MapaPageContent() {
             </div>
 
             <aside className="space-y-4 lg:col-span-4">
-              <div className="glass-dark rounded-2xl border border-white/10 p-4">
+              <div className="rdm-glass rounded-2xl border border-[hsl(var(--border)/0.4)] p-4">
                 {selected ? (
                   <>
                     <img src={selected.image} alt={selected.name} className="mb-3 h-40 w-full rounded-xl object-cover" />
-                    <h2 className="text-xl font-semibold text-silver-200">{selected.name}</h2>
-                    <p className="mt-2 text-sm text-silver-400">{selected.description}</p>
-                    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-silver-400">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-1">
+                    <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-display)" }}>{selected.name}</h2>
+                    <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]" style={{ fontFamily: "var(--font-body)" }}>{selected.description}</p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--muted))] px-2 py-1">
                         <MapPin className="h-3.5 w-3.5" /> {selected.category}
                       </span>
                       {selected.rating && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-gold-500/10 px-2 py-1 text-gold-300">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--rdm-amber)/0.1)] px-2 py-1 text-[hsl(var(--rdm-amber))]">
                           <Star className="h-3.5 w-3.5" /> {selected.rating}
                         </span>
                       )}
                       {selected.isPremium && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-electric-500/10 px-2 py-1 text-gold-300">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--rdm-amber)/0.1)] px-2 py-1 text-[hsl(var(--rdm-amber))]">
                           <Award className="h-3.5 w-3.5" /> Premium
                         </span>
                       )}
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-emerald-300">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-emerald-600 dark:text-emerald-300">
                         <Layers className="h-3.5 w-3.5" /> {selected.status}
                       </span>
                     </div>
@@ -316,87 +300,90 @@ function MapaPageContent() {
                       {selected.phone && (
                         <a
                           href={`tel:${selected.phone}`}
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gold-500 px-3 py-2 text-sm font-medium text-night-900"
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[hsl(var(--rdm-amber))] px-3 py-2 text-sm font-medium text-white"
+                          style={{ fontFamily: "var(--font-body)" }}
                         >
                           <Phone className="h-4 w-4" /> Llamar
                         </a>
                       )}
                       <button
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm font-medium text-silver-200 hover:bg-white/10"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] px-3 py-2 text-sm font-medium text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]"
                         onClick={() => setSelected(markers[0])}
+                        style={{ fontFamily: "var(--font-body)" }}
                       >
                         <LocateFixed className="h-4 w-4" /> Volver al nodo principal
                       </button>
                     </div>
                   </>
                 ) : (
-                  <p className="text-sm text-silver-500">Selecciona un punto del mapa para ver detalles.</p>
+                  <p className="text-sm text-[hsl(var(--muted-foreground))]" style={{ fontFamily: "var(--font-body)" }}>Selecciona un punto del mapa para ver detalles.</p>
                 )}
               </div>
 
-              <div className="glass-dark rounded-2xl border border-gold-500/30 p-4">
-                <h3 className="font-semibold text-gold-300">Exploración rápida</h3>
-                <ul className="mt-3 space-y-2 text-sm text-silver-400">
+              <div className="rdm-glass rounded-2xl border border-[hsl(var(--rdm-amber)/0.25)] p-4">
+                <h3 className="font-semibold text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-display)" }}>Exploración rápida</h3>
+                <ul className="mt-3 space-y-2 text-sm text-[hsl(var(--muted-foreground))]">
                   {filtered.slice(0, 4).map((item) => (
                     <li key={item.id}>
                       <button
                         onClick={() => setSelected(item)}
-                        className="flex w-full items-center justify-between rounded-lg border border-white/10 px-3 py-2 text-left transition hover:border-gold-500/40 hover:bg-white/5"
+                        className="flex w-full items-center justify-between rounded-lg border border-[hsl(var(--border))] px-3 py-2 text-left transition hover:border-[hsl(var(--rdm-amber)/0.4)] hover:bg-[hsl(var(--muted)/0.5)]"
+                        style={{ fontFamily: "var(--font-body)" }}
                       >
                         <span>{item.name}</span>
-                        <span className="text-xs text-gold-300">Ver</span>
+                        <span className="text-xs text-[hsl(var(--rdm-amber))]">Ver</span>
                       </button>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="rounded-2xl border border-gold-500/30 bg-gold-500/10 p-4">
-                <h3 className="font-semibold text-gold-300">Capa Realito AI (Plan de implementación)</h3>
-                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-silver-400">
-                  <li>Asistente contextual por POI con intentos de ruta, horario y compra.</li>
+              <div className="rounded-2xl border border-[hsl(var(--rdm-amber)/0.3)] bg-[hsl(var(--rdm-amber)/0.06)] p-4">
+                <h3 className="font-semibold text-[hsl(var(--rdm-amber))]" style={{ fontFamily: "var(--font-display)" }}>Capa Realito AI</h3>
+                <ol className="mt-2 list-decimal space-y-1 pl-4 text-sm text-[hsl(var(--muted-foreground))]" style={{ fontFamily: "var(--font-body)" }}>
+                  <li>Asistente contextual por POI con sugerencias de ruta y horario.</li>
                   <li>Streaming geoespacial de eventos por WebSocket federado.</li>
-                  <li>Sugerencias proactivas según densidad, clima y perfil de visitante.</li>
+                  <li>Sugerencias proactivas según densidad y perfil de visitante.</li>
                 </ol>
-                <Link to="/negocios" className="mt-3 inline-block rounded-lg bg-gold-500 px-3 py-2 text-sm font-semibold text-night-900">
+                <Link to="/negocios" className="mt-3 inline-block rounded-lg bg-[hsl(var(--rdm-amber))] px-3 py-2 text-sm font-semibold text-white" style={{ fontFamily: "var(--font-body)" }}>
                   Ir al portal de comercios
                 </Link>
               </div>
             </aside>
           </section>
 
-          <section className="space-y-4 rounded-2xl border border-white/10 bg-night-900/70 p-4 md:p-6">
+          <section className="space-y-4 rounded-2xl border border-[hsl(var(--border)/0.4)] bg-[hsl(var(--muted)/0.2)] p-4 md:p-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-silver-500">Integración híbrida</p>
-                <h2 className="text-2xl font-semibold text-silver-100">Control Room de Gemelos Digitales</h2>
-                <p className="mt-2 text-sm text-silver-400">Pipeline unificado para telemetría, modelos BIM/3D y simulaciones inmersivas con fallback para Lovable.</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[hsl(var(--muted-foreground))]">Integración híbrida</p>
+                <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-display)" }}>Control Room de Gemelos Digitales</h2>
+                <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]" style={{ fontFamily: "var(--font-body)" }}>Pipeline unificado para telemetría, modelos BIM/3D y simulaciones inmersivas.</p>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-silver-300">
-                <Workflow className="h-3.5 w-3.5 text-gold-300" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--rdm-amber)/0.3)] bg-[hsl(var(--rdm-amber)/0.08)] px-3 py-1.5 text-xs text-[hsl(var(--foreground))]">
+                <Workflow className="h-3.5 w-3.5 text-[hsl(var(--rdm-amber))]" />
                 Modo federado activo
               </div>
             </div>
 
             <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
               {twinSummary.map((source) => (
-                <article key={source.source} className="rounded-xl border border-white/10 bg-white/5 p-3">
-                  <p className="text-xs text-silver-400">{source.displayName}</p>
-                  <p className="mt-1 text-lg font-semibold text-silver-100">{source.healthScore}%</p>
-                  <p className="text-xs text-silver-400">Salud operativa</p>
-                  <div className="mt-2 space-y-1 text-xs text-silver-400">
-                    <p className="flex items-center gap-1"><Activity className="h-3 w-3 text-emerald-300" /> {source.throughputPerMinute}/min</p>
-                    <p className="flex items-center gap-1"><Cpu className="h-3 w-3 text-amber-300" /> {source.avgLatencyMs} ms</p>
-                    <p className="flex items-center gap-1"><DatabaseZap className="h-3 w-3 text-rose-300" /> {source.incidents} incidentes</p>
+                <article key={source.source} className="rounded-xl border border-[hsl(var(--border)/0.4)] bg-[hsl(var(--background))] p-3">
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]" style={{ fontFamily: "var(--font-body)" }}>{source.displayName}</p>
+                  <p className="mt-1 text-lg font-semibold text-[hsl(var(--foreground))]">{source.healthScore}%</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Salud operativa</p>
+                  <div className="mt-2 space-y-1 text-xs text-[hsl(var(--muted-foreground))]">
+                    <p className="flex items-center gap-1"><Activity className="h-3 w-3 text-emerald-500" /> {source.throughputPerMinute}/min</p>
+                    <p className="flex items-center gap-1"><Cpu className="h-3 w-3 text-[hsl(var(--rdm-amber))]" /> {source.avgLatencyMs} ms</p>
+                    <p className="flex items-center gap-1"><DatabaseZap className="h-3 w-3 text-rose-400" /> {source.incidents} incidentes</p>
                   </div>
                 </article>
               ))}
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-xl border border-gold-500/30 bg-gold-500/10 p-4">
-                <h3 className="font-semibold text-gold-300">Acciones recomendadas</h3>
-                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-silver-300">
+              <div className="rounded-xl border border-[hsl(var(--rdm-amber)/0.3)] bg-[hsl(var(--rdm-amber)/0.06)] p-4">
+                <h3 className="font-semibold text-[hsl(var(--rdm-amber))]" style={{ fontFamily: "var(--font-display)" }}>Acciones recomendadas</h3>
+                <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-body)" }}>
                   {suggestedActions.length > 0 ? (
                     suggestedActions.map((action) => <li key={action}>{action}</li>)
                   ) : (
@@ -404,18 +391,18 @@ function MapaPageContent() {
                   )}
                 </ul>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <h3 className="font-semibold text-silver-100">Referencias integradas</h3>
-                <ul className="mt-2 space-y-1.5 text-sm text-silver-300">
+              <div className="rounded-xl border border-[hsl(var(--border)/0.4)] bg-[hsl(var(--background))] p-4">
+                <h3 className="font-semibold text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-display)" }}>Referencias integradas</h3>
+                <ul className="mt-2 space-y-1.5 text-sm text-[hsl(var(--foreground))]" style={{ fontFamily: "var(--font-body)" }}>
                   {integrationReferences.map((reference) => (
                     <li key={reference.url}>
                       <a
                         href={reference.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-silver-200 hover:text-gold-300"
+                        className="inline-flex items-center gap-2 text-[hsl(var(--foreground))] hover:text-[hsl(var(--rdm-amber))] transition-colors"
                       >
-                        <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--rdm-amber))]" />
                         {reference.label}
                       </a>
                     </li>
@@ -425,10 +412,7 @@ function MapaPageContent() {
             </div>
           </section>
         </main>
-
-        <Footer />
-      </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }
 

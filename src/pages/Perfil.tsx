@@ -1,10 +1,9 @@
+import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { z } from "zod";
 import { Award, Loader2, LogOut, Save, Sparkles, Trophy, Zap } from "lucide-react";
-import PageTransition from "@/components/PageTransition";
-import { RDMNavbar } from "@/components/rdm/RDMNavbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,9 +104,8 @@ export default function Perfil() {
   };
 
   return (
-    <PageTransition>
+    <RDMLayout>
       <div className="min-h-screen bg-background">
-        <RDMNavbar />
         <div className="container mx-auto px-4 md:px-8 pt-24 pb-16 max-w-5xl">
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -228,6 +226,6 @@ export default function Perfil() {
           </Card>
         </div>
       </div>
-    </PageTransition>
+    </RDMLayout>
   );
 }

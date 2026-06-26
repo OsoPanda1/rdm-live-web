@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import introAudioSrc from "@/assets/legado.mp3"
+import introAudioSrc from "@/assets/tumirada.mp3"
 
 interface CinematicIntroProps {
   onComplete: () => void
@@ -10,7 +10,7 @@ interface CinematicIntroProps {
  * Pulso visual de la música
  */
 const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const rafRef = useRef<number>()
 
   useEffect(() => {
@@ -50,7 +50,6 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
         const y = h - barH
 
         const grad = ctx.createLinearGradient(x, h, x, y)
-        // Oro, bronce de campana, luz de hogar
         grad.addColorStop(0, `hsla(36, 75%, 45%, ${0.3 + rawVal * 1.0})`)
         grad.addColorStop(0.6, `hsla(43, 90%, 55%, ${0.5 + rawVal * 0.5})`)
         grad.addColorStop(1, `hsla(24, 85%, 60%, ${0.2 + rawVal * 1.2})`)
@@ -91,7 +90,7 @@ const AudioEqualizer = ({ analyser }: { analyser: AnalyserNode | null }) => {
  * Latido de la historia
  */
 const AudioWaveform = ({ analyser }: { analyser: AnalyserNode | null }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const rafRef = useRef<number>()
 
   useEffect(() => {
@@ -294,7 +293,8 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
     setStarted(true)
 
     try {
-      const Ctor = window.AudioContext || (window as any).webkitAudioContext
+      const Ctor =
+        (window as any).AudioContext || (window as any).webkitAudioContext
       const ctx = new Ctor()
       if (ctx.state === "suspended") {
         await ctx.resume()
@@ -353,7 +353,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
         }
       }, 120)
 
-      // Despedida suave al final
+      // Despedida suave
       setTimeout(() => {
         if (!audioRef.current) return
         fadeIntervalRef.current = window.setInterval(() => {
@@ -376,21 +376,19 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
     }
   }
 
-  /**
-   * Tiempo extendido: más calma para leer y sentir
-   */
+  // Tiempo extendido para leer y sentir
   useEffect(() => {
     if (!started) return
 
     const timers = [
-      setTimeout(() => setPhase(1), 600),   // Origen y orgullo
-      setTimeout(() => setPhase(2), 9500),  // Dedicado a Reina
-      setTimeout(() => setPhase(3), 20500), // Las noches de desvelo
-      setTimeout(() => setPhase(4), 33000), // Oveja negra, logro compartido
-      setTimeout(() => setPhase(5), 44500), // Real del Monte
-      setTimeout(() => setPhase(6), 56000), // Trabajo artesanal y manos
-      setTimeout(() => setPhase(7), 67000), // Siete federaciones / legado
-      setTimeout(() => setPhase(8), 76000), // Bienvenida final
+      setTimeout(() => setPhase(1), 600),
+      setTimeout(() => setPhase(2), 9500),
+      setTimeout(() => setPhase(3), 20500),
+      setTimeout(() => setPhase(4), 33000),
+      setTimeout(() => setPhase(5), 44500),
+      setTimeout(() => setPhase(6), 56000),
+      setTimeout(() => setPhase(7), 67000),
+      setTimeout(() => setPhase(8), 76000),
       setTimeout(() => {
         setOverlayVisible(false)
         onComplete()
@@ -408,7 +406,6 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
     }
   }, [stopAudio])
 
-  // Texto totalmente orientado a legado, amor, historia
   const scene = (() => {
     switch (phase) {
       case 0:
@@ -512,7 +509,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
             </motion.button>
           )}
 
-          {/* Pantalla de invitación inicial */}
+          {/* Invitación inicial */}
           {!started && (
             <motion.div
               className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-6"
@@ -562,7 +559,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
 
           {started && (
             <>
-              {/* Fondo de paisajes reales */}
+              {/* Fondo hero dinámico */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={heroIndex}
@@ -584,7 +581,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Oscurecimiento íntimo para escenas familiares */}
+              {/* Oscurecimiento íntimo */}
               <motion.div
                 className="absolute inset-0 z-[1]"
                 animate={{
@@ -596,7 +593,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                 transition={{ duration: 1.5, ease: "easeInOut" }}
               />
 
-              {/* Neblina suave */}
+              {/* Neblina */}
               <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden">
                 {mistParticles.map((pt) => (
                   <motion.div
@@ -623,7 +620,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                 ))}
               </div>
 
-              {/* Estrellas que danzan alrededor del texto */}
+              {/* Estrellas danzando alrededor del texto */}
               <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
                 {stars.map((star) => {
                   const orbitFactor =
@@ -686,7 +683,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                 />
               </div>
 
-              {/* Anillos suaves rodeando el centro */}
+              {/* Anillos suaves */}
               <motion.div
                 className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center"
                 initial={{ opacity: 0 }}
@@ -832,7 +829,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                 </p>
               </motion.div>
 
-              {/* Imágenes inferiores: vida cotidiana del pueblo */}
+              {/* Imágenes inferiores */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={phase >= 5 ? { opacity: 1, y: 0 } : {}}
@@ -840,9 +837,18 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                 className="absolute bottom-10 z-[5] flex w-full justify-center gap-5 px-4"
               >
                 {[
-                  { src: "/images/realito-pasterias.png", label: "Sabores de nuestra tierra" },
-                  { src: "/images/realito-platerias.png", label: "Manos que trabajan la plata" },
-                  { src: "/images/realito-sanitarios.png", label: "Servicio y cuidado al visitante" },
+                  {
+                    src: "/images/realito-pasterias.png",
+                    label: "Sabores de nuestra tierra",
+                  },
+                  {
+                    src: "/images/realito-platerias.png",
+                    label: "Manos que trabajan la plata",
+                  },
+                  {
+                    src: "/images/realito-sanitarios.png",
+                    label: "Servicio y cuidado al visitante",
+                  },
                 ].map((item, i) => (
                   <motion.div
                     key={item.label}

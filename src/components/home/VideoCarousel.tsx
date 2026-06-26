@@ -1,79 +1,121 @@
-/**
- * Video Carousel TAMV - Horizonte 3D inmersivo
- * Órbita de contenidos con profundidad, tilt y cristal cuántico
- */
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  type MouseEvent,
+} from "react"
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion"
+import {
+  Play,
+  Eye,
+  Heart,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
 
-import React, { useRef, useState } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Play, Eye, Heart, Clock, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+type VideoType = "trailer" | "xr" | "course" | "social"
 
-interface VideoItem {
-  id: string;
-  thumbnail: string;
-  title: string;
-  creator: string;
-  views: number;
-  likes: number;
-  duration: string;
-  isLive?: boolean;
-  type: "trailer" | "xr" | "course" | "social";
+export interface VideoItem {
+  id: string
+  thumbnail: string
+  title: string
+  creator: string
+  views: number
+  likes: number
+  duration: string
+  isLive?: boolean
+  type: VideoType
 }
 
-interface VideoCarouselProps {
-  videos: VideoItem[];
-  title: string;
-  subtitle?: string;
+export interface VideoCarouselProps {
+  videos: VideoItem[]
+  title: string
+  subtitle?: string
+  /** callback cuando se hace play / click en una tarjeta */
+  onVideoSelect?: (video: VideoItem) => void
+  /** autoplay orbital opcional (ms) */
+  autoRotateIntervalMs?: number
+  /** índice inicial del centro */
+  initialIndex?: number
 }
 
 interface VideoCardProps {
-  video: VideoItem;
-  offset: number; // posición relativa al centro (0 = centro absoluto)
-  isCenter: boolean;
+  video: VideoItem
+  offset: number // posición relativa al centro (0 = centro absoluto)
+  isCenter: boolean
+  onSelect: () => void
 }
 
-const VideoCard: React.FC<VideoCardProps> = ({ video, offset, isCenter }) => {
-  const cardRef = useRef<HTMLDivElement | null>(null);
+const TYPE_ACCENT: Record<
+  VideoType,
+  { gradient: string; label: string }
+> = {
+  xr: {
+    gradient: "from-cyan-400 to-emerald-400",
+    label: "XR",
+  },
+  course: {
+    gradient: "from-violet-400 to-cyan-400",
+    label: "Curso",
+  },
+  trailer: {
+    gradient: "from-cyan-400 to-blue-500",
+    label: "Trailer",
+  },
+  social: {
+    gradient: "from-fuchsia-400 to-cyan-400",
+    label: "Social",
+  },
+}
 
-  // valores de tilt en función del ratón
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 180, damping: 22, mass: 0.6 });
-  const springY = useSpring(y, { stiffness: 180, damping: 22, mass: 0.6 });
+const VideoCard: React.FC<VideoCardProps> = ({
+  video,
+  offset,
+  isCenter,
+  onSelect,
+}) => {
+  const cardRef = useRef<HTMLDivElement | null>(null)
 
-  const rotateX = useTransform(springY, [-0.5, 0.5], [10, -10]);
-  const rotateY = useTransform(springX, [-0.5, 0.5], [-12, 12]);
+  // Tilt suave con framer-motion
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const springX = useSpring(x, { stiffness: 180, damping: 22, mass: 0.6 })
+  const springY = useSpring(y, { stiffness: 180, damping: 22, mass: 0.6 })
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    x.set(px);
-    y.set(py);
-  };
+  const rotateX = useTransform(springY, [-0.5, 0.5], [10, -10])
+  const rotateY = useTransform(springX, [-0.5, 0.5], [-12, 12])
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5
+    x.set(px)
+    y.set(py)
+  }
 
   const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+    x.set(0)
+    y.set(0)
+  }
 
-  // profundidad orbital
-  const depthFactor = 1 - Math.min(Math.abs(offset) * 0.18, 0.75);
-  const baseRotateY = offset * -16;
-  const translateZ = depthFactor * 140;
-  const scale = 0.85 + depthFactor * 0.25;
-  const blurBackground = 1.8 - depthFactor * 1.2;
-  const opacity = 0.25 + depthFactor * 0.75;
+  // Profundidad orbital
+  const depthFactor = 1 - Math.min(Math.abs(offset) * 0.18, 0.75)
+  const baseRotateY = offset * -16
+  const translateZ = depthFactor * 140
+  const scale = 0.85 + depthFactor * 0.25
+  const opacity = 0.2 + depthFactor * 0.8
 
-  const typeAccent =
-    video.type === "xr"
-      ? "from-cyan-400 to-emerald-400"
-      : video.type === "course"
-      ? "from-violet-400 to-cyan-400"
-      : video.type === "trailer"
-      ? "from-cyan-400 to-blue-500"
-      : "from-fuchsia-400 to-cyan-400";
+  const typeAccent = TYPE_ACCENT[video.type]
 
   return (
     <motion.div
@@ -83,8 +125,10 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, offset, isCenter }) => {
       style={{ transformStyle: "preserve-3d" }}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="relative flex-shrink-0 w-[18rem] md:w-[20rem]"
+      className="relative w-[16rem] flex-shrink-0 md:w-[19rem]"
+      aria-hidden={!isCenter}
     >
       <motion.div
         style={{
@@ -94,67 +138,64 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, offset, isCenter }) => {
         }}
         whileHover={{ y: -6 }}
       >
-        <motion.div
-          style={{
-            transform: `
-              translateZ(${translateZ}px)
-              rotateY(${baseRotateY}deg)
-              scale(${scale})
-            `,
-            transformStyle: "preserve-3d",
-          }}
-          className="relative rounded-[1.35rem] overflow-hidden shadow-[0_24px_70px_rgba(15,23,42,0.95)]"
+        <button
+          type="button"
+          onClick={onSelect}
+          className="group relative block w-full rounded-[1.35rem] text-left outline-none"
         >
-          {/* capa soporte tipo tarjeta/video TAMV */}
-          <div className="tamv-card-video relative aspect-video">
+          <motion.div
+            style={{
+              transform: `
+                translateZ(${translateZ}px)
+                rotateY(${baseRotateY}deg)
+                scale(${scale})
+              `,
+              transformStyle: "preserve-3d",
+            }}
+            className="tamv-card-video relative aspect-video overflow-hidden rounded-[1.35rem] shadow-[0_24px_70px_rgba(15,23,42,0.95)]"
+          >
             {/* thumbnail */}
             <img
               src={video.thumbnail}
               alt={video.title}
-              className="w-full h-full object-cover saturate-[1.15] contrast-[1.05]"
+              loading="lazy"
+              className="h-full w-full object-cover saturate-[1.15] contrast-[1.05]"
             />
 
             {/* overlay de profundidad */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/10 to-slate-900/40" />
 
-            {/* glow dinámico según tipo */}
-            <div
-              className={`
-                pointer-events-none absolute inset-0 mix-blend-screen opacity-70
-                bg-radial-[circle_at_20%_0%] from-cyan-400/40 via-transparent to-transparent
-              `}
-            />
-            <div
-              className={`
-                pointer-events-none absolute inset-0 mix-blend-screen opacity-60
-                bg-radial-[circle_at_90%_0%] from-fuchsia-400/35 via-transparent to-transparent
-              `}
-            />
+            {/* glows */}
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.4),transparent_55%)] mix-blend-screen opacity-70" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_90%_0%,rgba(232,121,249,0.35),transparent_55%)] mix-blend-screen opacity-60" />
 
             {/* botón play flotante */}
             <motion.div
-              initial={{ scale: 0.85, opacity: 0 }}
-              whileHover={{ scale: 1, opacity: 1 }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{
+                scale: isCenter ? 1 : 0.95,
+                opacity: isCenter ? 1 : 0.4,
+              }}
               className="absolute inset-0 flex items-center justify-center"
             >
               <div className="relative flex items-center justify-center">
-                <div className="absolute w-20 h-20 rounded-full bg-cyan-400/35 blur-xl" />
-                <div className="relative w-14 h-14 rounded-full bg-cyan-500/90 flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.9)]">
-                  <Play className="w-6 h-6 text-white ml-1" />
+                <div className="absolute h-20 w-20 rounded-full bg-cyan-400/35 blur-xl" />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-cyan-500/90 shadow-[0_0_30px_rgba(34,211,238,0.9)] group-hover:bg-cyan-400">
+                  <Play className="ml-1 h-6 w-6 text-white" />
                 </div>
               </div>
             </motion.div>
 
             {/* duración */}
-            <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md text-[11px] text-slate-50 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
+            <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-slate-950/80 px-2.5 py-0.5 text-[11px] text-slate-50 backdrop-blur-md">
+              <Clock className="h-3 w-3" />
               {video.duration}
             </div>
 
             {/* live */}
             {video.isLive && (
-              <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-red-500/90 text-[11px] text-white font-semibold tracking-[0.16em] uppercase flex items-center gap-1 animate-pulse">
-                <span className="inline-flex w-[6px] h-[6px] rounded-full bg-white" />
+              <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-red-500/90 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white">
+                <span className="inline-flex h-[6px] w-[6px] animate-pulse rounded-full bg-white" />
                 En Vivo
               </div>
             )}
@@ -164,18 +205,20 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, offset, isCenter }) => {
 
             {/* marco interno sutil */}
             <div className="pointer-events-none absolute inset-[1px] rounded-[1.25rem] border border-white/8" />
-          </div>
+          </motion.div>
 
           {/* información */}
           <div className="relative mt-3 px-1">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
-                <h4 className="font-medium text-sm md:text-[15px] leading-snug line-clamp-2 text-slate-50">
+                <h4 className="line-clamp-2 text-sm font-medium leading-snug text-slate-50 md:text-[15px]">
                   <span className="bg-gradient-to-r from-slate-50 via-slate-200 to-cyan-200 bg-clip-text text-transparent">
                     {video.title}
                   </span>
                 </h4>
-                <p className="text-[11px] text-slate-400 mt-1">{video.creator}</p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {video.creator}
+                </p>
               </div>
 
               {/* chip de tipo */}
@@ -184,65 +227,119 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, offset, isCenter }) => {
                   className={`
                     inline-flex items-center rounded-full border border-cyan-300/40
                     bg-slate-950/80 px-2 py-0.5 text-[10px] uppercase tracking-[0.16em]
-                    text-cyan-200 bg-gradient-to-r ${typeAccent}
+                    text-cyan-200 bg-gradient-to-r ${typeAccent.gradient}
                     bg-clip-text text-transparent
                   `}
                 >
-                  {video.type === "xr"
-                    ? "XR"
-                    : video.type === "course"
-                    ? "Curso"
-                    : video.type === "trailer"
-                    ? "Trailer"
-                    : "Social"}
+                  {typeAccent.label}
                 </div>
               </div>
             </div>
 
             <div className="mt-2 flex items-center gap-4 text-[11px] text-slate-400">
-              <span className="flex items-center gap-1">
-                <Eye className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1">
+                <Eye className="h-3 w-3" />
                 {video.views.toLocaleString()}
               </span>
-              <span className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1">
+                <Heart className="h-3 w-3" />
                 {video.likes.toLocaleString()}
               </span>
             </div>
           </div>
-        </motion.div>
+        </button>
       </motion.div>
     </motion.div>
-  );
-};
+  )
+}
 
-const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos, title, subtitle }) => {
-  const [centerIndex, setCenterIndex] = useState(2);
+const VideoCarousel: React.FC<VideoCarouselProps> = ({
+  videos,
+  title,
+  subtitle,
+  onVideoSelect,
+  autoRotateIntervalMs = 0,
+  initialIndex = 2,
+}) => {
+  const [centerIndex, setCenterIndex] = useState(
+    Math.min(initialIndex, Math.max(0, videos.length - 1)),
+  )
 
-  if (!videos || videos.length === 0) return null;
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const touchStartX = useRef<number | null>(null)
 
-  const move = (dir: "left" | "right") => {
-    setCenterIndex((prev) => {
-      const next = dir === "left" ? prev - 1 : prev + 1;
-      const len = videos.length;
-      return (next + len) % len;
-    });
-  };
+  if (!videos || videos.length === 0) return null
+
+  const move = useCallback(
+    (dir: "left" | "right") => {
+      setCenterIndex((prev) => {
+        const next = dir === "left" ? prev - 1 : prev + 1
+        const len = videos.length
+        return (next + len) % len
+      })
+    },
+    [videos.length],
+  )
+
+  // Autoplay orbital opcional
+  useEffect(() => {
+    if (!autoRotateIntervalMs) return
+    const id = window.setInterval(() => move("right"), autoRotateIntervalMs)
+    return () => window.clearInterval(id)
+  }, [autoRotateIntervalMs, move])
+
+  // Swipe táctil básico
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0]?.clientX ?? null
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const startX = touchStartX.current
+      if (startX == null) return
+      const endX = e.changedTouches[0]?.clientX ?? startX
+      const delta = endX - startX
+      const threshold = 40 // px
+      if (delta > threshold) move("left")
+      else if (delta < -threshold) move("right")
+      touchStartX.current = null
+    }
+
+    el.addEventListener("touchstart", handleTouchStart, { passive: true })
+    el.addEventListener("touchend", handleTouchEnd)
+
+    return () => {
+      el.removeEventListener("touchstart", handleTouchStart)
+      el.removeEventListener("touchend", handleTouchEnd)
+    }
+  }, [move])
+
+  const handleVideoSelect = (video: VideoItem) => {
+    onVideoSelect?.(video)
+  }
 
   return (
-    <section className="relative py-6">
+    <section
+      className="relative py-6"
+      aria-label={`${title} — carrusel de videos inmersivos`}
+    >
       {/* header TAMV */}
-      <div className="flex items-center justify-between mb-4 gap-4">
+      <div className="mb-4 flex items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="mt-1 h-8 w-[3px] rounded-full bg-gradient-to-b from-cyan-400 via-blue-500 to-violet-500 shadow-[0_0_18px_rgba(56,189,248,0.8)]" />
           <div>
-            <h2 className="text-lg md:text-xl font-semibold tracking-[0.18em] uppercase text-slate-100">
+            <h2 className="text-lg font-semibold uppercase tracking-[0.18em] text-slate-100 md:text-xl">
               <span className="bg-gradient-to-r from-slate-50 via-cyan-200 to-blue-300 bg-clip-text text-transparent">
                 {title}
               </span>
             </h2>
             {subtitle && (
-              <p className="mt-1 text-xs md:text-sm text-slate-400">{subtitle}</p>
+              <p className="mt-1 text-xs text-slate-400 md:text-sm">
+                {subtitle}
+              </p>
             )}
           </div>
         </div>
@@ -251,52 +348,62 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos, title, subtitle }
           <Button
             size="icon"
             variant="outline"
-            className="w-8 h-8 rounded-full border-cyan-300/60 bg-slate-950/80 text-cyan-200 hover:bg-slate-900/90 hover:text-cyan-100 shadow-[0_0_16px_rgba(56,189,248,0.6)]"
+            type="button"
+            className="h-8 w-8 rounded-full border-cyan-300/60 bg-slate-950/80 text-cyan-200 shadow-[0_0_16px_rgba(56,189,248,0.6)] hover:bg-slate-900/90 hover:text-cyan-100"
             onClick={() => move("left")}
+            aria-label="Video anterior"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
             size="icon"
             variant="outline"
-            className="w-8 h-8 rounded-full border-cyan-300/60 bg-slate-950/80 text-cyan-200 hover:bg-slate-900/90 hover:text-cyan-100 shadow-[0_0_16px_rgba(56,189,248,0.6)]"
+            type="button"
+            className="h-8 w-8 rounded-full border-cyan-300/60 bg-slate-950/80 text-cyan-200 shadow-[0_0_16px_rgba(56,189,248,0.6)] hover:bg-slate-900/90 hover:text-cyan-100"
             onClick={() => move("right")}
+            aria-label="Siguiente video"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
       {/* horizonte 3D */}
-      <div className="relative mt-2 [perspective:1300px]">
+      <div
+        ref={containerRef}
+        className="relative mt-2 [perspective:1300px]"
+      >
         {/* pista orbital */}
         <div className="pointer-events-none absolute inset-x-6 -bottom-4 h-16 rounded-full bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent blur-2xl opacity-80" />
 
-        <div className="relative flex items-stretch justify-center gap-4 md:gap-6">
+        <div className="relative flex items-stretch justify-center gap-3 md:gap-5">
           {videos.map((video, index) => {
-            const offsetRaw = index - centerIndex;
-            const len = videos.length;
+            const offsetRaw = index - centerIndex
+            const len = videos.length
             const offset =
               offsetRaw > len / 2
                 ? offsetRaw - len
                 : offsetRaw < -len / 2
                 ? offsetRaw + len
-                : offsetRaw;
+                : offsetRaw
+
+            const isCenter = offset === 0
 
             return (
               <AnimatePresence key={video.id}>
                 <VideoCard
                   video={video}
                   offset={offset}
-                  isCenter={offset === 0}
+                  isCenter={isCenter}
+                  onSelect={() => handleVideoSelect(video)}
                 />
               </AnimatePresence>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default VideoCarousel;
+export default VideoCarousel

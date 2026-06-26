@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { ISABELLA_TAMV_PROFILE, TAMV_CAPABILITIES_SUMMARY } from "@/features/ai/isabellaTamvBase";
+import { logger } from "@/lib/logger";
 
 // Use public image path for REALITO avatar
 const logoRdm = "/images/realito-likes.png";
@@ -84,7 +85,7 @@ export default function RealitoChat({ initialOpen = false }: RealitoChatProps) {
         const response = localReply(content);
         await streamAssistantReply(response);
       } catch (error) {
-        console.error("RealitoChat error", error);
+        logger.error("RealitoChat error", error);
         setMessages((prev) => [
           ...prev,
           {

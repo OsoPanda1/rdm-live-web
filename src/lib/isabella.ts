@@ -12,6 +12,7 @@ import type {
 } from '@/core/models';
 import { orchestrator, ExperienceOrchestrator } from '@/core/orchestrator/ExperienceOrchestrator';
 import { runRealitoKernel, getSystemMetrics, getAllPlaces } from './kernel';
+import { logger } from "@/lib/logger";
 import {
   applyDecisionToHeptafederation,
   getGlobalHealth,
@@ -158,7 +159,7 @@ export function registrarFeedback(
   feedback?: string,
   consentimiento?: boolean
 ): void {
-  console.log('[Isabella] Feedback registrado:', {
+  logger.info('[Isabella] Feedback registrado:', {
     traceId: decisionTraceId,
     rating,
     feedback,

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Facebook, Github, Instagram, Twitter } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -49,7 +50,7 @@ const Register = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Here you'd typically send the data to your backend
-    console.log(values);
+    logger.info(values);
     toast.success("Registro exitoso! Redirigiendo al inicio...");
     
     // Simulate successful registration

@@ -16,6 +16,7 @@ import LiveTelemetryBadge from '@/components/LiveTelemetryBadge'
 import SearchOverlay from '@/components/SearchOverlay'
 import SmartSidebar from '@/components/SmartSidebar'
 import { RDMAuthProvider, useRDMAuth } from '@/contexts/RDMAuthContext'
+import { PostHogProvider } from '@/integrations/observability/posthog'
 import { logUIError } from '@/integrations/telemetry/uiTelemetry'
 
 // ===== Mother repo pages =====
@@ -371,9 +372,11 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <RDMAuthProvider>
-          <AppInner />
-        </RDMAuthProvider>
+        <PostHogProvider>
+          <RDMAuthProvider>
+            <AppInner />
+          </RDMAuthProvider>
+        </PostHogProvider>
       </BrowserRouter>
     </QueryClientProvider>
   )

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 /**
  * UI Telemetry — structured error & event logging for RDM Digital Hub.
  *
@@ -54,19 +55,19 @@ export function logUIError(payload: UIErrorPayload): void {
       case 'fatal':
       case 'error':
         // eslint-disable-next-line no-console
-        console.error(msg, enriched.details ?? '')
+        logger.error(msg, enriched.details ?? '')
         break
       case 'warn':
         // eslint-disable-next-line no-console
-        console.warn(msg, enriched.details ?? '')
+        logger.warn(msg, enriched.details ?? '')
         break
       case 'info':
         // eslint-disable-next-line no-console
-        console.info(msg, enriched.details ?? '')
+        logger.info(msg, enriched.details ?? '')
         break
       default:
         // eslint-disable-next-line no-console
-        console.debug(msg, enriched.details ?? '')
+        logger.debug(msg, enriched.details ?? '')
     }
   }
 }

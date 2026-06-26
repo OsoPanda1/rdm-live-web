@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 // ChronusEngine · Núcleo de gestión de presión turística para RDM Digital.
 // Contexto: Real del Monte, turismo de alta densidad, clima complejo, eventos culturales.[page:31]
 
@@ -194,7 +195,7 @@ export class ChronusEngine {
     const { polygonId, presion, componentes, timestamp } = resultado;
 
     // Logging estructurado, idealmente reemplazable por tu capa de observabilidad.
-    console.warn(
+    logger.warn(
       "[CHRONUS] ALERTA: Saturación crítica",
       JSON.stringify({ polygonId, presion, componentes, timestamp }),
     );

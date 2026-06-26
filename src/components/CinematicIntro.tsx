@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import introAudioSrc from "@/assets/legado.mp3"
+import { logger } from "@/lib/logger";
 
 interface CinematicIntroProps {
   onComplete: () => void
@@ -373,7 +374,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
         onComplete()
       })
     } catch (e) {
-      console.error("Audio initialization failed:", e)
+      logger.error("Audio initialization failed:", e)
     }
   }
 

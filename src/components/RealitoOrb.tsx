@@ -6,6 +6,7 @@ import { applyDecisionToHeptafederation, getTelemetry, getGlobalHealth } from "@
 import { useIsabellaSSE } from "@/hooks/useIsabellaSSE";
 import ReactMarkdown from "react-markdown";
 import { useCivicEvent } from "@/hooks/useCivicEvent";
+import { logger } from "@/lib/logger";
 
 interface Message {
   id: string;
@@ -169,7 +170,7 @@ export function RealitoOrb() {
         correlationId: decision?.traceId,
       });
     } catch (e) {
-      console.error("Realito error:", e);
+      logger.error("Realito error:", e);
       setMessages((prev) => [
         ...prev,
         {

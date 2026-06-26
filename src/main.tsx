@@ -4,6 +4,10 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import './index.css'
+import { initSentry } from '@/integrations/observability/sentry'
+
+// Fire-and-forget; init is a no-op until VITE_SENTRY_DSN is set.
+void initSentry()
 
 const container = document.getElementById('root')
 

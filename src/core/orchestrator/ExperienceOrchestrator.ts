@@ -16,6 +16,7 @@ import type {
 } from '../models';
 import { GeoLRUCache, MovementFilter, findNearestPoint, filterPointsInRadius, calculateSpeed, withinBBox } from '../geo';
 import { ScoringEngine, defaultScoringEngine } from '../engine/ScoringEngine';
+import { logger } from "@/lib/logger";
 import {
   isabellaTerritorialDecisionLatencyMs,
   decisionScore,
@@ -93,7 +94,7 @@ export class EventBus {
       try {
         listener(event as BusEvent);
       } catch (error) {
-        console.error('[EventBus] Error en listener:', error);
+        logger.error('[EventBus] Error en listener:', error);
       }
     }
 

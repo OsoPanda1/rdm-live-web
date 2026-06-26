@@ -1,4 +1,5 @@
 import { federationBus, type CivicEvent } from "@/lib/tamv-kernel";
+import { logger } from "@/lib/logger";
 
 export function useCivicEvent() {
   return async function emit(event: Omit<CivicEvent, "id" | "occurredAt"> & Partial<Pick<CivicEvent, "id" | "occurredAt">>) {
@@ -9,7 +10,7 @@ export function useCivicEvent() {
         occurredAt: event.occurredAt ?? new Date().toISOString(),
       });
     } catch (error) {
-      console.error("Event failed", error);
+      logger.error("Event failed", error);
     }
   };
 }

@@ -11,6 +11,7 @@ import SocialLinks from "@/modules/constelacionInteractiva/SocialLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { logger } from "@/lib/logger";
 
 /**
  * Oráculo Tecnológico: Panel de Control - Centro de Administración
@@ -55,7 +56,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+    logger.info(values);
     toast.success(`${type === "login" ? "Inicio de sesión" : "Registro"} exitoso! Redirigiendo...`);
     
     // Simulate successful authentication

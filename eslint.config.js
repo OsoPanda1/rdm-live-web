@@ -21,7 +21,9 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
-      "no-console": ["warn", { allow: ["error", "warn"] }],
+      // Centralized logger required. Any direct console.* fails CI.
+      // Exceptions: see overrides below for logger module, env bootstrap, tests and node instrumentation.
+      "no-console": "error",
       "no-restricted-imports": [
         "error",
         {
@@ -55,5 +57,18 @@ export default tseslint.config(
       "no-restricted-imports": "off",
       "no-console": "off",
     },
+  },
+  // Allowed console.* sinks (the logger itself, env bootstrap, low-level instrumentation, tests).
+  {
+    files: [
+      "src/lib/logger.ts",
+      "src/lib/env.ts",
+      "src/core/audit/logger.ts",
+      "src/instrumentation.node.ts",
+      "src/test/**/*.{ts,tsx}",
+      "e2e/**/*.{ts,tsx}",
+      "tests/**/*.{ts,tsx}",
+    ],
+    rules: { "no-console": "off" },
   },
 );

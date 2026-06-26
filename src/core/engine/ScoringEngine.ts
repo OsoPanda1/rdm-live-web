@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 /**
  * RDM Digital - Motor de Scoring GEN-7+
  * Sistema de reglas desacopladas para decision territorial
@@ -151,7 +152,7 @@ export class ScoringEngine {
   private validateWeights(): void {
     const totalWeight = this.rules.reduce((sum, r) => sum + r.weight, 0);
     if (Math.abs(totalWeight - 1.0) > 0.01) {
-      console.warn(
+      logger.warn(
         `[ScoringEngine] Pesos no suman 1.0 (actual: ${totalWeight}). Normalizando...`
       );
       // Normalizar pesos

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Shield, ShieldCheck, ShieldX, Clock, Fingerprint } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { logger } from "@/lib/logger";
 
 interface FederationBadgeProps {
   entityType: string;
@@ -65,7 +66,7 @@ export default function FederationBadge({
           metachain_tx: isVerified ? `0x${hash.slice(0, 16)}...${hash.slice(-8)}` : undefined
         });
       } catch (err) {
-        console.error("Federation check error:", err);
+        logger.error("Federation check error:", err);
         setData({ verified: false });
       } finally {
         setLoading(false);

@@ -8,6 +8,7 @@ import GradientSeparator from "@/components/GradientSeparator";
 import pasteImg from "@/assets/paste.webp";
 import rdm1 from "@/assets/rdm1.jpeg";
 import rdm2 from "@/assets/rdm2.jpeg";
+import { logger } from "@/lib/logger";
 
 interface Business {
   id: string;
@@ -56,7 +57,7 @@ export default function GastronomiaPage() {
         const data = await response.json();
         setBusinesses(data.data ?? []);
       } catch (error) {
-        console.error("Error loading gastronomía:", error);
+        logger.error("Error loading gastronomía:", error);
         setBusinesses([]);
       } finally {
         setLoading(false);

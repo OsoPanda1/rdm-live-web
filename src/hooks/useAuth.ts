@@ -9,6 +9,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { logger } from "@/lib/logger";
 
 interface Profile {
   id: string;
@@ -42,13 +43,13 @@ export const useAuth = () => {
         .maybeSingle();
 
       if (error) {
-        console.error('Error loading profile:', error);
+        logger.error('Error loading profile:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error in loadProfile:', error);
+      logger.error('Error in loadProfile:', error);
       return null;
     }
   }, []);
@@ -139,7 +140,7 @@ export const useAuth = () => {
           });
 
         if (profileError) {
-          console.error('Error creating profile:', profileError);
+          logger.error('Error creating profile:', profileError);
         }
 
         // Asignar rol de usuario
@@ -151,7 +152,7 @@ export const useAuth = () => {
           });
 
         if (roleError) {
-          console.error('Error assigning role:', roleError);
+          logger.error('Error assigning role:', roleError);
         }
 
         toast.success('¡Bienvenido al Metaverso TAMV!');
@@ -159,7 +160,7 @@ export const useAuth = () => {
 
       return { data };
     } catch (error) {
-      console.error('SignUp error:', error);
+      logger.error('SignUp error:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -185,7 +186,7 @@ export const useAuth = () => {
       navigate('/');
       return { data };
     } catch (error) {
-      console.error('SignIn error:', error);
+      logger.error('SignIn error:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -203,7 +204,7 @@ export const useAuth = () => {
       toast.success('Sesión cerrada correctamente');
       navigate('/login');
     } catch (error) {
-      console.error('SignOut error:', error);
+      logger.error('SignOut error:', error);
       toast.error('Error al cerrar sesión');
     } finally {
       setLoading(false);
@@ -231,7 +232,7 @@ export const useAuth = () => {
       toast.success('Perfil actualizado');
       return { data };
     } catch (error) {
-      console.error('UpdateProfile error:', error);
+      logger.error('UpdateProfile error:', error);
       return { error };
     }
   }, [user]);

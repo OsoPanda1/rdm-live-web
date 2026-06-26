@@ -1,12 +1,13 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { logger } from "@/lib/logger";
 
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    logger.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 
   return (

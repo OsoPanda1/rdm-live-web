@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, X, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -82,7 +83,7 @@ export function IsabellaChat() {
         }
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "Lo siento, hubo un error al procesar tu consulta. Intenta de nuevo." },

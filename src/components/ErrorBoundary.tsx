@@ -2,6 +2,7 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertCircle, RefreshCw } from 'lucide-react'
+import { logger } from "@/lib/logger";
 
 interface Props {
   children: ReactNode
@@ -25,7 +26,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log mínimo en consola, útil en dev
-    console.error('ErrorBoundary caught:', error, errorInfo)
+    logger.error('ErrorBoundary caught:', error, errorInfo)
 
     // Emite evento global para cualquier listener de telemetría/UI
     if (typeof window !== 'undefined') {
@@ -42,7 +43,7 @@ class ErrorBoundary extends Component<Props, State> {
         )
       } catch (e) {
         // Si por alguna razón falla el CustomEvent, no rompemos más la app
-        console.error('ErrorBoundary event dispatch failed:', e)
+        logger.error('ErrorBoundary event dispatch failed:', e)
       }
     }
   }

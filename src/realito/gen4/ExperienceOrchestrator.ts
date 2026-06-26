@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 interface Coordenadas {
   lat: number;
   lng: number;
@@ -46,7 +47,7 @@ export class ExperienceOrchestrator {
     const inactividadMinutos = (Date.now() - turista.ultimaInteraccion.getTime()) / 60000;
 
     if (cercaDeSalida && turista.tiempoEstadiaHoras < 3.0) {
-      console.log(`[REALITO GEN-4] Turista ${turista.id} en riesgo de fuga económica.`);
+      logger.info(`[REALITO GEN-4] Turista ${turista.id} en riesgo de fuga económica.`);
 
       return {
         accion: 'PUSH_NOTIFICATION',

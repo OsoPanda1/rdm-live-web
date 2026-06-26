@@ -3,6 +3,7 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from './types'
+import { logger } from "@/lib/logger";
 
 // Variables de entorno (Vite expone solo vars con prefijo VITE_):
 //   VITE_SUPABASE_URL         → URL del proyecto Supabase
@@ -29,7 +30,7 @@ const storage =
 
 if ((!SUPABASE_URL || !SUPABASE_ANON_KEY) && isDev) {
   // eslint-disable-next-line no-console
-  console.warn(
+  logger.warn(
     '[supabase] Configuración incompleta: asegúrate de definir ' +
     'VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en .env.development.local.',
   )

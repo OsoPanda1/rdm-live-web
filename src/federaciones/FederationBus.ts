@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "../integrations/supabase/admin";
+import { logger } from "@/lib/logger";
 
 export enum Federacion {
   HOSPEDAJE = "FED_HOSPEDAJE",
@@ -95,7 +96,7 @@ export class FederationBus {
     try {
       await this.subscriber.subscribe(...channels);
     } catch (err) {
-      console.error("[FED-BUS] CRITICAL: Error inicializando kernel de federación", err);
+      logger.error("[FED-BUS] CRITICAL: Error inicializando kernel de federación", err);
     }
 
     this.subscriber.onMessage(async (channel, message) => {
@@ -115,7 +116,7 @@ export class FederationBus {
             break;
         }
       } catch (error) {
-        console.error(`[FED-BUS] Error procesando canal ${channel}:`, error);
+        logger.error(`[FED-BUS] Error procesando canal ${channel}:`, error);
       }
     });
   }
@@ -127,7 +128,7 @@ export class FederationBus {
     try {
       data = JSON.parse(message);
     } catch (error) {
-      console.warn("[FED-BUS] Mensaje no JSON en canal", channel, { message });
+      logger.warn("[FED-BUS] Mensaje no JSON en canal", channel, { message });
       return null;
     }
 
@@ -135,7 +136,7 @@ export class FederationBus {
       case "CHECKIN_HOSPEDAJE": {
         const payload = data as Partial<CheckInPayload>;
         if (!payload.turistaId || !payload.hotelId || typeof payload.noches !== "number") {
-          console.warn("[FED-BUS] Payload CHECKIN_HOSPEDAJE inválido", payload);
+          logger.warn("[FED-BUS] Payload CHECKIN_HOSPEDAJE inválido", payload);
           return null;
         }
         return {
@@ -153,7 +154,7 @@ export class FederationBus {
   }
 
   private async handleCheckIn(payload: CheckInPayload) {
-    console.log(
+    logger.info(
       "[FEDERACION] Protocolo de Retención :: Turista",
       payload.turistaId,
       "Hotel",
@@ -164,7 +165,7 @@ export class FederationBus {
     const oferta = await this.generarOfertaGastronomica(payload.hotelId);
 
     // Ledger aún en memoria, pero listo para persistir a supabaseAdmin.
-    console.info("[LEDGER] cross_sell_automatico", {
+    logger.info("[LEDGER] cross_sell_automatico", {
       turistaId: payload.turistaId,
       origen_federacion: Federacion.HOSPEDAJE,
       destino_federacion: Federacion.GASTRONOMIA,
@@ -189,12 +190,12 @@ export class FederationBus {
   private handleLsmStream(_payload: unknown) {
     // LSM: Layered Sensing Matrix (telemetría, mapa interactivo).[page:80][web:62]
     // Aquí podrías enrutar datos hacia Supabase, Influx, etc.
-    console.log("[LSM] Stream de telemetría procesado");
+    logger.info("[LSM] Stream de telemetría procesado");
   }
 
   private handleSovereigntyEvent(payload: unknown) {
     // Hook para alertas de soberanía digital / policy engine.
-    console.log("[SOVEREIGNTY] Evento recibido", payload);
+    logger.info("[SOVEREIGNTY] Evento recibido", payload);
   }
 
   /** Genera oferta gastronómica base; fácilmente sustituible por consulta a Supabase. */

@@ -1,19 +1,36 @@
-/* RDM Digital - Theme Layer
+/* RDM Digital · Theme Layer
    Estética: Editorial, cálida, territorial
-   Paleta: Marfil cálido con acentos ámbar/terracota
+   Paleta: Marfil cálido, ámbar, terracota, azul neblina
+   Inspiración: neblina serrana, minería de plata, dorados discretos[page:31]
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap");
 
+/* Paleta base en HSL (sin alpha) para facilitar reutilización. */
 :root {
-  --rdm-amber: 24 72% 50%;
-  --rdm-blue: 212 36% 45%;
+  /* Acentos RDM */
+  --rdm-amber: 24 72% 50%;     /* Ámbar cálido (pastes, luz dorada)[page:31] */
+  --rdm-terracotta: 16 65% 46%;
+  --rdm-blue: 212 36% 45%;     /* Azul neblina / cielo frío */
   --rdm-green: 154 66% 36%;
   --rdm-red: 0 76% 53%;
   --rdm-purple: 270 40% 50%;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'DM Sans', sans-serif;
+
+  /* Tipografía */
+  --font-display: "Playfair Display", serif;
+  --font-body: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Escala de radios y sombras coherente con UI system */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.10);
+  --shadow-elevated: 0 18px 45px rgba(15, 23, 42, 0.16);
 }
+
+/* Theme principal */
 
 .rdm-theme {
   --background: 48 38% 96%;
@@ -28,75 +45,254 @@
   --secondary-foreground: 218 24% 24%;
   --muted: 210 18% 90%;
   --muted-foreground: 215 13% 42%;
-  --accent: 24 72% 50%;
+  --accent: var(--rdm-amber);
   --accent-foreground: 45 40% 98%;
   --border: 220 11% 82%;
   --input: 220 11% 84%;
-  --ring: 24 72% 50%;
+  --ring: var(--rdm-amber);
 
-  background-color: hsl(48 38% 96%);
+  background-color: hsl(var(--background));
   background-image:
-    radial-gradient(circle at 10% 10%, hsl(0 0% 100% / 0.6) 0%, transparent 34%),
-    radial-gradient(circle at 80% 20%, hsl(210 10% 83% / 0.35) 0%, transparent 45%),
-    linear-gradient(120deg, hsl(48 36% 95%) 0%, hsl(210 17% 92%) 48%, hsl(45 30% 96%) 100%);
+    radial-gradient(circle at 10% 8%, hsl(0 0% 100% / 0.55) 0%, transparent 36%),
+    radial-gradient(circle at 80% 16%, hsl(210 10% 83% / 0.30) 0%, transparent 45%),
+    linear-gradient(
+      120deg,
+      hsl(48 36% 95%) 0%,
+      hsl(210 17% 92%) 45%,
+      hsl(45 30% 96%) 100%
+    );
   background-attachment: fixed;
-  color: hsl(218 24% 18%);
+  color: hsl(var(--foreground));
   font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-.rdm-theme h1, .rdm-theme h2, .rdm-theme h3, .rdm-theme h4, .rdm-theme h5, .rdm-theme h6 {
+/* Sistema tipográfico editorial */
+
+.rdm-theme h1,
+.rdm-theme h2,
+.rdm-theme h3,
+.rdm-theme h4,
+.rdm-theme h5,
+.rdm-theme h6 {
   font-family: var(--font-display);
+  letter-spacing: 0.01em;
+  font-feature-settings: "lnum", "pnum", "liga";
 }
 
-.rdm-theme ::selection {
-  background: hsl(24 72% 50% / 0.25);
+.rdm-theme h1 {
+  font-size: clamp(2.6rem, 3vw, 3.4rem);
+  line-height: 1.05;
 }
+
+.rdm-theme h2 {
+  font-size: clamp(2.0rem, 2.4vw, 2.6rem);
+  line-height: 1.1;
+}
+
+.rdm-theme h3 {
+  font-size: clamp(1.6rem, 1.9vw, 2.0rem);
+  line-height: 1.15;
+}
+
+/* Copy principal con ritmo vertical suave */
+.rdm-theme p {
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+/* Selección cálida, coherente con acento */
+.rdm-theme ::selection {
+  background: hsl(var(--rdm-amber) / 0.22);
+}
+
+/* Glassmorphism editorial */
 
 .rdm-glass {
-  background: hsl(0 0% 100% / 0.65);
-  backdrop-filter: blur(16px);
-  border: 1px solid hsl(0 0% 100% / 0.3);
+  background: hsl(0 0% 100% / 0.70);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  border-radius: var(--radius-md);
+  border: 1px solid hsl(0 0% 100% / 0.40);
+  box-shadow: var(--shadow-soft);
 }
+
+/* Variantes de glass para secciones específicas */
+.rdm-glass--timeline {
+  border-left: 3px solid hsl(var(--rdm-amber) / 0.70);
+}
+
+.rdm-glass--hero {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Pins del mapa: “joyas” sobre la montaña[page:31] */
 
 .rdm-map-pin {
   width: 16px;
   height: 16px;
-  border-radius: 50%;
-  background: var(--pin-color, hsl(24 72% 50%));
-  border: 2px solid white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
+  border-radius: 999px;
+  background: var(--pin-color, hsl(var(--rdm-amber)));
+  border: 2px solid hsl(0 0% 100%);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.35);
+  transform-origin: center bottom;
+  transition:
+    transform 0.22s ease-out,
+    box-shadow 0.22s ease-out,
+    background-color 0.18s ease-out;
 }
+
 .rdm-map-pin:hover {
-  transform: scale(1.3);
+  transform: translateY(-1px) scale(1.22);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.45);
 }
+
+/* Popups Leaflet estilizados */
 
 .rdm-popup .leaflet-popup-content-wrapper {
   background: hsl(48 25% 98%);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  border: 1px solid hsl(220 11% 82%);
+  border-radius: var(--radius-md);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.18);
+  border: 1px solid hsl(var(--border));
 }
 
-.rdm-popup-card { padding: 4px; }
-.rdm-popup-kicker { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: hsl(215 13% 42%); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-.rdm-popup-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-.rdm-popup-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; margin-bottom: 4px; color: hsl(218 24% 18%); }
-.rdm-popup-desc { font-size: 12px; color: hsl(215 13% 42%); line-height: 1.4; }
-.rdm-popup-meta { font-size: 10px; color: hsl(215 13% 42%); display: flex; gap: 12px; margin-top: 6px; }
+.rdm-popup .leaflet-popup-tip {
+  background: hsl(48 25% 98%);
+  border-top-color: hsl(var(--border));
+}
 
-@keyframes rdm-fade-up { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes rdm-ken-burns { from { transform: scale(1); } to { transform: scale(1.08); } }
-.rdm-animate-fade-up { animation: rdm-fade-up 1s ease-out forwards; }
-.rdm-animate-ken-burns { animation: rdm-ken-burns 20s ease-in-out infinite alternate; }
+.rdm-popup-card {
+  padding: 6px 8px;
+}
+
+.rdm-popup-kicker {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rdm-popup-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  background: hsl(var(--rdm-amber));
+}
+
+.rdm-popup-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: hsl(var(--foreground));
+}
+
+.rdm-popup-desc {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.45;
+}
+
+.rdm-popup-meta {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* Animaciones: sutiles, cinematográficas */
+
+@keyframes rdm-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rdm-ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+.rdm-animate-fade-up {
+  animation: rdm-fade-up 0.9s ease-out forwards;
+}
+
+.rdm-animate-ken-burns {
+  animation: rdm-ken-burns 24s ease-in-out infinite alternate;
+}
+
+/* Variante para entradas de “Historia” (cards editoriales).[page:31] */
+
+.rdm-history-card {
+  border-radius: var(--radius-md);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
 
 /* TAMV card styles */
+
 .tamv-card {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
 }
 
 .tamv-gold-border {
-  border-color: hsl(var(--rdm-amber) / 0.3);
+  border-color: hsl(var(--rdm-amber) / 0.38);
+}
+
+/* Botones / llamados a la acción (Apoya, Planificar Visita).[page:31] */
+
+.rdm-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--rdm-amber) / 0.5);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--rdm-amber)),
+    hsl(var(--rdm-terracotta))
+  );
+  color: hsl(45 40% 98%);
+  font-weight: 600;
+  font-size: 0.92rem;
+  box-shadow: 0 12px 30px rgba(148, 81, 36, 0.45);
+  transition:
+    transform 0.16s ease-out,
+    box-shadow 0.16s ease-out,
+    filter 0.12s ease-out;
+}
+
+.rdm-button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(148, 81, 36, 0.55);
+  filter: brightness(1.02);
+}
+
+.rdm-button-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 24px rgba(148, 81, 36, 0.40);
 }

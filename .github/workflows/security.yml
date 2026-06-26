@@ -38,7 +38,7 @@ jobs:
         scanner: [gitleaks, trufflehog]
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -52,8 +52,8 @@ jobs:
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "true"
 
       - name: Upload Gitleaks SARIF
-        if: matrix.scanner == 'gitleaks' && always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: matrix.scanner == 'gitleaks' && always() && hashFiles('gitleaks.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: gitleaks.sarif
 
@@ -87,12 +87,12 @@ jobs:
       FORCE_COLOR: "1"
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -135,21 +135,21 @@ jobs:
           - "packages/*"
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: javascript-typescript
           queries: +security-and-quality
 
       - name: Autobuild monorepo
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - name: Perform CodeQL Analysis (${{ matrix.app }})
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:javascript-typescript/${{ matrix.app }}"
 
@@ -163,7 +163,7 @@ jobs:
     needs: [deps-audit]
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 

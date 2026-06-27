@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    deps: { interopDefault: true },
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     coverage: {
@@ -31,6 +32,9 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, "./src") },
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      zod: path.resolve(__dirname, "./node_modules/zod/index.cjs"),
+    },
   },
 });

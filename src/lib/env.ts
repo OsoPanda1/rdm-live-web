@@ -14,7 +14,7 @@ const clientSchema = z.object({
   VITE_SENTRY_DSN: z.string().url().optional(),
   VITE_POSTHOG_KEY: z.string().min(1).optional(),
   VITE_POSTHOG_HOST: z.string().url().optional(),
-  VITE_APP_ENV: z.enum(["development", "preview", "production"]).default("development"),
+  VITE_APP_ENV: z.enum(["development", "preview", "production", "test"]).default("development"),
 });
 
 export type ClientEnv = z.infer<typeof clientSchema>;

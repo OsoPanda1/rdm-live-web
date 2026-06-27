@@ -94,3 +94,9 @@ export {
 } from './orchestrator/ExperienceOrchestrator';
 
 export type { Clock } from './orchestrator/ExperienceOrchestrator';
+
+// ============================================================================
+// GUARDIAN AI
+// ============================================================================
+
+export { GuardianLearningLoop, guardianLearningLoop } from './ai/GuardianLearningLoop';

@@ -77,7 +77,7 @@ export default function Paquetes() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paged.map(p => <PackageCard key={p.id} pkg={p} />)}
+              {paged.map(p => <PackageCard key={p.id} pkg={{ ...p, slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), duration_hours: null, intensity: null, price_from: p.price, hero_image: p.image_url }} />)}
             </div>
           )}
 

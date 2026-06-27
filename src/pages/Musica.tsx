@@ -10,6 +10,8 @@ import {
 
 import legadoMp3 from "@/assets/legado.mp3";
 import tumiradaMp3 from "@/assets/tumirada.mp3";
+import playlistMd from "@/assets/musica/playlist.md?raw";
+import ReactMarkdown from "react-markdown";
 
 interface Track {
   id: string;
@@ -233,7 +235,7 @@ export default function Musica() {
         <div className="absolute inset-0 -z-10 opacity-25"
           style={{ backgroundImage: "radial-gradient(circle at 15% 45%, hsl(24 72% 50% / 0.5) 0%, transparent 60%), radial-gradient(circle at 85% 30%, hsl(212 36% 45% / 0.3) 0%, transparent 50%), radial-gradient(circle at 50% 80%, hsl(24 60% 40% / 0.15) 0%, transparent 40%)" }}
         />
-        <div className="absolute inset-0 -z-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
+        <div className="absolute inset-0 -z-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
 
         <div className="max-w-4xl mx-auto text-center relative">
           <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200, damping: 20 }}
@@ -278,7 +280,7 @@ export default function Musica() {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </motion.div>
 
-          {/* Playlist manifesto */}
+          {/* Playlist manifesto from playlist.md */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="mb-10 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm"
           >
@@ -286,13 +288,8 @@ export default function Musica() {
               <div className="w-10 h-10 rounded-xl bg-[hsl(var(--rdm-amber)/0.1)] flex items-center justify-center shrink-0">
                 <BookOpen className="w-5 h-5 text-[hsl(var(--rdm-amber))]" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-white/80 mb-1">Sobre esta colección</p>
-                <p className="text-xs text-white/40 leading-relaxed">
-                  Cada pieza ha sido seleccionada para evocar los paisajes, sabores y memorias de Real del Monte.
-                  Son composiciones originales creadas por el equipo RDM Digital y colaboradores invitados.
-                  Puedes escucharlas en línea o descargarlas libremente.
-                </p>
+              <div className="prose prose-invert prose-sm max-w-none text-white/80">
+                <ReactMarkdown>{playlistMd}</ReactMarkdown>
               </div>
             </div>
           </motion.div>
@@ -411,7 +408,7 @@ export default function Musica() {
             </div>
           </motion.div>
 
-          {/* Playlist metadata card */}
+          {/* Playlist.md source display */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -420,12 +417,9 @@ export default function Musica() {
           >
             <div className="flex gap-3">
               <FileText className="w-5 h-5 text-white/20 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-white/40 mb-1">Playlist.md</p>
-                <p className="text-[11px] text-white/20 leading-relaxed">
-                  Toda la música está bajo licencia Creative Commons Atribución-NoComercial 4.0 Internacional (CC BY-NC 4.0).
-                  Puedes descargarlas, compartirlas y reproducirlas libremente, siempre que no sea con fines comerciales y otorgues crédito a RDM Digital / Real del Monte Digital Hub.
-                </p>
+              <div className="prose prose-invert prose-xs max-w-none text-white/40">
+                <p className="text-xs font-semibold text-white/40 mb-1">Fuente: src/assets/musica/playlist.md</p>
+                <ReactMarkdown>{playlistMd}</ReactMarkdown>
               </div>
             </div>
           </motion.div>

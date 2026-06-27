@@ -2,6 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import introAudioSrc from "@/assets/legado.mp3"
 import { logger } from "@/lib/logger";
+import cinematicBg from "@/assets/rdm-hero-cinematic.png"
+import rdm01 from "@/assets/rdm01.jpg"
+import rdm02 from "@/assets/rdm02.jpg"
+import rdm03 from "@/assets/rdm03.jpg"
+import rdm04 from "@/assets/rdm-plaza-principal.jpg"
 
 interface CinematicIntroProps {
   onComplete: () => void
@@ -475,10 +480,10 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
   })()
 
   const heroImages = [
-    "/images/rdm-hero.png",
-    "/images/realito-pasterias.png",
-    "/images/realito-platerias.png",
-    "/images/realito-sanitarios.png",
+    cinematicBg,
+    rdm01,
+    rdm02,
+    rdm03,
   ]
 
   const heroIndex =
@@ -523,7 +528,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
             >
               <div className="relative">
                 <img
-                  src="/images/rdm-hero.png"
+                  src={cinematicBg}
                   alt="Real del Monte"
                   className="relative h-40 w-40 rounded-full object-cover md:h-52 md:w-52"
                   style={{
@@ -843,16 +848,16 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
               >
                 {[
                   {
-                    src: "/images/realito-pasterias.png",
-                    label: "Sabores de nuestra tierra",
+                    src: rdm01,
+                    label: "Real del Monte desde las alturas",
                   },
                   {
-                    src: "/images/realito-platerias.png",
-                    label: "Manos que trabajan la plata",
+                    src: rdm02,
+                    label: "Calles de nuestra tierra",
                   },
                   {
-                    src: "/images/realito-sanitarios.png",
-                    label: "Servicio y cuidado al visitante",
+                    src: rdm04,
+                    label: "Plaza principal",
                   },
                 ].map((item, i) => (
                   <motion.div

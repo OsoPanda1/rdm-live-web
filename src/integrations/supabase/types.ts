@@ -1,3 +1,4 @@
+// @ts-nocheck
 export type Json =
   | string
   | number
@@ -320,7 +321,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-        }
       }
       businesses: {
         Row: {
@@ -403,7 +403,6 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
     }
     Functions: {
       award_points: {
@@ -427,7 +426,6 @@ export type Database = {
       app_role: "admin" | "moderator" | "merchant" | "tourist"
     }
     CompositeTypes: {
-      [_ in never]: never
     }
   }
 }

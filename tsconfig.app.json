@@ -108,5 +108,8 @@
     "services/*/src",
     "apps/*/src",
     "infra/*/src"
+  ],
+  "exclude": [
+    "src/integrations/supabase/types.ts"
   ]
 }

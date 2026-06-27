@@ -45,7 +45,7 @@ export default function EventosPage() {
           {EVENT_CATEGORIES.map(cat => (
             <button
               key={cat.value}
-              onClick={() => setActiveCategory(cat.value)}
+              onClick={() => setActiveCategory(cat.value as CategoryValue)}
               className={`px-4 py-2 rounded-full text-xs font-medium border transition ${
                 activeCategory === cat.value
                   ? "bg-[hsl(var(--rdm-amber))] text-white border-[hsl(var(--rdm-amber))]"

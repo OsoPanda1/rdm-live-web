@@ -43,7 +43,13 @@ export const useIsabella = () => {
     emotionalState: { sentiment: 'neutral', intensity: 0.5 }
   });
 
+  const messagesRef = useRef(state.messages);
+  const sessionIdRef = useRef(state.sessionId);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Mantener refs sincronizados
+  messagesRef.current = state.messages;
+  sessionIdRef.current = state.sessionId;
 
   // Enviar mensaje a Isabella con streaming
   const sendMessage = useCallback(async (
@@ -83,8 +89,10 @@ export const useIsabella = () => {
       // Obtener sesión actual
       const { data: { session } } = await supabase.auth.getSession();
 
-      // Preparar mensajes para la API
-      const apiMessages = state.messages.map(m => ({
+      // Preparar mensajes para la API (usar ref para evitar stale closure)
+      const currentMessages = messagesRef.current;
+      const currentSessionId = sessionIdRef.current;
+      const apiMessages = currentMessages.map(m => ({
         role: m.role,
         content: m.content
       }));
@@ -94,12 +102,12 @@ export const useIsabella = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           messages: apiMessages,
           userId: session?.user?.id,
-          sessionId: state.sessionId,
+          sessionId: currentSessionId,
           protocol: options?.protocol,
           challengeResponse: options?.challengeResponse,
           stream: true
@@ -120,7 +128,7 @@ export const useIsabella = () => {
 
       // Crear mensaje vacío de Isabella
       const assistantMessageId = generateFederationHash();
-      
+
       setState(prev => ({
         ...prev,
         messages: [...prev.messages, {
@@ -154,15 +162,15 @@ export const useIsabella = () => {
           try {
             const parsed = JSON.parse(jsonStr);
             const deltaContent = parsed.choices?.[0]?.delta?.content;
-            
+
             if (deltaContent) {
               assistantContent += deltaContent;
-              
+
               // Actualizar el último mensaje
               setState(prev => ({
                 ...prev,
-                messages: prev.messages.map((m, i) => 
-                  i === prev.messages.length - 1 
+                messages: prev.messages.map((m, i) =>
+                  i === prev.messages.length - 1
                     ? { ...m, content: assistantContent }
                     : m
                 )
@@ -180,14 +188,14 @@ export const useIsabella = () => {
       if (error instanceof Error && error.name === 'AbortError') {
         return; // Ignorar errores de cancelación
       }
-      
+
       setState(prev => ({
         ...prev,
         isLoading: false,
         error: error instanceof Error ? error.message : 'Error desconocido'
       }));
     }
-  }, [state.messages, state.sessionId]);
+  }, []); // Sin dependencias externas - usamos refs
 
   // Activar protocolo de seguridad
   const activateProtocol = useCallback((protocol: 'fenix_rex' | 'iniciacion' | 'hoyo_negro') => {

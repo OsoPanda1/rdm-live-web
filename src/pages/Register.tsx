@@ -48,7 +48,7 @@ const Register = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Here you'd typically send the data to your backend
-    logger.info(values);
+    logger.info(JSON.stringify(values));
     toast.success("Registro exitoso! Redirigiendo al inicio...");
     
     // Simulate successful registration
@@ -60,7 +60,7 @@ const Register = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90 relative overflow-hidden">
       {/* TAMVtrix Effect Background */}
-      <TAMVTrixEffect
+      <MatrixEffect
   className="matrix-canvas"
   baseColor="#3bf5ff"
   minFontSize={10}

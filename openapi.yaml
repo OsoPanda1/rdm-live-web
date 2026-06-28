@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: RDM Digital Unified API
+  version: 1.0.0
+  description: |
+    API unificada del Gemelo Digital de Real del Monte.
+    Endpoints territoriales, de federación, donaciones y métricas.
+    La ISA-API de Isabella se documenta en isabella_openapi_genesis.yaml.
+
+servers:
+  - url: /api
+    description: RDM Digital API base
+
+paths:
+  /unified/state:
+    get:
+      summary: Estado global del sistema unificado
+      tags: [Unified]
+      responses:
+        '200':
+          description: Estado completo del sistema, readiness, eventos, fusión y persistencia
+    post:
+      summary: Acciones de control del sistema
+      tags: [Unified]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [restart, stop, clear_events]
+      responses:
+        '200':
+          description: Acción ejecutada
+
+  /unified/contribute:
+    post:
+      summary: Registrar contribución territorial
+      tags: [Unified]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContributionRequest'
+      responses:
+        '201':
+          description: Contribución registrada
+        '400':
+          description: Datos inválidos
+        '429':
+          description: Demasiadas solicitudes
+
+  /unified/query:
+    post:
+      summary: Consultar territorio
+      tags: [Unified]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Resultado de la consulta
+
+  /isabella/recommendations:
+    post:
+      summary: Recomendaciones de Isabella
+      tags: [Isabella]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                territory:
+                  type: string
+                traceId:
+                  type: string
+      responses:
+        '200':
+          description: Recomendaciones con narrativa y decisiones
+
+  /isabella/feedback:
+    post:
+      summary: Enviar feedback
+      tags: [Isabella]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+      responses:
+        '200':
+          description: Feedback registrado
+
+  /isabella/stream:
+    get:
+      summary: Stream SSE de decisiones de Isabella
+      tags: [Isabella]
+      responses:
+        '200':
+          description: Conexión SSE establecida
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/event-stream
+
+  /metrics:
+    get:
+      summary: Métricas Prometheus
+      tags: [System]
+      responses:
+        '200':
+          description: Texto de métricas en formato Prometheus
+
+  /donations/checkout:
+    post:
+      summary: Crear sesión de donación Stripe
+      tags: [Donations]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  minimum: 1
+      responses:
+        '200':
+          description: URL de checkout creada
+
+components:
+  schemas:
+    ContributionRequest:
+      type: object
+      required: [userId, type, coords, payload]
+      properties:
+        userId:
+          type: string
+          description: ID del usuario
+        type:
+          type: string
+          enum: [checkin, review, photo, rating, tip, event_report, route_trace, poi_suggestion]
+        coords:
+          type: object
+          required: [lat, lng]
+          properties:
+            lat:
+              type: number
+              minimum: -90
+              maximum: 90
+            lng:
+              type: number
+              minimum: -180
+              maximum: 180
+        territorio:
+          type: string
+          default: RDM
+        payload:
+          type: object
+        poiId:
+          type: string
+
+    QueryRequest:
+      type: object
+      required: [text, userId]
+      properties:
+        text:
+          type: string
+          maxLength: 1000
+        userId:
+          type: string
+        coords:
+          type: object
+          properties:
+            lat:
+              type: number
+            lng:
+              type: number
+
+    FeedbackRequest:
+      type: object
+      properties:
+        territory:
+          type: string
+          enum: [RDM, PACHUCA, HIDALGO]
+          default: RDM
+        consent:
+          type: boolean
+          nullable: true
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+        comment:
+          type: string
+          maxLength: 280
+
+tags:
+  - name: Unified
+    description: Sistema Unificado — estado, contribuciones y consultas territoriales
+  - name: Isabella
+    description: Isabella Villaseñor AI — recomendaciones, feedback y streaming
+  - name: System
+    description: Métricas del sistema
+  - name: Donations
+    description: Donaciones vía Stripe

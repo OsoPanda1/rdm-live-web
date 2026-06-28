@@ -1,40 +1,32 @@
 import { unifiedSDK } from '@/core/unified/UnifiedSDK';
-import type { ContributionType } from '@/core/territorial/types';
+import { validate, contributionSchema } from '@/lib/validation';
+import { handleApiError, apiResponse } from '@/lib/security/error-handler';
+import { createRateLimitMiddleware } from '@/lib/security/rate-limiter';
+import { cache } from '@/lib/cache';
+import { enqueue } from '@/lib/jobs';
+
+const rateLimit = createRateLimitMiddleware({ maxTokens: 20, refillRate: 1, refillIntervalMs: 1000 });
 
 export async function POST(req: Request) {
   try {
+    const reject = rateLimit('contribute');
+    if (reject) return reject;
+
     const body = await req.json();
-    const { userId, type, coords, territorio, payload, poiId } = body;
+    const data = validate(contributionSchema, body);
 
-    if (!userId || !type || !coords || !payload) {
-      return Response.json(
-        { success: false, error: 'Faltan campos requeridos: userId, type, coords, payload' },
-        { status: 400 }
-      );
-    }
+    const cacheKey = `contrib:${data.userId}:${Date.now()}`;
+    const cached = await cache.get(cacheKey);
+    if (cached) return apiResponse(cached);
 
-    const validTypes: ContributionType[] = ['checkin', 'review', 'photo', 'rating', 'tip', 'event_report', 'route_trace', 'poi_suggestion'];
-    if (!validTypes.includes(type)) {
-      return Response.json(
-        { success: false, error: `Tipo invalido: ${type}. Validos: ${validTypes.join(', ')}` },
-        { status: 400 }
-      );
-    }
+    const result = unifiedSDK.recordContribution(data.userId, data.type, data.coords, data.territorio, data.payload, data.poiId);
 
-    const result = unifiedSDK.recordContribution(
-      userId,
-      type,
-      { lat: coords.lat, lng: coords.lng },
-      territorio ?? 'RDM',
-      payload,
-      poiId
-    );
+    await cache.set(cacheKey, result, 5000);
 
-    return Response.json(result);
+    enqueue('territorial:heatmap-update', { zone: data.territorio }, 0);
+
+    return apiResponse(result, 201);
   } catch (error) {
-    return Response.json(
-      { success: false, error: String(error) },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

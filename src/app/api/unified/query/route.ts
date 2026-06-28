@@ -1,28 +1,22 @@
 import { unifiedSDK } from '@/core/unified/UnifiedSDK';
+import { validate, querySchema } from '@/lib/validation';
+import { handleApiError, apiResponse } from '@/lib/security/error-handler';
+import { cache } from '@/lib/cache';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { text, userId, coords } = body;
+    const data = validate(querySchema, body);
 
-    if (!text || !userId) {
-      return Response.json(
-        { success: false, error: 'Faltan campos requeridos: text, userId' },
-        { status: 400 }
-      );
-    }
+    const cacheKey = `query:${data.userId}:${data.text.slice(0, 50)}`;
+    const cached = await cache.get(cacheKey);
+    if (cached) return apiResponse(cached);
 
-    const result = await unifiedSDK.queryTerritory(
-      text,
-      userId,
-      coords ? { lat: coords.lat, lng: coords.lng } : undefined
-    );
+    const result = await unifiedSDK.queryTerritory(data.text, data.userId, data.coords);
+    await cache.set(cacheKey, result, 30_000);
 
-    return Response.json(result);
+    return apiResponse(result);
   } catch (error) {
-    return Response.json(
-      { success: false, error: String(error) },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

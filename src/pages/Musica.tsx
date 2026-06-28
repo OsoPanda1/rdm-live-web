@@ -26,29 +26,29 @@ import ReactMarkdown from "react-markdown";
 import { useAudioPlayer, type Track } from "@/contexts/AudioPlayerContext";
 
 const PLAYLIST: Track[] = [
-  { id: "legado", title: "Legado de Real del Monte", artist: "RDM Digital", description: "Tema principal del proyecto. Una travesía sonora por calles empedradas, niebla eterna y el latir minero del Pueblo Mágico.", src: legadoMp3, duration: 200, bpm: 80, mood: "Épico" },
+  { id: "reina_trejo", title: "A Mi Madre", artist: "RDM Digital", description: "Homenaje musical a mi madre, al amor incondicional y al sacrificio silencioso.", src: reinatrejoMp3, duration: 275, bpm: 70, mood: "Emotivo" },
   { id: "tumirada", title: "Tu Mirada", artist: "RDM Digital", description: "Melodía íntima que captura la esencia de una mirada que lo dice todo.", src: tumiradaMp3, duration: 240, bpm: 72, mood: "Melancólico" },
-  { id: "a_mimadre", title: "A Mi Madre (Legend)", artist: "Edwin Castillo", description: "Homenaje musical a la madre, al amor incondicional y al sacrificio silencioso.", src: aMimadreMp3, duration: 210, bpm: 70, mood: "Emotivo" },
-  { id: "adicted_toyou", title: "Adicted to You", artist: "Edwin Castillo", description: "Canción que explora la adicción emocional que nace del corazón y se niega a soltar.", src: adictedToyouMp3, duration: 220, bpm: 85, mood: "Pasional" },
+  { id: "a_mimadre", title: "El Real (Legend)", artist: "Edwin Castillo", description: "Tema principal del intro de la plataforma.", src: aMimadreMp3, duration: 210, bpm: 70, mood: "Emotivo" },
+  { id: "adicted_toyou", title: "Adicted to You", artist: "Edwin Castillo", description: "Canción que explora la adicción emocional que nace del corazón y se niega a soltar los recuerdos del ayer.", src: adictedToyouMp3, duration: 220, bpm: 85, mood: "Pasional" },
   { id: "cada_noche", title: "Cada Noche", artist: "Edwin Castillo", description: "Ritmo nocturno que evoca las madrugadas de insomnio y reflexión.", src: cadaNocheMp3, duration: 230, bpm: 78, mood: "Nocturno" },
   { id: "el_senalado", title: "El Señalado", artist: "Edwin Castillo", description: "Narrativa musical sobre llevar una marca distinta y encontrar fuerza en la propia identidad.", src: elSenaladoMp3, duration: 240, bpm: 82, mood: "Intenso" },
-  { id: "legado_1", title: "Legado (Versión Extendida)", artist: "RDM Digital", description: "Versión extendida del tema principal con arreglos adicionales.", src: legado1Mp3, duration: 260, bpm: 80, mood: "Épico" },
+  { id: "legado_1", title: "Legado (Versión Extendida)", artist: "RDM Digital", description: "Como deseo ser recordado, que dejo como legado, una pregunta que vive a diario en mi mente.", src: legado1Mp3, duration: 260, bpm: 80, mood: "Épico" },
   { id: "patio_tierra", title: "Patio de Tierra", artist: "Edwin Castillo", description: "Melodía que evoca los patios de las casas antiguas y las memorias que ahí habitan.", src: patioDeTierraMp3, duration: 200, bpm: 65, mood: "Nostálgico" },
   { id: "puro_dolor", title: "Puro Dolor", artist: "Edwin Castillo", description: "Balada que transforma el dolor en arte y catarsis musical.", src: puroDolorMp3, duration: 250, bpm: 68, mood: "Triste" },
   { id: "rdmintro2", title: "RDM Intro (Versión 2)", artist: "RDM Digital", description: "Segunda versión de la introducción musical de Real del Monte Digital.", src: rdmintro2Mp3, duration: 180, bpm: 90, mood: "Energético" },
   { id: "rdm_yoteadoro", title: "Yo Te Adoro", artist: "Edwin Castillo", description: "Declaración de amor en forma de canción.", src: rdmYoteadoroMp3, duration: 215, bpm: 75, mood: "Romántico" },
-  { id: "shooting_star", title: "Shooting Star", artist: "Edwin Castillo", description: "Inspirado en las estrellas fugaces que cruzan el cielo de Real del Monte.", src: shootingStarMp3, duration: 225, bpm: 88, mood: "Inspirador" },
+  { id: "shooting_star", title: "Shooting Star", artist: "Edwin Castillo", description: "Inspirado en las estrella fugaz que ilumino mi andar y cruza el cielo de Real del Monte.", src: shootingStarMp3, duration: 225, bpm: 88, mood: "Inspirador" },
   { id: "tumirada_musica", title: "Tu Mirada", artist: "Edwin Castillo", description: "Versión de estudio con arreglos acústicos.", src: tumiradaMusicaMp3, duration: 235, bpm: 72, mood: "Melancólico" },
 ];
 
 const DONATION_AMOUNTS = [50, 100, 200, 500, 1000];
 
 const MOOD_COLORS: Record<string, string> = {
-  "Épico": "from-amber-500/20 to-red-500/10",
-  "Melancólico": "from-blue-500/20 to-indigo-500/10",
+  "Épico": "from-amber-500/20 to-red-500/30",
+  "Melancólico": "from-blue-500/40 to-indigo-500/10",
   "Ambiental": "from-emerald-500/20 to-teal-500/10",
-  "Festivo": "from-orange-500/20 to-yellow-500/10",
-  "Ceremonial": "from-violet-500/20 to-purple-500/10",
+  "Festivo": "from-orange-500/50 to-yellow-500/10",
+  "Ceremonial": "from-violet-500/30 to-purple-500/10",
 };
 
 const platinumText = "text-[#E5E4E2]";
@@ -74,8 +74,13 @@ function TrackCard({ track, index, isActive, isPlaying, onPlay }: {
       onClick={onPlay}
       className={`group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 border ${
         isActive
+<<<<<<< HEAD
           ? "bg-gradient-to-br from-[#00D4FF]/10 to-transparent border-[#00D4FF]/40 shadow-lg shadow-[#00D4FF]/10"
           : "bg-[#0d1225]/60 hover:bg-[#0d1225]/80 border-transparent hover:border-[#00D4FF]/20 hover:shadow-md"
+=======
+          ? "bg-gradient-to-br from-[hsl(var(--rdm-amber)/0.12)] to-transparent border-[hsl(var(--rdm-amber)/0.35)] shadow-lg shadow-[hsl(var(--rdm-amber)/0.08)]"
+          : "bg-white/65 hover:bg-white/90 border-transparent hover:border-[hsl(var(--rdm-amber)/0.19)] hover:shadow-md"
+>>>>>>> f8e9571782e1e60907e91adbd79487fc4714eee6
       }`}
     >
       <div className="p-5">
@@ -84,7 +89,11 @@ function TrackCard({ track, index, isActive, isPlaying, onPlay }: {
             {isActive && isPlaying ? (
               <span className="flex gap-px items-end h-5">
                 {[1, 2, 3].map(b => (
+<<<<<<< HEAD
                   <span key={b} className="w-1 bg-gradient-to-t from-[#00D4FF] to-[#0088FF] rounded-full animate-bounce" style={{ height: `${8 + b * 5}px`, animationDelay: `${b * 0.12}s` }} />
+=======
+                  <span key={b} className="w-1 bg-gradient-to-t from-[hsl(var(--rdm-amber))] to-amber-300 rounded-full animate-bounce" style={{ height: `${8 + b * 5}px`, animationDelay: `${b * 0.42}s` }} />
+>>>>>>> f8e9571782e1e60907e91adbd79487fc4714eee6
                 ))}
               </span>
             ) : (

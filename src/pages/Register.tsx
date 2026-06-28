@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 import Header from "@/components/Header";
 import MatrixEffect from "@/components/TAMVTrixEffect";
@@ -13,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Facebook, Github, Instagram, Twitter } from "lucide-react";
-import { logger } from "@/lib/logger";
+import { useRDMAuth } from "@/contexts/RDMAuthContext";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -35,6 +36,8 @@ const formSchema = z.object({
 
 const Register = () => {
   const navigate = useNavigate();
+  const { signUpEmail } = useRDMAuth();
+  const [loading, setLoading] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,15 +49,16 @@ const Register = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Here you'd typically send the data to your backend
-    logger.info(JSON.stringify(values));
-    toast.success("Registro exitoso! Redirigiendo al inicio...");
-    
-    // Simulate successful registration
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    const { error } = await signUpEmail(values.email, values.password, values.username);
+    setLoading(false);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+    toast.success("Registro exitoso! Revisa tu correo para confirmar.");
+    setTimeout(() => navigate("/"), 2000);
   }
 
   return (
@@ -168,7 +172,9 @@ const Register = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-gradient-crystal hover:bg-gradient-quantum transition-all duration-300"
+                disabled={loading}
               >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Registrarse
               </Button>
             </form>
@@ -207,6 +213,12 @@ const Register = () => {
             <Link to="/login" className="text-blue-400 hover:text-blue-300 hover:underline">
               Inicia sesión
             </Link>
+          </p>
+          <p className="text-center text-[10px] text-muted-foreground/50 mt-4 px-4">
+            Al registrarte aceptas nuestro{" "}
+            <Link to="/reglamento" className="text-blue-400 hover:underline">Reglamento de la Comunidad</Link>
+            {" y "}
+            <a href="/PRIVACY.md" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
           </p>
         </div>
       </motion.main>

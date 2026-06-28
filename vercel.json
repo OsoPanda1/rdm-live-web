@@ -6,6 +6,26 @@
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "visitarealdelmonte.online" }],
+      "destination": "https://www.visitarealdelmonte.online/$1",
+      "statusCode": 301
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "rdm-digital-ltos.vercel.app" }],
+      "destination": "https://www.visitarealdelmonte.online/$1",
+      "statusCode": 301
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "*.vercel.app" }],
+      "destination": "https://www.visitarealdelmonte.online/$1",
+      "statusCode": 301
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

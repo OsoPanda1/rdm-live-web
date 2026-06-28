@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ThresholdRule, type ScoreRule } from "@/core/rules/scoring.rule";
 import type { ScoreBreakdown } from "@/core/models";
 
@@ -9,6 +8,10 @@ export interface ScoreInput {
   speedMps: number;
 }
 
+/**
+ * V2 simplificada - Mantenida para compatibilidad con el facade territorial-twin.
+ * La implementacion canonica es ScoringEngine en ScoringEngine.ts (V1).
+ */
 export class ScoringEngine {
   constructor(private rules: ScoreRule[] = defaultRules()) {}
 

@@ -171,6 +171,13 @@ export default function Auth() {
 
           <CardFooter className="flex-col gap-2 text-xs text-muted-foreground text-center">
             <Link to="/" className="hover:text-foreground">Explorar sin cuenta →</Link>
+            <p className="text-[10px] text-muted-foreground/60">
+              Al registrarte aceptas nuestro{" "}
+              <Link to="/reglamento" className="text-primary hover:underline">Reglamento de la Comunidad</Link>
+              {" y "}
+              <a href="/PRIVACY.md" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+              Nos proclamamos en contra del odio, racismo, clasismo, explotación y actividades criminales.
+            </p>
           </CardFooter>
         </Card>
       </div>

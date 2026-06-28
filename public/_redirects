@@ -1,2 +1,12 @@
+# === DOMAIN LOCK: Canonical domain enforcement ===
+# All traffic MUST resolve to https://www.visitarealdelmonte.online
+# Redirect apex domain to www
+https://visitarealdelmonte.online/* https://www.visitarealdelmonte.online/:splat 301
+# Block non-canonical deployment domains (vercel.app, cloudflare pages, lovable previews)
+# These must be configured as Page Rules in Cloudflare Dashboard:
+#   - visitarealdelmonte.online/* → https://www.visitarealdelmonte.online/* (301)
+#   - *.vercel.app/* → return 404
+#   - *.pages.dev/* → return 404
+#
 # SPA fallback for client-side routing on Cloudflare Pages.
 /*    /index.html   200

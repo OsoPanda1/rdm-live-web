@@ -1,23 +1,13 @@
-// @ts-nocheck
 import { MovementFilter } from "@/core/behavior/movement.filter";
 import { detectMovementPattern } from "@/core/behavior/pattern.detector";
-import { endManualSpan, setSpanAttribute, startManualSpan } from "@/instrumentation.node";
 import { createTraceId } from "@/core/context/trace";
 import { type IClock, Clock } from "@/core/engine/deterministic-clock";
 import { ScoringEngine } from "@/core/engine/scoring.engine";
-import { withinBBox } from "@/core/geo/bbox";
-import { fastDistance } from "@/core/geo/haversine.fast";
-import { LRUCache } from "@/core/geo/lru-cache";
-import { LinearSpatialIndex } from "@/core/geo/spatial-index";
+import { withinBBox } from "@/core/geo";
+import { fastDistance } from "@/core/geo";
+import { GeoLRUCache } from "@/core/geo";
 import { bus, type EventBus } from "@/core/infra/event-bus";
-import type { Coordenadas, IsabellaDecision, RetentionIntent, TuristaEstado } from "@/core/models";
-import {
-  decisionScore,
-  isabellaGeoLruCapacity,
-  isabellaGeoLruSize,
-  isabellaMovementFilterAlpha,
-  isabellaTerritorialDecisionLatencyMs,
-} from "@/infra/metrics/prometheus";
+import type { Coordenadas, IsabellaDecision, RetentionIntent, TuristaEstado, ScoreBreakdown } from "@/core/models";
 
 interface OrchestratorOptions {
   cacheCapacity?: number;
@@ -31,8 +21,36 @@ interface OrchestratorOptions {
   threshold?: number;
 }
 
+interface SpatialEntry {
+  id: string;
+  coords: Coordenadas;
+}
+
+class LinearSpatialIndex {
+  private entries: SpatialEntry[] = [];
+
+  upsert(entry: SpatialEntry): void {
+    const idx = this.entries.findIndex(e => e.id === entry.id);
+    if (idx >= 0) this.entries[idx] = entry;
+    else this.entries.push(entry);
+  }
+
+  nearest(coords: Coordenadas): SpatialEntry | null {
+    let nearest: SpatialEntry | null = null;
+    let minDist = Infinity;
+    for (const entry of this.entries) {
+      const dist = fastDistance(coords, entry.coords);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = entry;
+      }
+    }
+    return nearest;
+  }
+}
+
 export class ExperienceOrchestrator {
-  private cache: LRUCache<string, number>;
+  private cache: GeoLRUCache;
   private movement: MovementFilter;
   private clock: IClock;
   private engine: ScoringEngine;
@@ -50,11 +68,10 @@ export class ExperienceOrchestrator {
     this.clock = options.clock ?? new Clock();
     this.engine = options.engine ?? new ScoringEngine();
     this.eventBus = options.eventBus ?? bus;
-    this.cache = new LRUCache(
-      options.cacheCapacity ?? 5000,
-      options.cacheTtlMs ?? 30_000,
-      () => this.clock.now(),
-    );
+    this.cache = new GeoLRUCache({
+      maxSize: options.cacheCapacity ?? 5000,
+      ttlMs: options.cacheTtlMs ?? 30_000,
+    });
     this.movement = new MovementFilter(options.movementAlpha ?? 0.3);
     this.throttleMs = options.throttleMs ?? 45_000;
     this.proximityBBoxMeters = options.proximityBBoxMeters ?? 300;
@@ -63,9 +80,6 @@ export class ExperienceOrchestrator {
     this.exits.forEach((exit, idx) => {
       this.exitIndex.upsert({ id: `exit-${idx}`, coords: exit });
     });
-
-    isabellaGeoLruCapacity.set(options.cacheCapacity ?? 5000);
-    isabellaMovementFilterAlpha.set(this.movement.getAlpha());
   }
 
   allowExecution(touristId: string, windowMs = this.throttleMs): boolean {
@@ -82,25 +96,16 @@ export class ExperienceOrchestrator {
     }
 
     const traceId = createTraceId();
-    const span = startManualSpan("territorial.decision");
-    setSpanAttribute(span, "territory", t.territory ?? "RDM");
 
     const nearest = this.getNearestExit(t.coords);
-    if (!nearest || !withinBBox(t.coords, nearest, this.proximityBBoxMeters)) {
-      endManualSpan(span);
+    if (!nearest || !withinBBox(t.coords, nearest as any)) {
       return null;
     }
 
-    const key = `${t.coords.lat.toFixed(5)},${t.coords.lng.toFixed(5)}->${nearest.lat.toFixed(5)},${nearest.lng.toFixed(5)}`;
-    let dist = this.cache.get(key);
-    if (dist === undefined) {
-      dist = fastDistance(t.coords, nearest);
-      this.cache.set(key, dist);
-    }
-    isabellaGeoLruSize.set(this.cache.size());
+    const dist = fastDistance(t.coords, nearest);
 
     const rawSpeed = t.prevCoords ? fastDistance(t.prevCoords, t.coords) / 5 : 0;
-    const speed = this.movement.update(rawSpeed);
+    const speed = this.movement.smooth(rawSpeed);
 
     const inactivity = (started - t.activityTimestamps.lastInteractionAt.getTime()) / 60_000;
 
@@ -112,12 +117,17 @@ export class ExperienceOrchestrator {
     });
 
     if (score.total < this.threshold) {
-      endManualSpan(span);
       return null;
     }
 
     const pattern = detectMovementPattern({ speedMps: speed, distanceToExit: dist });
     const retentionIntent = this.resolveIntent(score.total, pattern);
+
+    const fullScore: ScoreBreakdown = {
+      total: score.total / 100,
+      factors: score.factors,
+      confidence: 0.7,
+    };
 
     const decision: IsabellaDecision = {
       traceId,
@@ -128,31 +138,22 @@ export class ExperienceOrchestrator {
       distanceToExit: dist,
       speedMps: speed,
       coords: t.coords,
+      timestamp: this.clock.now(),
+      score: fullScore,
       payload: {
         titulo: retentionIntent === "SAFE_EXIT" ? "Salida segura sugerida" : "Experiencia desbloqueada",
         mensaje:
           retentionIntent === "UPSELL"
-            ? "Última experiencia local disponible antes de salir"
+            ? "Ultima experiencia local disponible antes de salir"
             : retentionIntent === "DISCOVERY"
               ? "Ruta exploratoria activada cerca de ti"
               : "Te guiamos por una salida segura y cultural",
         ruta_ar_activada: true,
       },
-      score,
     };
-
-    setSpanAttribute(span, "score", score.total);
-    setSpanAttribute(span, "pattern", pattern);
-    setSpanAttribute(span, "distanceToExit", dist);
-    setSpanAttribute(span, "speedMps", speed);
-    setSpanAttribute(span, "traceId", traceId);
 
     this.lastDecisionAt.set(t.id, started);
     this.eventBus.emit("isabella:decision", decision);
-
-    decisionScore.observe(Math.max(0, Math.min(1, decision.score.total / 100)));
-    isabellaTerritorialDecisionLatencyMs.observe(this.clock.now() - started);
-    endManualSpan(span);
 
     return decision;
   }

@@ -1,17 +1,18 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 import SocialLinks from "@/modules/constelacionInteractiva/SocialLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { logger } from "@/lib/logger";
+import { useRDMAuth } from "@/contexts/RDMAuthContext";
 
 /**
  * Oráculo Tecnológico: Panel de Control - Centro de Administración
@@ -46,6 +47,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
   footerLinkUrl 
 }) => {
   const navigate = useNavigate();
+  const { signInEmail, signUpEmail, signInGoogle } = useRDMAuth();
+  const [loading, setLoading] = useState(false);
   
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -55,14 +58,26 @@ const AuthForm: React.FC<AuthFormProps> = ({
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    logger.info("AuthForm submitted", { values });
-    toast.success(`${type === "login" ? "Inicio de sesión" : "Registro"} exitoso! Redirigiendo...`);
-    
-    // Simulate successful authentication
-    setTimeout(() => {
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    setLoading(true);
+    if (type === "login") {
+      const { error } = await signInEmail(values.email, values.password);
+      setLoading(false);
+      if (error) {
+        toast.error(error);
+        return;
+      }
+      toast.success("Inicio de sesión exitoso!");
       navigate("/");
-    }, 2000);
+    } else {
+      const { error } = await signUpEmail(values.email, values.password, values.email);
+      setLoading(false);
+      if (error) {
+        toast.error(error);
+        return;
+      }
+      toast.success("Registro exitoso! Revisa tu correo para confirmar.");
+    }
   }
 
   return (
@@ -139,7 +154,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
           <Button 
             type="submit" 
             className="w-full bg-gradient-crystal hover:bg-gradient-quantum transition-all duration-300"
+            disabled={loading}
           >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {buttonText}
           </Button>
         </form>
@@ -167,6 +184,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
         <Link to={footerLinkUrl} className="text-blue-400 hover:text-blue-300 hover:underline">
           {footerLinkText}
         </Link>
+      </p>
+      <p className="text-center text-[10px] text-muted-foreground/50 mt-3 px-4">
+        Al continuar aceptas nuestro{" "}
+        <Link to="/reglamento" className="text-blue-400 hover:underline">Reglamento</Link>
+        {" y "}
+        <a href="/PRIVACY.md" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
       </p>
     </motion.div>
   );

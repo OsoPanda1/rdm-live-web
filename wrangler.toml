@@ -9,12 +9,34 @@ compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
 
+# === CANONICAL DOMAIN ===
+# The ONLY authorized domain for production:
+#   https://www.visitarealdelmonte.online
+#
+# Cloudflare Pages dashboard MUST have the following custom domains configured:
+#   - www.visitarealdelmonte.online (production)
+#   - visitarealdelmonte.online (redirect to www)
+#
+# Page Rules (set in Cloudflare Dashboard) REQUIRED:
+#   1. visitarealdelmonte.online/* → https://www.visitarealdelmonte.online/* (301)
+#   2. *.vercel.app/* → block (404)
+#   3. *.pages.dev/* → block (404) — only if not preview domain
+#
+# The deployment CI gate (see .github/workflows/ci.yml) verifies the deployment
+# URL matches the canonical domain before completing. Any deploy to a non-canonical
+# URL MUST be treated as a security incident.
+
 # --- Production environment ----------------------------------------------
 [env.production]
 name = "rdm-digital-ltos"
 
 [env.production.vars]
 VITE_APP_ENV = "production"
+
+[env.production.routes]
+pattern = "www.visitarealdelmonte.online"
+custom_domain = true
+zone_id = ""  # Set via `wrangler pages --project-name rdm-digital-ltos`
 
 # Secrets (do NOT put values here):
 #   wrangler pages secret put SUPABASE_SERVICE_ROLE_KEY --project-name rdm-digital-ltos
@@ -28,3 +50,6 @@ name = "rdm-digital-ltos-preview"
 
 [env.preview.vars]
 VITE_APP_ENV = "preview"
+
+# Preview deployments are ALLOWED only via Cloudflare Pages preview URLs.
+# Vercel preview deployments are DISABLED (see vercel.json redirects).

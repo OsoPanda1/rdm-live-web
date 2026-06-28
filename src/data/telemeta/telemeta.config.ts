@@ -84,7 +84,36 @@ export const telemetryExamples = {
 };
 
 // Registro de métricas a una función reportadora central (puede ser fuente de datos, beacon, o logger)
+
+// === CARDINALITY & SAMPLING CONTROLS ===
+// Máximo de entradas de telemetría únicas por sesión antes de aplicar muestreo
+const MAX_ENTRIES_PER_SESSION = 10_000;
+// Tasa de muestreo (0.0 - 1.0) al acercarse al límite de cardinalidad
+const SAMPLING_RATE = 0.1;
+
+let telemetryCounter = 0;
+
+/**
+ * Reporta una métrica de telemetría con guardas de cardinalidad y rate-limit.
+ * Descarta eventos silenciosamente cuando se excede el límite por sesión
+ * o cuando el muestreo reduce el volumen bajo backpressure.
+ */
 export const reportMetric = (metric: TelemObject): void => {
+  telemetryCounter++;
+
+  // Guarda de cardinalidad: descarte duro a las 10k por sesión
+  if (telemetryCounter > MAX_ENTRIES_PER_SESSION) {
+    if (telemetryCounter === MAX_ENTRIES_PER_SESSION + 1) {
+      console.warn(`[telemeta] Límite de cardinalidad (${MAX_ENTRIES_PER_SESSION}) alcanzado. Muestreo al ${SAMPLING_RATE * 100}%`);
+    }
+    return;
+  }
+
+  // Muestreo: solo reporta ~10% de eventos cuando está al 80% del límite
+  if (telemetryCounter > MAX_ENTRIES_PER_SESSION * 0.8) {
+    if (Math.random() > SAMPLING_RATE) return;
+  }
+
   // Enviado a Supabase usando `telemeta` (productos de Supabase pga datos públicos)
   if (import.meta.env.VITE_SUPABASE_URL) {
     fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/telemeta`, {
@@ -98,4 +127,9 @@ export const reportMetric = (metric: TelemObject): void => {
       body: JSON.stringify(metric),
     }).catch(() => {});
   }
+};
+
+/** Reinicia el contador de telemetría por sesión (llamar en navegación) */
+export const resetTelemetryCounter = (): void => {
+  telemetryCounter = 0;
 };

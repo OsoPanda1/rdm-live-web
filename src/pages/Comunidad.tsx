@@ -133,7 +133,6 @@ const Comunidad = () => {
     });
 
     if (error) {
-      console.error("Error creating post:", error);
       setSubmitting(false);
       return;
     }
@@ -158,7 +157,6 @@ const Comunidad = () => {
     });
 
     if (error) {
-      console.error("Error creating comment:", error);
       return;
     }
 

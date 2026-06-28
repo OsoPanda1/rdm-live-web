@@ -104,7 +104,7 @@ export class IsabellaTerritorialMind {
       true
     );
 
-    let insights: TerritorialInsight[] = [];
+    const insights: TerritorialInsight[] = [];
 
     if (coords) {
       const nearbyContributions = territorialCollector.getContributionsInRadius(coords, 200);
@@ -161,7 +161,7 @@ export class IsabellaTerritorialMind {
   }
 
   private analyzeRoutePattern(contribution: UserContribution): TerritorialInsight | null {
-    const routePayload = contribution.payload as any;
+    const routePayload = contribution.payload as unknown as Record<string, unknown>;
     if (routePayload.type !== 'route_trace' || !routePayload.waypoints) return null;
 
     const distance = routePayload.distanceKm ?? 0;

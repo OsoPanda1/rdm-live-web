@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: fullMessages.map((m: any) => ({
+            contents: fullMessages.map((m: { role: string; content: string }) => ({
               role: m.role === "assistant" ? "model" : "user",
               parts: [{ text: m.content }],
             })),

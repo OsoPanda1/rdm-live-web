@@ -83,10 +83,10 @@ export class IsabellaConsciousnessPipeline {
     let emotional: EmotionalState = { emotion: 'neutral', intensity: 0.5, valence: 0.5, resonance: 0.5, suggestedResponse: '' };
     let memory: MemoryContext = { lastEmotion: null, lastContext: null, pattern: {}, totalInteractions: 0 };
     let knowledge: KnowledgeContext = { relevantEntries: [], totalEntries: 0, lastFetch: null };
-    let awakening: AwakeningSignal = { shouldTrigger: false, phase: 'SILENT', reason: '', territorialActivityLevel: 0 };
+    const awakening: AwakeningSignal = { shouldTrigger: false, phase: 'SILENT', reason: '', territorialActivityLevel: 0 };
     let guardian: GuardianVerdict = { action: 'enable_cache_boost', severity: 'normal', federationsImpacted: [], reason: 'default' };
-    let federationActions: FederationAction[] = [];
-    let territorialActions: TerritorialAction[] = [];
+    const federationActions: FederationAction[] = [];
+    const territorialActions: TerritorialAction[] = [];
 
     const inputText = this.extractText(input);
     const userId = this.extractUserId(input);

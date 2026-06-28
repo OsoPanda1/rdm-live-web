@@ -161,7 +161,7 @@ export class KnowledgeAbsorptionEngine {
       const parsed = JSON.parse(content);
       if (parsed.title) return String(parsed.title).slice(0, 200);
       if (parsed.name) return String(parsed.name).slice(0, 200);
-    } catch { }
+    } catch { /* JSON parse expected to fail for non-JSON content */ }
 
     return url.split("/").pop()?.split(".")[0]?.replace(/[-_]/g, " ") || url;
   }

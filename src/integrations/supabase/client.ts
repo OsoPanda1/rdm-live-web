@@ -29,7 +29,6 @@ const storage =
     : undefined
 
 if ((!SUPABASE_URL || !SUPABASE_ANON_KEY) && isDev) {
-  // eslint-disable-next-line no-console
   logger.warn(
     '[supabase] Configuración incompleta: asegúrate de definir ' +
     'VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en .env.development.local.',
@@ -38,7 +37,6 @@ if ((!SUPABASE_URL || !SUPABASE_ANON_KEY) && isDev) {
 
 // Declaración global para singleton (Vite HMR safe).
 declare global {
-  // eslint-disable-next-line no-var
   var __supabase__: SupabaseClient<Database> | undefined
 }
 

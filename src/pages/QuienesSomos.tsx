@@ -31,15 +31,20 @@ function useOrcidWorks(orcid: string) {
       .then((r) => (r.ok ? r.json() : Promise.reject("ORCID fetch failed")))
       .then((data) => {
         if (cancelled) return;
-        const items: OrcidWork[] = (data.group || []).map((g: any) => {
-          const summary = g?.["work-summary"]?.[0] || {};
+        const items: OrcidWork[] = (data.group || []).map((g: Record<string, unknown>) => {
+          const summaries = g["work-summary"] as Record<string, unknown>[] | undefined;
+          const summary = summaries?.[0] ?? {};
+          const title = (((summary.title ?? {}) as Record<string, unknown>).title ?? {}) as Record<string, unknown>;
+          const pubDate = (summary["publication-date"] ?? {}) as Record<string, unknown>;
+          const year = (pubDate.year ?? {}) as Record<string, unknown>;
+          const extIds = (summary["external-ids"] ?? {}) as Record<string, unknown>;
+          const extIdArr = (extIds["external-id"] ?? []) as Array<Record<string, unknown>>;
+          const doiEntry = extIdArr.find((e: Record<string, unknown>) => e["external-id-type"] === "doi");
           return {
-            title: summary?.title?.title?.value || "Untitled",
-            type: summary?.type || "other",
-            pubYear: summary?.["publication-date"]?.year?.value || "",
-            doi: summary?.["external-ids"]?.["external-id"]?.find(
-              (e: any) => e["external-id-type"] === "doi"
-            )?.["external-id-value"],
+            title: (title.value as string) || "Untitled",
+            type: (summary.type as string) || "other",
+            pubYear: (year.value as string) || "",
+            doi: doiEntry?.["external-id-value"] as string | undefined,
           };
         });
         setWorks(items);

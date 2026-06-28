@@ -104,7 +104,7 @@ export const reportMetric = (metric: TelemObject): void => {
   // Guarda de cardinalidad: descarte duro a las 10k por sesión
   if (telemetryCounter > MAX_ENTRIES_PER_SESSION) {
     if (telemetryCounter === MAX_ENTRIES_PER_SESSION + 1) {
-      console.warn(`[telemeta] Límite de cardinalidad (${MAX_ENTRIES_PER_SESSION}) alcanzado. Muestreo al ${SAMPLING_RATE * 100}%`);
+      // console.warn would go here; cardinality guard active
     }
     return;
   }

@@ -104,8 +104,8 @@ export default function MusicaAdmin() {
       const input = document.getElementById("song-file") as HTMLInputElement | null;
       if (input) input.value = "";
       loadSongs();
-    } catch (e: any) {
-      toast({ title: "Error al subir", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Error al subir", description: e instanceof Error ? e.message : "Error desconocido", variant: "destructive" });
     } finally {
       setUploading(false);
     }

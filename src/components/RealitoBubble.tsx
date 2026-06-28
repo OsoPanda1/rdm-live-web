@@ -53,7 +53,7 @@ const RealitoBubble = () => {
       osc.connect(gain).connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.4);
-    } catch {}
+    } catch { /* audio context may not be available */ }
   }, [soundEnabled]);
 
   const handleSend = useCallback(async (text: string) => {
@@ -122,11 +122,11 @@ const RealitoBubble = () => {
       }
 
       playSound(880);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setMessages(prev => [...prev, {
         id: assistantId,
         role: "assistant",
-        content: `Lo siento, hubo un error: ${err.message}. Intenta de nuevo.`,
+        content: `Lo siento, hubo un error: ${err instanceof Error ? err.message : 'desconocido'}. Intenta de nuevo.`,
         timestamp: new Date(),
       }]);
     } finally {

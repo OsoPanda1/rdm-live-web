@@ -212,6 +212,17 @@ class FederationBus {
   getQueueLength(federation: FederationId): number {
     return this.federationQueues.get(federation)?.length ?? 0;
   }
+
+  getHealth(): { totalEvents: number; listenersByType: Record<string, number> } {
+    const listenersByType: Record<string, number> = {};
+    for (const [type, handlers] of this.handlers) {
+      listenersByType[type] = handlers.size;
+    }
+    return {
+      totalEvents: Array.from(this.federationQueues.values()).reduce((sum, q) => sum + q.length, 0),
+      listenersByType,
+    };
+  }
 }
 
 export const federationBus = new FederationBus();

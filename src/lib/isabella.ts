@@ -167,13 +167,13 @@ export function registrarFeedback(
     timestamp: new Date().toISOString(),
   });
 
-  supabase.from("isabella_feedback" as any).insert({
+  supabase.from("isabella_feedback").insert({
     decision_trace_id: decisionTraceId,
     rating,
     feedback: feedback ?? null,
     consentimiento: consentimiento ?? null,
     created_at: new Date().toISOString(),
-  } as any).then(({ error }: any) => {
+  }).then(({ error }: { error: unknown }) => {
     if (error) logger.error("[Isabella] Error al persistir feedback", error);
   });
 }

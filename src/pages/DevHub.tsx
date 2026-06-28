@@ -50,7 +50,7 @@ export default function DevHub() {
   const domain = DOMAINS.find(d => d.id === activeDomain) ?? DOMAINS[0];
 
   const copyToClipboard = async (text: string) => {
-    try { await navigator.clipboard.writeText(text); setCopied(text); setTimeout(() => setCopied(null), 2000); } catch {}
+    try { await navigator.clipboard.writeText(text); setCopied(text); setTimeout(() => setCopied(null), 2000); } catch { /* clipboard write may fail */ }
   };
 
   return (

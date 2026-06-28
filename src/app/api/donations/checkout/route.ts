@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const BASE_URL = process.env.BASE_URL ?? "https://realdelmonte.digital";
 
     if (STRIPE_SECRET_KEY) {
-      // @ts-ignore - stripe may not be installed
+      // @ts-expect-error - stripe may not be installed
       const stripe = await import("stripe");
       const client = new stripe.default(STRIPE_SECRET_KEY);
       const session = await client.checkout.sessions.create({

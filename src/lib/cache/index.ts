@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 interface CacheEntry<T> {
   value: T;
   expiresAt: number;
@@ -85,7 +87,7 @@ class RedisCache implements CacheAdapter {
       this.client = createClient({ url }) as unknown as RedisCache['client'];
       (this.client as unknown as { connect: () => Promise<void> }).connect();
     } catch {
-      console.warn('[Cache] Redis no disponible, usando fallback a InMemoryCache');
+      logger.warn('[Cache] Redis no disponible, usando fallback a InMemoryCache');
     }
   }
 

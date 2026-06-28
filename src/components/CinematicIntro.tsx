@@ -337,7 +337,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
       try {
         audioRef.current.pause()
         audioRef.current.currentTime = 0
-      } catch {}
+      } catch { /* audio cleanup */ }
       audioRef.current = null
     }
     if (audioCtxRef.current) {
@@ -371,7 +371,7 @@ const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
 
     try {
       const Ctor =
-        (window as any).AudioContext || (window as any).webkitAudioContext
+        window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
       const ctx = new Ctor()
       if (ctx.state === "suspended") {
         await ctx.resume()

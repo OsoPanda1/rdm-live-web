@@ -3,6 +3,8 @@
  * Metricas tecnicas y de negocio para observabilidad
  */
 
+import { logger } from '@/lib/logger';
+
 type Labels = Record<string, string>;
 
 // ============================================================================
@@ -16,7 +18,7 @@ const MAX_LABEL_VALUE_LENGTH = 64;
 function validateLabels(labels: Labels, metricName: string): void {
   const keys = Object.keys(labels);
   if (keys.length > MAX_LABEL_KEYS) {
-    console.warn(`[prometheus] ${metricName}: truncating labels from ${keys.length} to ${MAX_LABEL_KEYS}`);
+    logger.warn(`[prometheus] ${metricName}: truncating labels from ${keys.length} to ${MAX_LABEL_KEYS}`);
     for (const k of keys.slice(MAX_LABEL_KEYS)) delete labels[k];
   }
   for (const [k, v] of Object.entries(labels)) {
@@ -38,7 +40,7 @@ export class Counter {
     validateLabels(labels, this.name);
     const key = JSON.stringify(labels);
     if (!this.data.has(key) && this.data.size >= MAX_CARDINALITY) {
-      console.warn(`[prometheus] ${this.name}: cardinality limit (${MAX_CARDINALITY}) reached, dropping labels`);
+      logger.warn(`[prometheus] ${this.name}: cardinality limit (${MAX_CARDINALITY}) reached, dropping labels`);
       return;
     }
     const previous = this.data.get(key) ?? 0;

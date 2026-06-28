@@ -330,7 +330,7 @@ const LOCAL_FEDERATION_DEFAULTS: LocalFederationStatus[] = [
   { id: Federacion.GOBIERNO_DIGITAL, name: 'Gobierno Digital', activeBusiness: 3, satisfaction: 0.75, revenue24h: 0, trending: 'stable' },
 ];
 
-let localFederations: LocalFederationStatus[] = [...LOCAL_FEDERATION_DEFAULTS];
+const localFederations: LocalFederationStatus[] = [...LOCAL_FEDERATION_DEFAULTS];
 
 export function getLocalFederations(): LocalFederationStatus[] {
   return localFederations;

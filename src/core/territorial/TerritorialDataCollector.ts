@@ -277,7 +277,7 @@ export class TerritorialDataCollector {
   private calculateAverageRating(contributions: UserContribution[]): number {
     const ratings = contributions
       .filter(c => c.payload.type === 'rating')
-      .map(c => (c.payload as any).score)
+      .map(c => (c.payload as unknown as Record<string, unknown>).score as number)
       .filter((s): s is number => typeof s === 'number');
 
     if (ratings.length === 0) return 0;

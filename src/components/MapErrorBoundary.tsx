@@ -1,5 +1,6 @@
 import { Component, type ReactNode, type ErrorInfo } from "react";
 import { MapPin, AlertTriangle } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 interface Props {
   children: ReactNode;
@@ -21,7 +22,7 @@ export default class MapErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.warn("[MapErrorBoundary] Error capturado:", error.message, info.componentStack);
+    logger.warn("[MapErrorBoundary] Error capturado: " + error.message);
   }
 
   render() {

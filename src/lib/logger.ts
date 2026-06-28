@@ -47,7 +47,6 @@ function emit(level: Level, message: string, context?: LogContext): void {
   const isProd = clientEnv.VITE_APP_ENV === "production";
   const payload = isProd ? JSON.stringify(entry) : entry;
 
-  // eslint-disable-next-line no-console
   const sink = level === "error" ? console.error : level === "warn" ? console.warn : console.log;
   sink(payload);
 

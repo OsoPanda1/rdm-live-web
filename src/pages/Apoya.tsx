@@ -50,8 +50,8 @@ const Apoya = () => {
         message: 'Donación desde RDM Digital',
       });
       window.location.href = response.data.url;
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Error al procesar la donación.', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error al procesar la donación.', variant: 'destructive' });
       setLoading(false);
     }
   };

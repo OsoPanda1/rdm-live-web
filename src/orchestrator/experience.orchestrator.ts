@@ -7,7 +7,7 @@ import { withinBBox } from "@/core/geo";
 import { fastDistance } from "@/core/geo";
 import { GeoLRUCache } from "@/core/geo";
 import { bus, type EventBus } from "@/core/infra/event-bus";
-import type { Coordenadas, IsabellaDecision, RetentionIntent, TuristaEstado, ScoreBreakdown } from "@/core/models";
+import type { Coordenadas, BoundingBox, IsabellaDecision, RetentionIntent, TuristaEstado, ScoreBreakdown } from "@/core/models";
 
 interface OrchestratorOptions {
   cacheCapacity?: number;
@@ -98,7 +98,7 @@ export class ExperienceOrchestrator {
     const traceId = createTraceId();
 
     const nearest = this.getNearestExit(t.coords);
-    if (!nearest || !withinBBox(t.coords, nearest as any)) {
+    if (!nearest || !withinBBox(t.coords, nearest as unknown as BoundingBox)) {
       return null;
     }
 

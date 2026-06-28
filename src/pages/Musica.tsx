@@ -11,6 +11,7 @@ import {
 import legadoMp3 from "@/assets/legado.mp3";
 import tumiradaMp3 from "@/assets/tumirada.mp3";
 import aMimadreMp3 from "@/assets/musica/a_mimadre.mp3";
+import reinatrejoMp3 from "@/assets/musica/reina_trejo.mp3";
 import adictedToyouMp3 from "@/assets/musica/adicted_toyou).mp3";
 import cadaNocheMp3 from "@/assets/musica/cada_noche.mp3";
 import elSenaladoMp3 from "@/assets/musica/el_señalado.mp3";
@@ -74,13 +75,8 @@ function TrackCard({ track, index, isActive, isPlaying, onPlay }: {
       onClick={onPlay}
       className={`group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 border ${
         isActive
-<<<<<<< HEAD
-          ? "bg-gradient-to-br from-[#00D4FF]/10 to-transparent border-[#00D4FF]/40 shadow-lg shadow-[#00D4FF]/10"
-          : "bg-[#0d1225]/60 hover:bg-[#0d1225]/80 border-transparent hover:border-[#00D4FF]/20 hover:shadow-md"
-=======
           ? "bg-gradient-to-br from-[hsl(var(--rdm-amber)/0.12)] to-transparent border-[hsl(var(--rdm-amber)/0.35)] shadow-lg shadow-[hsl(var(--rdm-amber)/0.08)]"
           : "bg-white/65 hover:bg-white/90 border-transparent hover:border-[hsl(var(--rdm-amber)/0.19)] hover:shadow-md"
->>>>>>> f8e9571782e1e60907e91adbd79487fc4714eee6
       }`}
     >
       <div className="p-5">
@@ -89,11 +85,7 @@ function TrackCard({ track, index, isActive, isPlaying, onPlay }: {
             {isActive && isPlaying ? (
               <span className="flex gap-px items-end h-5">
                 {[1, 2, 3].map(b => (
-<<<<<<< HEAD
-                  <span key={b} className="w-1 bg-gradient-to-t from-[#00D4FF] to-[#0088FF] rounded-full animate-bounce" style={{ height: `${8 + b * 5}px`, animationDelay: `${b * 0.12}s` }} />
-=======
                   <span key={b} className="w-1 bg-gradient-to-t from-[hsl(var(--rdm-amber))] to-amber-300 rounded-full animate-bounce" style={{ height: `${8 + b * 5}px`, animationDelay: `${b * 0.42}s` }} />
->>>>>>> f8e9571782e1e60907e91adbd79487fc4714eee6
                 ))}
               </span>
             ) : (

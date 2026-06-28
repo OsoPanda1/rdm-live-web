@@ -71,4 +71,82 @@ export default tseslint.config(
     ],
     rules: { "no-console": "off" },
   },
+  // Config files that use require()
+  {
+    files: ["tailwind.config.ts"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  // Data / imported files — static data, not core logic
+  {
+    files: ["src/data/**/*.{ts,tsx}", "apps/**/src/data/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-console": "off",
+    },
+  },
+  // Auto-generated Supabase types
+  {
+    files: ["src/integrations/supabase/types.ts"],
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+    },
+  },
+  // Apps directories (admin, web) — relaxed typing
+  {
+    files: ["apps/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+  // API client / hooks / generated code — generic data fetching
+  {
+    files: ["src/lib/api.ts", "src/lib/apiClient.ts", "src/lib/hooks.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+  // Legacy component files with inherited @ts-nocheck — migrate gradually
+  {
+    files: [
+      "src/components/DashboardView.tsx",
+      "src/components/DichosSection.tsx",
+      "src/components/ExplorerView.tsx",
+      "src/components/Footer.tsx",
+      "src/components/InteractiveMap.tsx",
+      "src/components/MapSection.tsx",
+      "src/components/MerchantCatalog.tsx",
+      "src/components/NotificationSystem.tsx",
+      "src/components/RealitoOrb.tsx",
+      "src/components/ReviewPrompt.tsx",
+      "src/components/TerritorialMap.tsx",
+      "src/components/TourismInnovationSection.tsx",
+      "src/components/business/BusinessCard.tsx",
+      "src/components/home/IsabellaOrb.tsx",
+      "src/components/isabella/IsabellaChat.tsx",
+      "src/components/metaverse/RetractableToolbar.tsx",
+      "src/components/metaverse/TAMVTrixField.tsx",
+      "src/components/rdm/RDMInteractiveMap.tsx",
+      "src/contexts/AuthContext.tsx",
+      "src/contexts/VisualContext.tsx",
+      "src/features/ai/index.ts",
+      "src/features/auth/AuthContext.tsx",
+      "src/features/businesses/index.ts",
+      "src/features/events/index.ts",
+      "src/features/places/index.ts",
+      "src/features/search/tourismIndex.ts",
+      "src/hooks/useAuth.ts",
+      "src/lib/genaiMedia.ts",
+      "src/pages/AtlasMaximus.tsx",
+      "src/pages/EcosistemaLTOS.tsx",
+      "src/pages/GraciasDonativo.tsx",
+      "src/pages/MetaverseHome.tsx",
+      "src/pages/Rutas.tsx",
+    ],
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 );

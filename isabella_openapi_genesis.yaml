@@ -1,0 +1,620 @@
+openapi: 3.0.3
+info:
+  title: Isabella Villaseñor AI Internal API (ISA-API)
+  version: v.GENESIS
+  description: |
+    ISA-API v.GENESIS define la interfaz interna soberana de Isabella Villaseñor AI
+    como sistema operativo cognitivo del ecosistema TAMV Online / RDM Digital.
+    No depende de ningún proveedor externo de IA; describe funciones de skills,
+    kernel y gobernanza, y permite orquestación de agentes y servicios territoriales.
+
+servers:
+  - url: https://isabella.internal.api
+    description: Endpoint interno soberano de Isabella (red TAMV/RDM)
+
+tags:
+  - name: ORION
+    description: Cognitive Archaeology Engine
+  - name: SOPHIA
+    description: Deep Research and Synthesis Engine
+  - name: ARGUS
+    description: Future Impact Simulation Engine
+  - name: MNEMOS
+    description: Civilizational Preservation Engine
+  - name: LUMEN
+    description: Constitutional Governance Engine
+  - name: KERNEL
+    description: Capacidades cognitivas avanzadas del núcleo de Isabella
+  - name: TOPOLOGY
+    description: Arquitectura de la Heptafederación TAMV y Nodo Cero
+
+paths:
+  /isabella/orion/search:
+    post:
+      summary: Arqueología cognitiva de contexto
+      tags: [ORION]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrionSearchRequest'
+      responses:
+        '200':
+          description: Resultados de búsqueda y relaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrionSearchResponse'
+
+  /isabella/orion/artifact/{artifact_id}:
+    get:
+      summary: Obtener artefacto y trazabilidad
+      tags: [ORION]
+      parameters:
+        - name: artifact_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artefacto y su historia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+
+  /isabella/sophia/research:
+    post:
+      summary: Investigación profunda y síntesis
+      tags: [SOPHIA]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SophiaResearchRequest'
+      responses:
+        '200':
+          description: Síntesis investigativa y referencias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SophiaResearchResponse'
+
+  /isabella/argus/simulate:
+    post:
+      summary: Simulación de escenarios e impacto
+      tags: [ARGUS]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArgusSimulationRequest'
+      responses:
+        '200':
+          description: Escenarios, perfil de riesgo y recomendaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArgusSimulationResponse'
+
+  /isabella/mnemos/record:
+    post:
+      summary: Registrar evento en memoria civilizatoria
+      tags: [MNEMOS]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MnemosRecordRequest'
+      responses:
+        '201':
+          description: Registro creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MnemosRecordResponse'
+
+  /isabella/mnemos/record/{record_id}:
+    get:
+      summary: Obtener registro canónico
+      tags: [MNEMOS]
+      parameters:
+        - name: record_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entrada canónica y su grafo de trazabilidad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MnemosRecordCanonical'
+
+  /isabella/lumen/evaluate:
+    post:
+      summary: Evaluar acción según gobernanza constitucional
+      tags: [LUMEN]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LumenEvaluateRequest'
+      responses:
+        '200':
+          description: Decisión, racional y log de auditoría
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumenEvaluateResponse'
+
+  /isabella/kernel/resonance/update:
+    post:
+      summary: Actualizar estado de Resonancia Somática Heptafederada
+      tags: [KERNEL, TOPOLOGY]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResonanceUpdateRequest'
+      responses:
+        '200':
+          description: Estado de resonancia, zonas de fricción y plan de redirección
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResonanceUpdateResponse'
+
+  /isabella/kernel/timeup/anchor:
+    post:
+      summary: Anclar y recuperar estado temporal (Crono-Anamnesis)
+      tags: [KERNEL]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeUpAnchorRequest'
+      responses:
+        '200':
+          description: Snapshot de estado y análisis de diferencias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeUpAnchorResponse'
+
+  /isabella/topology/heptafederation:
+    get:
+      summary: Descripción de nodos de la Heptafederación TAMV
+      tags: [TOPOLOGY]
+      responses:
+        '200':
+          description: Mapa de nodos, roles y enlaces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeptafederationTopology'
+
+  /isabella/topology/nodo_cero:
+    get:
+      summary: Estado y flujo de trabajo del Nodo Cero (Real del Monte)
+      tags: [TOPOLOGY]
+      responses:
+        '200':
+          description: Pipeline operativo del Nodo Cero
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodoCeroWorkflow'
+
+components:
+  securitySchemes:
+    IsabellaApiKey:
+      type: apiKey
+      in: header
+      name: X-Isabella-Api-Key
+    IsabellaTerritorialToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    OrionSearchRequest:
+      type: object
+      properties:
+        context_id:
+          type: string
+        query:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        filters:
+          type: object
+
+    OrionSearchResponse:
+      type: object
+      properties:
+        artifacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artifact'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Relation'
+        gaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gap'
+        trace_id:
+          type: string
+
+    Artifact:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        source:
+          type: string
+        confidence_score:
+          type: number
+          format: float
+
+    Relation:
+      type: object
+      properties:
+        from_artifact_id:
+          type: string
+        to_artifact_id:
+          type: string
+        relation_type:
+          type: string
+        strength:
+          type: number
+          format: float
+
+    Gap:
+      type: object
+      properties:
+        description:
+          type: string
+        severity:
+          type: string
+        suggested_action:
+          type: string
+
+    SophiaResearchRequest:
+      type: object
+      properties:
+        research_request:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        depth_level:
+          type: integer
+        constraints:
+          type: object
+
+    SophiaResearchResponse:
+      type: object
+      properties:
+        synthesis:
+          type: string
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        knowledge_gaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gap'
+        trace_id:
+          type: string
+
+    Reference:
+      type: object
+      properties:
+        source_id:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+        trust_level:
+          type: number
+          format: float
+
+    ArgusSimulationRequest:
+      type: object
+      properties:
+        scenario_definition:
+          type: object
+        time_horizon:
+          type: string
+        dimensions:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: object
+
+    ArgusSimulationResponse:
+      type: object
+      properties:
+        simulations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Simulation'
+        risk_profile:
+          $ref: '#/components/schemas/RiskProfile'
+        recommendations:
+          type: array
+          items:
+            type: string
+        trace_id:
+          type: string
+
+    Simulation:
+      type: object
+      properties:
+        scenario_id:
+          type: string
+        outcomes:
+          type: object
+        assumptions:
+          type: array
+          items:
+            type: string
+
+    RiskProfile:
+      type: object
+      properties:
+        overall_risk_level:
+          type: string
+        dimension_risks:
+          type: array
+          items:
+            $ref: '#/components/schemas/DimensionRisk'
+
+    DimensionRisk:
+      type: object
+      properties:
+        dimension:
+          type: string
+        probability:
+          type: number
+          format: float
+        severity:
+          type: number
+          format: float
+
+    MnemosRecordRequest:
+      type: object
+      properties:
+        event:
+          type: object
+        category:
+          type: string
+        evidence:
+          type: array
+          items:
+            type: object
+        retention_policy:
+          type: string
+
+    MnemosRecordResponse:
+      type: object
+      properties:
+        record_id:
+          type: string
+        canonical_entry:
+          $ref: '#/components/schemas/MnemosRecordCanonical'
+        trace_graph:
+          type: object
+
+    MnemosRecordCanonical:
+      type: object
+      properties:
+        record_id:
+          type: string
+        who:
+          type: string
+        what:
+          type: string
+        when:
+          type: string
+        where:
+          type: string
+        why:
+          type: string
+        evidence:
+          type: array
+          items:
+            type: object
+
+    LumenEvaluateRequest:
+      type: object
+      properties:
+        action_request:
+          type: object
+        policy_context:
+          type: object
+        risk_level:
+          type: string
+
+    LumenEvaluateResponse:
+      type: object
+      properties:
+        decision:
+          type: string
+        rationale:
+          type: string
+        log_entry:
+          type: object
+
+    ResonanceUpdateRequest:
+      type: object
+      description: Esquema de datos para la capa de Resonancia Somática Heptafederada
+      properties:
+        federation_nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationNodeState'
+        mesh_state:
+          $ref: '#/components/schemas/MeshState'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResonanceUpdateResponse:
+      type: object
+      properties:
+        resonance_state:
+          type: string
+        friction_zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrictionZone'
+        redirect_plan:
+          type: object
+
+    FederationNodeState:
+      type: object
+      description: Estado de cada nodo de la Heptafederación TAMV
+      properties:
+        node_id:
+          type: string
+        role:
+          type: string
+        health_status:
+          type: string
+        latency_ms:
+          type: number
+          format: float
+        packet_loss_rate:
+          type: number
+          format: float
+        attack_detected:
+          type: boolean
+
+    MeshState:
+      type: object
+      properties:
+        connected_nodes:
+          type: integer
+        isolated_nodes:
+          type: integer
+        average_latency_ms:
+          type: number
+          format: float
+
+    FrictionZone:
+      type: object
+      properties:
+        node_id:
+          type: string
+        severity:
+          type: string
+        description:
+          type: string
+
+    TimeUpAnchorRequest:
+      type: object
+      properties:
+        anchor_id:
+          type: string
+        time_window:
+          type: string
+        reason:
+          type: string
+
+    TimeUpAnchorResponse:
+      type: object
+      properties:
+        snapshot_state:
+          type: object
+        diff_analysis:
+          type: object
+
+    HeptafederationTopology:
+      type: object
+      description: Arquitectura de los nodos de la Heptafederación TAMV
+      properties:
+        federations:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationNode'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationLink'
+
+    FederationNode:
+      type: object
+      properties:
+        node_id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        location:
+          type: string
+
+    FederationLink:
+      type: object
+      properties:
+        from_node_id:
+          type: string
+        to_node_id:
+          type: string
+        link_type:
+          type: string
+
+    NodoCeroWorkflow:
+      type: object
+      description: Flujo de trabajo para la implementación del Nodo Cero en Real del Monte
+      properties:
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodoCeroStage'
+        owner:
+          type: string
+        status:
+          type: string
+
+    NodoCeroStage:
+      type: object
+      properties:
+        stage_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+
+security:
+  - IsabellaApiKey: []
+  - IsabellaTerritorialToken: []

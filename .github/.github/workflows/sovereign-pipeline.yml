@@ -1,0 +1,68 @@
+name: Sovereign Pipeline RDMX
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secret scan (TruffleHog)
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm ci
+        working-directory: server
+      - run: npm run lint
+      - run: npm audit --audit-level=high || true
+
+  test:
+    needs: security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm ci
+        working-directory: server
+      - run: npm run test
+      - run: npm run build
+      - run: npm run build
+        working-directory: server
+
+  factuality:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: node tools/prompt_quality/check_prompt_factuality.mjs
+        env:
+          API_URL: http://localhost:3000
+
+  deploy_canary:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: factuality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.NODE0_SSH_KEY }}
+      - run: ./tools/deploy/deploy_canary.sh
+      - run: ./tools/deploy/post_deploy_check.sh

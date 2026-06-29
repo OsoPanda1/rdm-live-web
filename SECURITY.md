@@ -1,53 +1,34 @@
-# RDM Digital LTOS — Política de Seguridad
+# RDM Digital LTOS — Postura de Seguridad
 
-RDM Digital LTOS es una plataforma territorial crítica para el ecosistema de Real del Monte. La seguridad de los datos, de los usuarios y de la infraestructura es prioritaria.
+## Modelo
+- **Frontend**: React/Vite SPA servida por Lovable hosting (HTTPS forzado, CDN).
+- **Backend**: Supabase Postgres + Edge Functions (Deno).
+- **Auth**: JWT bearer en `Authorization` header (no cookies de sesión).
 
-## Alcance
+## Controles activos
+- **RLS** en todas las tablas `public.*` con políticas explícitas por rol.
+- **GRANT** explícitos por tabla; `anon` sólo en lectura pública intencional.
+- **CSP** declarada vía `<meta http-equiv="Content-Security-Policy">` en `index.html`.
+- **HSTS** aplicado por el hosting de Lovable (no requiere meta tag).
+- **Referrer-Policy** + **Permissions-Policy** declarados en HTML.
+- **Validación de inputs** con Zod en formularios (RegistrarComercio, ratings).
+- **Rate-limit** ad-hoc en memoria por edge function (60 req/min/IP) — aceptado como mitigación parcial hasta contar con infraestructura dedicada.
+- **CORS** restrictivo en edge functions sensibles.
 
-- Repositorio `rdm-digital-ltos` y todos sus módulos.
-- Aplicaciones web (visitante, admin).
-- Servicios de dominio (IA, gemelo territorial, economía, analítica, cultura).
-- Supabase (Auth · Postgres · Storage · Edge Functions).
-- Despliegue en Cloudflare Pages / Workers.
+## CSRF
+No aplica: el stack usa **JWT bearer** (no cookies), por lo que el ataque CSRF clásico (forjar requests con la cookie de sesión del usuario) no es viable. Documentado intencionalmente.
 
-## Reportar una vulnerabilidad
-
-Envía un correo cifrado a **security@realdelmonte.example** con:
-
-- Descripción técnica reproducible.
-- Impacto estimado.
-- PoC (si aplica).
-
-Compromiso de respuesta:
-
-| Severidad | Acuse | Mitigación | Disclosure |
-|-----------|-------|------------|------------|
-| Crítica   | 24 h  | 72 h       | coordinado |
-| Alta      | 48 h  | 7 días     | coordinado |
-| Media     | 5 días| 30 días    | coordinado |
-| Baja      | 10 días| backlog   | a discreción |
-
-No realices pruebas destructivas, no accedas a datos de terceros, no hagas DoS.
-
-## Controles obligatorios
-
-1. **Secret hygiene**: ningún secreto en código. Service-role aislado en `*.server.ts`. CI ejecuta `gitleaks` + `trufflehog` en cada PR.
-2. **Zero Trust frontend**: el navegador solo usa la `publishable key`. Toda escritura privilegiada pasa por Edge Function autenticada que verifica `has_role()`.
-3. **RLS por defecto**: toda tabla pública en `public` tiene RLS habilitada y políticas explícitas; `USING (true)` está prohibido salvo lectura genuinamente pública.
-4. **Roles en tabla separada**: `user_roles` + función `SECURITY DEFINER` `has_role()`. Jamás en `profiles`.
-5. **CSP / HSTS / headers**: ver `public/_headers`.
-6. **Dependencias**: `npm audit --audit-level=high` bloquea merge; CodeQL semanal.
-7. **Backups**: PITR Supabase + verificación mensual de restore.
-8. **Observabilidad**: logs estructurados (JSON), Sentry para errores, PostHog para producto.
-
-## Roles
-
-- **Security lead**: define política, revisa hallazgos, aprueba excepciones.
-- **DPO**: cumplimiento de privacidad y respuesta a titulares de datos.
-- **On-call**: responde incidentes según `docs/RUNBOOK.md`.
+## Pagos
+- Stripe Checkout en modo redirect (PCI handling delegado).
+- Webhooks firmados (`STRIPE_WEBHOOK_SECRET`).
+- `verify_jwt = false` solo en `stripe-webhook` y endpoints públicos de ingest/metrics.
 
 ## Auditoría
+- `tracking_events` y `federation_health_log` persisten bitácora.
+- `system_alerts` registra umbrales excedidos.
+- Linter Supabase ejecutado tras cada migración.
 
-- Logs de auth + admin retenidos 90 días.
-- Migraciones SQL revisadas en PR por al menos 1 reviewer con rol `db-reviewer`.
-- Cambios a políticas RLS requieren PR etiquetado `security-review` y aprobación del security lead.
+## Limitaciones conocidas (pre-producción real)
+- Rate-limit es por instancia de edge function (memoria local), no global.
+- Falta WAF gestionado y DDoS protection a nivel de red.
+- PQC (post-quantum) está en roadmap (Tomo XII), no implementado.

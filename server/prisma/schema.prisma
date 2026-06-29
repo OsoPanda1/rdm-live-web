@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================
+// GEMELOS DIGITALES · TELEMETRÍA & OBSERVABILIDAD
+// =====================================================
+
+model DigitalTwin {
+  id          String     @id @default(cuid())
+  modelType   TwinType
+  modelId     String?
+  sourceId    String
+  status      TwinStatus @default(ACTIVE)
+
+  /// Telemetría cruda (sensores, eventos, latencias, métricas de salud)
+  telemetry   Json       @default("{}")
+  /// Propiedades “lentas”: configuración, capacidades declaradas, límites
+  properties  Json       @default("{}")
+  /// Metadata extendida: etiquetas, versión de modelo, checksums, etc.
+  metadata    Json       @default("{}")
+
+  /// Huella para futuros esquemas híbridos pre/post‑cuántum (ej. hash en MSR)
+  quantumFingerprint String? @db.VarChar(255)
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([sourceId, modelType])
+  @@index([modelType, status])
+  @@index([status, updatedAt])
+}
+
+enum TwinType {
+  PLACE_TWIN
+  MERCHANT_TWIN
+  ROUTE_TWIN
+  AGENT_TWIN
+}
+
+enum TwinStatus {
+  ACTIVE
+  INACTIVE
+  SIMULATING
+  MAINTENANCE
+}
+
+// =====================================================
+// ENTIDADES TURÍSTICAS
+// =====================================================
+
+model Place {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String    @db.Text
+  type        String
+  latitude    Float
+  longitude   Float
+  altitude    Float?
+  city        String    @default("Real del Monte")
+  state       String    @default("Hidalgo")
+  country     String    @default("México")
+  metadata    Json      @default("{}")
+  isFeatured  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([city])
+  @@index([state])
+  @@index([latitude, longitude])
+  @@index([type, isFeatured])
+}
+
+model Merchant {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  category        String
+  immersionLevel  Int      @default(1)
+  description     String   @db.Text
+  priceRange      String
+  address         String
+  latitude        Float?
+  longitude       Float?
+  city            String   @default("Real del Monte")
+  state           String   @default("Hidalgo")
+  country         String   @default("México")
+  phone           String?
+  website         String?
+  mainImage       String?
+  tags            String[]
+  pciCompliance   Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([category, isActive])
+  @@index([city])
+  @@index([latitude, longitude])
+}
+
+model Route {
+  id           String      @id @default(cuid())
+  slug         String      @unique
+  name         String
+  theme        String
+  difficulty   String      @default("EASY")
+  fitnessScore Float       @default(0.0)
+  stops        RouteStop[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model RouteStop {
+  id      String @id @default(cuid())
+  order   Int
+  placeId String
+  routeId String
+
+  route   Route  @relation(fields: [routeId], references: [id])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String   @db.Text
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  image       String?
+}
+
+model Legend {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  summary     String
+  content     String   @db.Text
+  tags        String[]
+}
+
+model Saying {
+  id          String   @id @default(cuid())
+  phrase      String
+  meaning     String   @db.Text
+  origin      String?
+}
+
+// =====================================================
+// USUARIOS Y COMERCIO
+// =====================================================
+
+enum Role {
+  VISITOR
+  MERCHANT
+  ADMIN
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String?
+  role         Role          @default(VISITOR)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  donations    Donation[]
+  interactions Interaction[]
+  aiLogs       AiInteractionLog[]
+}
+
+model Donation {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+
+  amount     Int
+  currency   String   @default("mxn")
+  provider   String   @default("stripe")
+  providerId String
+
+  /// requestId que generas en la ruta /donations (para trazabilidad completa)
+  requestId  String?  @db.VarChar(100)
+
+  /// Hash o ID externo (p.ej. ancla en MSR Blockchain / Evidence Chain)
+  ledgerAnchor String? @db.VarChar(255)
+
+  /// Metadatos para telemetría / observabilidad (IP, UA, tags, etc.)
+  telemetry  Json     @default("{}")
+
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([provider, providerId])
+  @@index([userId, createdAt])
+}
+
+model Interaction {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+
+  kind       String
+  businessId String?
+  context    String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, kind, createdAt])
+}
+
+// =====================================================
+// IA / REALITO · TELEMETRÍA COGNITIVA
+// =====================================================
+
+model AiInteractionLog {
+  id          String   @id @default(cuid())
+  userId      String
+  channel     String         // web, whatsapp, kiosk, etc.
+  sourceModel String         // modelo de IA
+  prompt      String   @db.Text
+  response    String   @db.Text
+  latencyMs   Int
+  createdAt   DateTime @default(now())
+
+  /// IP, UA, geolocalización aproximada, flags de moderación, etc.
+  metadata    Json     @default("{}")
+
+  /// Perfil de seguridad criptográfica de la sesión (pre/híbrido/post‑Q)
+  cryptoProfile String? @db.VarChar(50)
+
+  @@index([createdAt])
+  @@index([userId, channel])
+}
+
+// =====================================================
+// ARCHIVO SONORO DIGITAL · MÚSICA
+// =====================================================
+
+model MusicTrack {
+  id          String   @id @default(uuid())
+  title       String
+  artist      String
+  description String?
+
+  coverUrl    String
+  audioUrl    String
+
+  active      Boolean  @default(true)
+
+  // Para métricas de uso por pista
+  playCount   Int      @default(0)
+  lastPlayedAt DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, createdAt])
+  @@index([artist, active])
+}

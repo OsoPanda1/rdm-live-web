@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
 
-const GradientSeparator = ({ className = "", animated = false }: { className?: string; animated?: boolean }) => {
-  if (animated) {
+interface GradientSeparatorProps {
+  className?: string;
+  animated?: boolean;
+  variant?: "gold" | "electric" | "full" | "default";
+}
+
+const GradientSeparator = ({ className = "", animated = false, variant = "default" }: GradientSeparatorProps) => {
+  if (animated || variant === "full") {
     return (
       <div className={`relative w-full my-0 ${className}`}>
         <div className="separator-animated w-full" />
@@ -15,7 +21,18 @@ const GradientSeparator = ({ className = "", animated = false }: { className?: s
     );
   }
 
-  return <div className={`separator-gradient w-full my-0 ${className}`} />;
+  const gradientStyle = variant === "gold"
+    ? "linear-gradient(90deg, transparent 0%, hsl(43,80%,55%) 20%, hsl(25,55%,45%) 80%, transparent 100%)"
+    : variant === "electric"
+    ? "linear-gradient(90deg, transparent 0%, hsl(210,100%,55%) 20%, hsl(210,100%,45%) 80%, transparent 100%)"
+    : undefined;
+
+  return (
+    <div
+      className={`w-full my-0 ${variant === "default" ? "separator-gradient" : ""} ${className}`}
+      style={gradientStyle ? { height: "1px", background: gradientStyle } : undefined}
+    />
+  );
 };
 
 export default GradientSeparator;

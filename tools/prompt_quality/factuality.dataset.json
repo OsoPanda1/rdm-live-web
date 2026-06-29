@@ -1,0 +1,10 @@
+[
+  {
+    "question": "¿Cuál es el horario de Mina de Acosta?",
+    "expected": ["Mina de Acosta", "horario", "10:00-17:00"]
+  },
+  {
+    "question": "Dame una ruta base en Real del Monte",
+    "expected": ["Ruta sugerida", "Plaza", "Mina de Acosta"]
+  }
+]

@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install root deps
+        run: npm ci
+
+      - name: Install server deps
+        run: npm ci
+        working-directory: server
+
+      - name: Install submodule deps
+        run: |
+          for dir in packages/*; do
+            if [ -f "$dir/package.json" ]; then
+              echo "Installing deps in $dir"
+              (cd "$dir" && npm ci 2>/dev/null || npm install 2>/dev/null || echo "skip $dir")
+            fi
+          done
+
+      - name: Roadmap sync (docs ↔ public/roadmap-rdmx.json)
+        run: npm run roadmap:sync
+
+      - name: Frontend lint
+        run: npm run lint
+
+      - name: Frontend tests
+        run: npm run test
+
+      - name: Frontend build
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E tests (Playwright, headless)
+        run: npm run test:e2e
+        env:
+          CI: "true"
+
+      - name: Backend build
+        run: npm run build
+        working-directory: server
+
+      - name: Prisma migrate deploy (staging-compatible)
+        if: ${{ secrets.STAGING_DATABASE_URL != '' }}
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        run: npx prisma migrate deploy
+        working-directory: server

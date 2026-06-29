@@ -30,6 +30,8 @@ import legadoMp3 from "@/assets/musica/Legado (1).mp3"
 import patioDetierraMp3 from "@/assets/musica/patio_detierra.mp3"
 import puroDolorMp3 from "@/assets/musica/puro_dolor.mp3"
 import shootingStarMp3 from "@/assets/musica/shooting_star.mp3"
+import rdmYoteadoroMp3 from "@/assets/musica/rdm_yoteadoro.mp3"
+import rdmintroMp3 from "@/assets/musica/rdmintro (2).mp3"
 
 const PLAYLIST: Track[] = [
   {
@@ -136,14 +138,24 @@ const PLAYLIST: Track[] = [
     mood: "Inspirador",
   },
   {
-    id: "tumirada_musica",
-    title: "Tu Mirada (Estudio)",
-    artist: "Edwin Castillo",
-    description: "Versión de estudio con arreglos acústicos.",
-    src: tumiradaMp3,
-    duration: 235,
-    bpm: 72,
-    mood: "Melancólico",
+    id: "rdm_yoteadoro",
+    title: "RDM Yo Te Adoro",
+    artist: "RDM Digital",
+    description: "Declaración de amor al Pueblo Mágico de Real del Monte.",
+    src: rdmYoteadoroMp3,
+    duration: 210,
+    bpm: 76,
+    mood: "Emotivo",
+  },
+  {
+    id: "rdm_intro",
+    title: "RDM Intro (Versión Extendida)",
+    artist: "RDM Digital",
+    description: "Melodía de apertura extendida de la plataforma RDM Digital.",
+    src: rdmintroMp3,
+    duration: 195,
+    bpm: 70,
+    mood: "Épico",
   },
 ]
 
@@ -536,22 +548,7 @@ export default function Musica() {
                   ))}
                 </div>
 
-                {/* Descargar todo */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="mt-4 flex justify-end"
-                >
-                  <a
-                    href={`${R2_BASE}/legado_1.mp3`}
-                    download="Legado_de_Real_del_Monte.mp3"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#00D4FF] hover:bg-[#00D4FF]/10 transition-all"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    Descargar todo (.zip próximamente)
-                  </a>
-                </motion.div>
+                {/* Descargar todo (zip próximamente) */}
               </div>
 
               {/* Donaciones */}

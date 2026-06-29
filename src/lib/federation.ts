@@ -59,7 +59,7 @@ export interface FederatedEntity {
 // Generar hash de federación
 export const generateFederationHash = (): string => {
   const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 10);
+  const random = crypto.randomUUID().replace(/-/g, '').substring(0, 8);
   const prefix = 'TF'; // Triple Federado
   return `${prefix}-${timestamp}-${random}`.toUpperCase();
 };

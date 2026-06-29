@@ -6,12 +6,16 @@ export interface ValidationResult {
   errors: string[];
 }
 
-const SQL_INJECTION = /[;'"\\]|(--)|(\/\*)|(\*\/)|(%27)|(%22)|(%3B)/i;
-const XSS_PATTERNS = /<script|javascript:|onerror=|onload=|onclick=|onmouseover|alert\(|prompt\(|confirm\(/i;
-const COMMAND_INJECTION = /[|&;$`\\]|(\|\|)|(&&)|(> )|(< )/i;
-const PATH_TRAVERSAL = /\.\.\/|\.\.\\|~\/|~\\|%2e%2e/i;
+const SQL_INJECTION = /[;'"\\]|(--)|(\/\*)|(\*\/)|(%27)|(%22)|(%3B)/gi;
+const XSS_PATTERNS = /<script[\s>]|javascript:|onerror\s*=|onload\s*=|onclick\s*=|onmouseover\s*=|alert\s*\(|prompt\s*\(|confirm\s*\(/i;
+const COMMAND_INJECTION = /[|&;$`\\]|(\|\|)|(&&)|(>\s*)|(<\s*)/gi;
+const PATH_TRAVERSAL = /\.\.[\/\\]|~[\/\\]|%2e%2e[\/\\]?|%2e%2e%2f|%2e%2e%5c/i;
 
 const MAX_STRING_LENGTH = 10000;
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 export function sanitizeString(input: string, maxLength = MAX_STRING_LENGTH): ValidationResult {
   const errors: string[] = [];
@@ -36,9 +40,12 @@ export function sanitizeString(input: string, maxLength = MAX_STRING_LENGTH): Va
 
   if (XSS_PATTERNS.test(sanitized)) {
     errors.push("XSS pattern detected");
-    sanitized = sanitized.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
-    sanitized = sanitized.replace(/javascript:/gi, "");
-    sanitized = sanitized.replace(/on\w+=/gi, "");
+    sanitized = sanitized.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "");
+    sanitized = sanitized.replace(/<script\b[^>]*\/?>/gi, "");
+    sanitized = sanitized.replace(/[\s"'`]javascript\s*:/gi, " blocked:");
+    sanitized = sanitized.replace(/[\s"'`]on\w+\s*=\s*(['"]?)[^'"&\s>]*\1?/gi, " ");
+    sanitized = sanitized.replace(/[\s"'`]on\w+\s*=\s*&[^;]+;/gi, " ");
+    sanitized = sanitized.replace(/formaction\s*=/gi, "disabled-");
   }
 
   if (COMMAND_INJECTION.test(sanitized)) {
@@ -48,7 +55,10 @@ export function sanitizeString(input: string, maxLength = MAX_STRING_LENGTH): Va
 
   if (PATH_TRAVERSAL.test(sanitized)) {
     errors.push("Path traversal detected");
-    sanitized = sanitized.replace(/\.\.(\/|\\)/g, "");
+    sanitized = sanitized.replace(/\.\.[\/\\]/g, "");
+    sanitized = sanitized.replace(/%2e%2e[\/\\]?/gi, "");
+    sanitized = sanitized.replace(/%2f/gi, "");
+    sanitized = sanitized.replace(/%5c/gi, "");
   }
 
   const final = sanitized.trim();

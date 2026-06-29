@@ -1,5 +1,4 @@
 
-import React from "react";
 import Layout from "@/modules/core/Layout";
 import Blueprint from "@/modules/documentation/Blueprint";
 import BackgroundEffects from "@/modules/interfazSensorial/BackgroundEffects";

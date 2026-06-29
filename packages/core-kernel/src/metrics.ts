@@ -578,10 +578,22 @@ export function getMetricsSnapshot(): MetricsSnapshot {
  * PROMETHEUS EXPORT
  * ============================================================================ */
 
+function sanitizePrometheusValue(v: string): string {
+  return String(v)
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "\\r")
+}
+
+function sanitizePrometheusName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_:]/g, "_")
+}
+
 function formatLabels(labels?: MetricLabels): string {
   if (!labels || Object.keys(labels).length === 0) return ""
   const pairs = Object.entries(labels).map(
-    ([k, v]) => `${k}="${String(v).replace(/"/g, '\\"')}"`,
+    ([k, v]) => `${sanitizePrometheusName(k)}="${sanitizePrometheusValue(v)}"`,
   )
   return `{${pairs.join(",")}}`
 }
@@ -592,20 +604,22 @@ export function exportPrometheus(): string {
 
   // Counters
   for (const metric of counters.values()) {
-    if (!typeEmitted.has(metric.name)) {
-      lines.push(`# TYPE ${metric.name} counter`)
-      typeEmitted.add(metric.name)
+    const safeName = sanitizePrometheusName(metric.name)
+    if (!typeEmitted.has(safeName)) {
+      lines.push(`# TYPE ${safeName} counter`)
+      typeEmitted.add(safeName)
     }
-    lines.push(`${metric.name}${formatLabels(metric.labels)} ${metric.value}`)
+    lines.push(`${safeName}${formatLabels(metric.labels)} ${metric.value}`)
   }
 
   // Gauges
   for (const metric of gauges.values()) {
-    if (!typeEmitted.has(metric.name)) {
-      lines.push(`# TYPE ${metric.name} gauge`)
-      typeEmitted.add(metric.name)
+    const safeName = sanitizePrometheusName(metric.name)
+    if (!typeEmitted.has(safeName)) {
+      lines.push(`# TYPE ${safeName} gauge`)
+      typeEmitted.add(safeName)
     }
-    lines.push(`${metric.name}${formatLabels(metric.labels)} ${metric.value}`)
+    lines.push(`${safeName}${formatLabels(metric.labels)} ${metric.value}`)
   }
 
   // Histograms (clásicos Prometheus)

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta, PAGE_SEO } from "@/components/SEOMeta";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MessageCircle, Share2, MapPin, Calendar, Clock, TrendingUp, Users, Sparkles, Tag, BookOpen, Image } from "lucide-react";
+import { Heart, MessageCircle, Share2, MapPin, Clock, TrendingUp, Users, Sparkles, BookOpen } from "lucide-react";
 
 interface FeedPost {
   id: string;

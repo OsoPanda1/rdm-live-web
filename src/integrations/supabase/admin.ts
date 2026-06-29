@@ -13,5 +13,3 @@ throw new Error(
   "[supabase/admin] This module is server-only and has moved to admin.server.ts. " +
     "Frontend code must NEVER import the service-role client.",
 );
-
-export {};

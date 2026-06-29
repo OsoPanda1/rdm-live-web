@@ -13,7 +13,7 @@
   "icons": [
     { "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" },
     { "src": "/images/rdm-hero.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/images/rdm-hero.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    { "src": "/images/rdm-hero.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
   ],
   "screenshots": [],
   "shortcuts": [

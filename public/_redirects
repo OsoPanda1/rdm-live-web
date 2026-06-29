@@ -1,3 +1,5 @@
-# SPA fallback para React Router — Cloudflare Pages lo maneja automaticamente
-# al detectar react-router como framework. No necesita regla /* /index.html.
+# SPA fallback — Cloudflare Pages detecta react-router, pero esta regla explicita
+# asegura el comportamiento en cualquier entorno.
+/* /index.html 200
+
 # Redireccion apex→www se configura en Cloudflare Dashboard > Page Rules.

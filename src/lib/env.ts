@@ -7,6 +7,7 @@
  *  - Never inline `process.env` or `import.meta.env` outside this module.
  */
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const clientSchema = z.object({
   VITE_SUPABASE_URL: z.string().url().optional(),
@@ -31,8 +32,8 @@ function parseClient(): ClientEnv {
   const parsed = clientSchema.safeParse(raw);
   if (!parsed.success) {
     // Don't crash the bundle — degrade gracefully and log once.
-    if (typeof console !== "undefined") {
-      console.error("[env] Invalid client env", parsed.error.flatten().fieldErrors);
+    if (typeof logger !== "undefined") {
+      logger.error("[env] Invalid client env", parsed.error.flatten().fieldErrors);
     }
     return clientSchema.parse({});
   }

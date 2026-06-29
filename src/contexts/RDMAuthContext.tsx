@@ -57,15 +57,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
 
   const loadProfileAndRoles = useCallback(
     async (uid: string) => {
-      if (!supabase) {
-        setError(
-          '[auth] Supabase no está disponible; no se pueden cargar perfiles ni roles en este entorno.',
-        )
-        setProfile(null)
-        setRoles([])
-        return
-      }
-
       try {
         const [
           { data: profileData, error: profileError },
@@ -104,26 +95,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let isMounted = true
-
-    // Protección inicial: si el cliente Supabase no se pudo inicializar (Cloudflare sin envs, etc.),
-    // no colapsamos toda la app; deshabilitamos auth y exponemos estado explícito.
-    if (!supabase) {
-      if (isMounted) {
-        setIsSupabaseReady(false)
-        setLoading(false)
-        setSession(null)
-        setUser(null)
-        setProfile(null)
-        setRoles([])
-        setError(
-          '[auth] Supabase no está inicializado. La autenticación está deshabilitada, ' +
-            'pero el resto de la aplicación puede seguir funcionando.',
-        )
-      }
-      return () => {
-        isMounted = false
-      }
-    }
 
     setIsSupabaseReady(true)
 
@@ -197,13 +168,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
   }, [loadProfileAndRoles])
 
   const signInEmail = async (email: string, password: string) => {
-    if (!supabase) {
-      const msg =
-        '[auth] Supabase no está disponible; no es posible iniciar sesión con email/password en este entorno.'
-      setError(msg)
-      return { error: msg }
-    }
-
     setLoading(true)
     setError(null)
     try {
@@ -244,13 +208,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
     password: string,
     displayName: string,
   ) => {
-    if (!supabase) {
-      const msg =
-        '[auth] Supabase no está disponible; no es posible registrarse con email/password en este entorno.'
-      setError(msg)
-      return { error: msg }
-    }
-
     setLoading(true)
     setError(null)
     try {
@@ -288,12 +245,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
   const signInGoogle = async () => {
     setError(null)
 
-    if (!supabase) {
-      const msg = '[auth] Supabase no disponible; Google OAuth deshabilitado.'
-      setError(msg)
-      return { error: msg }
-    }
-
     try {
       const redirectTo =
         import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_REDIRECT_URL ??
@@ -321,13 +272,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    if (!supabase) {
-      setError(
-        '[auth] Supabase no está disponible; signOut no es posible en este entorno.',
-      )
-      return
-    }
-
     setLoading(true)
     setError(null)
     try {

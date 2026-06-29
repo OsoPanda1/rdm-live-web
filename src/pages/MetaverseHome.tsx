@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { 
   Search, Bell, Wallet, Globe, User, Settings, CreditCard, 
   ShoppingBag, Shield, Home, Users, Music, Sparkles, 
-  GraduationCap, Image, Gavel, Bot, PawPrint, Store,
-  TrendingUp, Award, Ticket, Zap, MessageCircle, Video
+  GraduationCap, Image, Gavel, Bot,
+  TrendingUp, Award, Ticket, MessageCircle, Video
 } from "lucide-react";
 import Matrix3DEffect from "@/components/metaverse/Matrix3DEffect";
 import RetractableToolbar from "@/components/metaverse/RetractableToolbar";

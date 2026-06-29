@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rdm-digital-v1';
+const CACHE_NAME = 'rdm-digital-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -6,13 +6,15 @@ const STATIC_ASSETS = [
   '/favicon.ico',
 ];
 
-const API_CACHE = 'rdm-api-v1';
-const ASSET_CACHE = 'rdm-assets-v1';
+const API_CACHE = 'rdm-api-v2';
+const ASSET_CACHE = 'rdm-assets-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+      return cache.addAll(STATIC_ASSETS).catch((err) => {
+        console.warn('[SW] Pre-cache falló, continuando de todos modos:', err);
+      });
     }),
   );
   self.skipWaiting();
@@ -42,26 +44,28 @@ self.addEventListener('fetch', (event) => {
 
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
-      fetch(event.request).then((response) => {
-        const cloned = response.clone();
-        caches.open(API_CACHE).then((cache) => {
-          cache.put(event.request, cloned);
-        });
-        return response;
-      }).catch(() => caches.match(event.request)),
+      caches.open(API_CACHE).then((cache) =>
+        cache.match(event.request).then((cached) => {
+          const fetchPromise = fetch(event.request).then((response) => {
+            cache.put(event.request, response.clone());
+            return response;
+          }).catch(() => cached);
+          return cached ?? fetchPromise;
+        }),
+      ),
     );
     return;
   }
 
-  if (url.pathname.match(/\.(css|js|png|jpg|jpeg|svg|gif|ico|woff2?|ttf)$/)) {
+  if (url.pathname.match(/\.(css|js|png|jpg|jpeg|svg|gif|ico|woff2?|ttf|webp|avif)$/)) {
     event.respondWith(
       caches.open(ASSET_CACHE).then((cache) => {
         return cache.match(event.request).then((cached) => {
-          const fetched = fetch(event.request).then((response) => {
+          if (cached) return cached;
+          return fetch(event.request).then((response) => {
             cache.put(event.request, response.clone());
             return response;
           });
-          return cached ?? fetched;
         });
       }),
     );

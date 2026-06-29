@@ -68,7 +68,7 @@ const MOCK_TRANSACTIONS: Transaction[] = [
 const BancoTAMV = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [balance] = useState(15750.50);
-  const [accountNumber] = useState('TAMV-2024-' + Math.random().toString(36).substring(2, 8).toUpperCase());
+  const [accountNumber] = useState(() => 'TAMV-2024-' + crypto.randomUUID().slice(0, 8).toUpperCase());
 
   const getTransactionIcon = (type: string) => {
     switch (type) {

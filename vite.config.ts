@@ -15,9 +15,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [react(), mode === 'development' && componentTagger()].filter(Boolean),
-  esbuild: {
-    drop: mode === 'production' ? ['console', 'debugger'] : [],
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -45,7 +42,6 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     target: 'es2020',
     cssMinify: 'lightningcss',
-    minify: 'esbuild',
     rollupOptions: {
       external: [/@sentry\//, /posthog-js/],
       output: {

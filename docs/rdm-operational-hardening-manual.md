@@ -43,13 +43,13 @@ Norma:
 - ESLint debe bloquear imports server-only desde frontend.
 - La llave debe vivir en variables protegidas de Cloudflare/Vault, nunca en código fuente.
 
-### P0-03 Cloudflare
+### P0-03 Vercel
 
 Norma:
 
-- Debe existir configuración formal de Cloudflare Pages/Workers.
+- Debe existir configuración formal de Vercel deployment.
 - Deben existir entornos separados de preview/staging y production.
-- Secrets se configuran con Cloudflare dashboard o `wrangler pages secret put`; nunca se versionan.
+- Secrets se configuran en Vercel dashboard → Project Settings → Environment Variables; nunca se versionan.
 
 ### P0-04 Observabilidad
 

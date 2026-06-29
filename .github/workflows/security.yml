@@ -154,7 +154,7 @@ jobs:
           category: "/language:javascript-typescript/${{ matrix.app }}"
 
   #
-  # 4) Policy-as-code / Zero‑trust de configuración (gitleaks.toml, .npmrc, wrangler, vercel, supabase)
+  # 4) Policy-as-code / Zero‑trust de configuración (gitleaks.toml, .npmrc, vercel.json, supabase)
   #
   policy:
     name: Policy-as-Code · Config Hardening

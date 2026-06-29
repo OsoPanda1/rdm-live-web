@@ -12,7 +12,7 @@
 ## 2. Incidente: filtración de service-role key
 
 1. Rotar inmediatamente en Supabase → Settings → API → Reset service_role.
-2. `wrangler pages secret put SUPABASE_SERVICE_ROLE_KEY` con la nueva.
+2. Actualizar en Vercel dashboard → Project Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` con la nueva.
 3. Revocar sesiones admin: `auth.admin.signOut(user_id)`.
 4. `git log -p -- src/integrations/supabase/admin*` para auditar accesos.
 5. Notificar a DPO + abrir post-mortem.

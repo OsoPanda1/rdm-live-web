@@ -387,9 +387,11 @@ const AppInner = () => {
         <AuthStatusBanner />
         <Toaster />
         <Sonner />
-        {showIntro && !introComplete && (
-          <CinematicIntro onEnter={handleIntroComplete} />
-        )}
+        <AnimatePresence>
+          {showIntro && !introComplete && (
+            <CinematicIntro onEnter={handleIntroComplete} />
+          )}
+        </AnimatePresence>
           {(!showIntro || introComplete) && (
             <>
               <AudioPlayerProvider>

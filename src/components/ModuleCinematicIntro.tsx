@@ -26,6 +26,7 @@ export function ModuleCinematicIntro({
 
   return (
     <motion.div
+      key="module-cinematic-intro"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

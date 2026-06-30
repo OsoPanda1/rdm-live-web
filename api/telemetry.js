@@ -1,45 +1,68 @@
-// api/telemetry.js — Vercel Edge Function for Nodo Cero telemetry ingestion
-// Receives telemetry POSTs from node-core/server_core.py and stores in Supabase
+// api/telemetry.js — Vercel Edge Function
+// DOCUMENTO MAESTRO INTERCONECTADO DE SOBERANÍA DIGITAL — Capítulo IV
+// Endpoint Perimetral de Telemetría del Nodo Cero
+// Cabeceras defensivas: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, CORS
+// Cache-Control: no-store, max-age=0, must-revalidate
 
 /**
  * @param {Request} request
  */
 export default async function handler(request) {
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
+  // --- Cabeceras defensivas (Capítulo IV) ---
+  const defensiveHeaders = {
+    "Content-Security-Policy":
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'",
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Cache-Control": "no-store, max-age=0, must-revalidate",
+    "Access-Control-Allow-Origin": "https://www.visitarealdelmonte.online",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Content-Type": "application/json",
   };
 
+  // Handle preflight
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 204, headers: defensiveHeaders });
   }
 
   try {
+    // --- Determinar topology_state ---
+    const netflowDbUrl = process.env.NETFLOW_DB_SUPABASE_URL;
+    const topologyState = netflowDbUrl ? "FEDERATED_ACTIVE" : "STANDALONE_MODAL";
+
+    // --- Construir respuesta soberana ---
+    const payload = {
+      infra_status: "operational",
+      node_id: "nodo-cero-001",
+      federation_schema_count: 7,
+      topology_state: topologyState,
+      edge_timestamp: new Date().toISOString(),
+      service: "nodo-cero-telemetry",
+    };
+
     if (request.method === "POST") {
       const body = await request.json();
-
-      // Validate required fields
-      const requiredFields = ["flows_total", "packets_rx", "bytes_total", "cpu_percent", "memory_percent", "active_connections"];
+      const requiredFields = [
+        "flows_total", "packets_rx", "bytes_total",
+        "cpu_percent", "memory_percent", "active_connections",
+      ];
       for (const field of requiredFields) {
         if (body[field] === undefined) {
-          return new Response(JSON.stringify({ error: `Missing required field: ${field}` }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: `Missing required field: ${field}`, ...payload }),
+            { status: 400, headers: defensiveHeaders },
+          );
         }
       }
 
-      // Store in Supabase if URL/key exist
+      // Store in Supabase if NETFLOW_DB_ credentials exist
       let stored = false;
-      const supabaseUrl = process.env.VITE_SUPABASE_URL;
-      const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
-
-      if (supabaseUrl && supabaseKey) {
+      if (netflowDbUrl && process.env.NETFLOW_DB_SUPABASE_ANON_KEY) {
         try {
           const { createClient } = await import("@supabase/supabase-js");
-          const supabase = createClient(supabaseUrl, supabaseKey);
-
+          const supabase = createClient(netflowDbUrl, process.env.NETFLOW_DB_SUPABASE_ANON_KEY);
           const { error } = await supabase.from("telemetry_logs").insert({
             flows_total: body.flows_total,
             packets_rx: body.packets_rx,
@@ -51,45 +74,26 @@ export default async function handler(request) {
             node_id: body.node_id || "nodo-cero-001",
             status: body.status || "operational",
           });
-
           if (!error) stored = true;
-        } catch (dbError) {
-          // Supabase not available — return telemetry without persistence
+        } catch (_) {
+          // Supabase no disponible — responder sin persistencia
         }
       }
 
-      return new Response(JSON.stringify({
-        accepted: true,
-        stored,
-        timestamp: new Date().toISOString(),
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ accepted: true, stored, ...payload }),
+        { status: 200, headers: defensiveHeaders },
+      );
     }
 
-    if (request.method === "GET") {
-      // Return latest telemetry or health status
-      return new Response(JSON.stringify({
-        service: "nodo-cero-telemetry",
-        status: "operational",
-        timestamp: new Date().toISOString(),
-        docs: "POST telemetry data or GET health",
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // GET — health check
+    return new Response(JSON.stringify(payload), { status: 200, headers: defensiveHeaders });
 
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: err.message, infra_status: "error", node_id: "nodo-cero-001" }),
+      { status: 500, headers: defensiveHeaders },
+    );
   }
 }
 

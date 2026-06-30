@@ -31,6 +31,6 @@ Estado tras hardening P0 (este PR):
 
 1. Crear cuentas Sentry + PostHog → poner DSN/keys en Vercel Environment Variables.
 2. Auditar las 8 migraciones SQL: eliminar políticas `USING (true)` salvo justificación.
-3. Migrar whitelist admin (`apps/admin`) a tabla `user_roles` con `has_role()`.
+3. Migrar whitelist admin a tabla `user_roles` con `has_role()`.
 4. Reemplazar `console.*` por `logger.*` con codemod (`npx jscodeshift -t scripts/console-to-logger.ts src`).
 5. Añadir Playwright E2E para flows: login, IA chat, mapa, admin CRUD.

@@ -18,20 +18,6 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@geo-engine': path.resolve(__dirname, './packages/geo-engine/src'),
-      '@core-kernel': path.resolve(__dirname, './packages/core-kernel/src'),
-      '@data-models': path.resolve(__dirname, './packages/data-models/src'),
-      '@ui-kit': path.resolve(__dirname, './packages/ui-kit/src'),
-      '@ai-core': path.resolve(__dirname, './services/ai-core/src'),
-      '@twin': path.resolve(__dirname, './services/territorial-twin/src'),
-      '@economy': path.resolve(__dirname, './services/economy/src'),
-      '@analytics': path.resolve(__dirname, './services/analytics/src'),
-      '@culture': path.resolve(__dirname, './services/culture/src'),
-      '@infra/ai-provider': path.resolve(__dirname, './infra/ai-provider/src'),
-      '@territorial-sensing': path.resolve(
-        __dirname,
-        './services/territorial-sensing/src',
-      ),
     },
     dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
   },

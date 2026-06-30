@@ -20,72 +20,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@geo-engine": [
-        "./packages/geo-engine/src/index.ts"
-      ],
-      "@geo-engine/*": [
-        "./packages/geo-engine/src/*"
-      ],
-      "@core-kernel": [
-        "./packages/core-kernel/src/index.ts"
-      ],
-      "@core-kernel/*": [
-        "./packages/core-kernel/src/*"
-      ],
-      "@data-models": [
-        "./packages/data-models/src/index.ts"
-      ],
-      "@data-models/*": [
-        "./packages/data-models/src/*"
-      ],
-      "@ui-kit": [
-        "./packages/ui-kit/src/index.ts"
-      ],
-      "@ui-kit/*": [
-        "./packages/ui-kit/src/*"
-      ],
-      "@ai-core": [
-        "./services/ai-core/src/index.ts"
-      ],
-      "@ai-core/*": [
-        "./services/ai-core/src/*"
-      ],
-      "@twin": [
-        "./services/territorial-twin/src/index.ts"
-      ],
-      "@twin/*": [
-        "./services/territorial-twin/src/*"
-      ],
-      "@economy": [
-        "./services/economy/src/index.ts"
-      ],
-      "@economy/*": [
-        "./services/economy/src/*"
-      ],
-      "@analytics": [
-        "./services/analytics/src/index.ts"
-      ],
-      "@analytics/*": [
-        "./services/analytics/src/*"
-      ],
-      "@culture": [
-        "./services/culture/src/index.ts"
-      ],
-      "@culture/*": [
-        "./services/culture/src/*"
-      ],
-      "@infra/ai-provider": [
-        "./infra/ai-provider/src/index.ts"
-      ],
-      "@infra/ai-provider/*": [
-        "./infra/ai-provider/src/*"
-      ],
-      "@territorial-sensing": [
-        "./services/territorial-sensing/src/index.ts"
-      ],
-      "@territorial-sensing/*": [
-        "./services/territorial-sensing/src/*"
       ]
     },
     "skipLibCheck": true,
@@ -97,10 +31,7 @@
     "useDefineForClassFields": true
   },
   "include": [
-    "src",
-    "packages/*/src",
-    "services/*/src",
-    "infra/*/src"
+    "src"
   ],
   "exclude": [
     "src/integrations/supabase/types.ts"

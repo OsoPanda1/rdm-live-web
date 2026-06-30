@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Activity, Shield, Eye, Cpu, Sparkles, Network } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FooterSection from "@/components/FooterSection";
+import { FooterSection } from "@/components/FooterSection";
 import SEOMeta from "@/components/SEOMeta";
 import {
   SENTINELS_MIRROR,

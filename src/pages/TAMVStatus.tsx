@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Activity, Cpu, Database, Shield, Radio } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FooterSection from "@/components/FooterSection";
+import { FooterSection } from "@/components/FooterSection";
 import SEOMeta from "@/components/SEOMeta";
 import { apiGet } from "@/lib/apiClient";
 

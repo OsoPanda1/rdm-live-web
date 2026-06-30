@@ -13,7 +13,7 @@ import {
   Compass,
 } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FooterSection from "@/components/FooterSection";
+import { FooterSection } from "@/components/FooterSection";
 import { SEOMeta } from "@/components/SEOMeta";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";

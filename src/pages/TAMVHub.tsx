@@ -9,7 +9,7 @@ import {
   Network, Cpu, ScrollText, Database, Radio, Lock,
 } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FooterSection from "@/components/FooterSection";
+import { FooterSection } from "@/components/FooterSection";
 import SEOMeta from "@/components/SEOMeta";
 import { useIsabellaStore } from "@/stores/tamv/isabellaStore";
 import { useEconomyStore } from "@/stores/tamv/economyStore";

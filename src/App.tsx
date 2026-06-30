@@ -416,7 +416,7 @@ const App = () => {
             <NotificationProvider>
               <AppInner />
               <SpeedInsights />
-              <Analytics />
+              <Analytics debug={import.meta.env.DEV} />
             </NotificationProvider>
           </RDMAuthProvider>
         </PostHogProvider>

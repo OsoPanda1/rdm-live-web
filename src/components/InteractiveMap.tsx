@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Layers, MapPin, Navigation, Route, Search, Star, Store, TrendingUp } from "lucide-react";

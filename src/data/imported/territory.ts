@@ -1,4 +1,3 @@
-// @ts-nocheck
 // src/data/territory.ts
 // Núcleo de datos territoriales de Real del Monte para el ecosistema MD-X4.
 // Pensado como grafo ligero: capítulos, minas, pastes, calles, leyendas, rutas, eventos.

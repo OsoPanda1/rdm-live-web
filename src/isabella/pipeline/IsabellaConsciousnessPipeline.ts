@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/logger';
 import { motorConciencia } from '@/isabella/core/consciousness';
@@ -11,7 +9,7 @@ import { isabellaTerritorialMind } from '@/isabella/territorial/IsabellaTerritor
 import { federationBus } from '@/federaciones/FederationBus';
 import { isabellaGuardian } from '@/core/ai/isabella-guardian';
 import { locateNode } from '@/isabella/ontology';
-import type { SystemMetrics } from '@/core/models';
+import type { SystemMetrics, Coordenadas } from '@/core/models';
 import type {
   PipelineInput,
   PipelineResult,

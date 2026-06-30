@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 export type {
   SkillContext, Artifact, Relation, Gap, Reference,
   SimulationResult, RiskProfile, CanonicalEntry, Evidence,

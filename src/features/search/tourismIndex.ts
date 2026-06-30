@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   RDM_TERRITORY_POIS,
   chapters,

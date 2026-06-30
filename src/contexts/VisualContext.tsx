@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { computeTimeTheme, type TimeTheme } from "@/hooks/useTimeTheme";
 import { useWeather } from "@/hooks/useWeather";

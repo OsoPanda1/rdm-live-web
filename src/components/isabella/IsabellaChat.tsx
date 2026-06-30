@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Interfaz de Chat con Isabella AI
  * Triple Federado: Conceptual | Legal | Técnico

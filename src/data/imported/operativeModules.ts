@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { DomainSummary, ModuleState } from "@/lib/types/operativo";
 
 export const OPERATIVE_MODULES: ModuleState[] = [

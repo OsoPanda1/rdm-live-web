@@ -1,4 +1,3 @@
-// @ts-nocheck
 export interface MapMarkerData {
   id: string;
   name: string;

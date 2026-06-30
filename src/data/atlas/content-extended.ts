@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Centralized rich dataset for Real del Monte — used across map, pages and Isabella AI.
 // Single source of truth: history, culture, gastronomy, legends, routes.
 

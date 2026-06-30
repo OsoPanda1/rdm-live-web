@@ -1,4 +1,3 @@
-// @ts-nocheck
 export type POICategory = "historico" | "mineria" | "geologico" | "plaza" | "mercado" | "templo" | "escuela"
 export type FederationLayer = "subsuelo" | "memoria-comestible" | "memoria-silenciosa" | "superficie" | "economia-local" | "metadatos" | "simulacion"
 

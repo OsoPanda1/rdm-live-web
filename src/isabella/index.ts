@@ -13,3 +13,5 @@ export type { PipelineInput, PipelineResult, PipelineConfig, ConsciousnessActiva
 export { orion, sophia, argus, mnemos, lumen, getAllSkillMetadata, SKILL_REGISTRY } from "./skills";
 export type { SkillContext, Artifact, Relation, Gap, Reference, SimulationResult, RiskProfile, CanonicalEntry, Evidence, PolicyViolation, LumenDecision, ResearchSynthesis, KnowledgeGraph } from "./skills";
 export { kernelResonance, kernelCronoAnamnesis, kernelEmpatiaAntifragil, kernelTransduccionEstetica, kernelOmnipresenciaMesh } from "./kernel";
+export { MenteCuantica, menteCuantica } from "./quantum";
+export type { QuantumCapability, QuantumState } from "./quantum";

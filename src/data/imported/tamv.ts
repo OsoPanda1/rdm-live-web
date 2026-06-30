@@ -1,4 +1,3 @@
-// @ts-nocheck
 // CODEX TAMV — Doctrina canónica extraída de tamvonlinenetwork.blogspot.com,
 // tamvonline-oficial.odoo.com, github.com/OsoPanda1 y manifiestos públicos.
 // Curaduría: RDM Digital · Nodo Cero del Sistema Operativo Civilizatorio Federado.

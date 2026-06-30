@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import { MapPin, Navigation } from "lucide-react";
 import { getAllPlaces } from "@/lib/kernel";

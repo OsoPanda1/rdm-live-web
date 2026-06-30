@@ -1,5 +1,4 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
-// @ts-nocheck
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {

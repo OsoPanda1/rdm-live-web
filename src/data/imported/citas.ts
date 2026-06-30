@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Base de datos de citas y constelaciones del ecosistema TAMV.
 // Constelaciones: Anubis (guardianía), Horus (visión/observabilidad), Dekateotl (memoria/territorio).
 

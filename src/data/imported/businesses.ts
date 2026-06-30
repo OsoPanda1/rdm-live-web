@@ -1,4 +1,3 @@
-// @ts-nocheck
 export interface Business {
   id: string;
   name: string;

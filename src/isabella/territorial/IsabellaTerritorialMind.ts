@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { isabellaAPI } from '../api';
 import { memoriaEmocional } from '../emotional/memory';
 import { motorConciencia } from '../core/consciousness';

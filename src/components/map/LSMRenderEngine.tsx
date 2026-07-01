@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useWebSocketSubscription } from "../../hooks/useWebSocket"
 
-interface LSMRenderProps {
+export interface LSMRenderProps {
   capaActiva: "turismo" | "economia" | "plateria" | "movilidad"
   initialViewState: {
     longitude: number

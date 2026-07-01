@@ -26,6 +26,11 @@ export default defineConfig({
     target: 'es2020',
     cssMinify: 'lightningcss',
     rollupOptions: {
+      external: [
+        '@sentry/node',
+        '@sentry/serverless',
+        'posthog-node',
+      ],
       output: {
         // Vendor chunks: cada dependencia pesada en su propio chunk
         manualChunks(id) {

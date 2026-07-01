@@ -5,53 +5,98 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  CI: "true"
+
 jobs:
   security:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Secret scan (TruffleHog)
         uses: trufflesecurity/trufflehog@main
         with:
           path: .
-      - uses: actions/setup-node@v4
+          # Opcional: ajustar filtros, proveedores, etc.
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - run: npm ci
+
+      - name: Install deps (root)
+        run: npm ci
+
+      - name: Install deps (server)
         working-directory: server
-      - run: npm run lint
-      - run: npm audit --audit-level=high || true
+        run: npm ci
+
+      - name: Lint (frontend)
+        run: npm run lint
+
+      - name: npm audit (high and critical)
+        run: |
+          npm audit --audit-level=high || echo "::warning::npm audit (high) reported issues"
+          npm audit --audit-level=critical || echo "::warning::npm audit (critical) reported issues"
 
   test:
     needs: security
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - run: npm ci
+
+      - name: Install deps (root)
+        run: npm ci
+
+      - name: Install deps (server)
         working-directory: server
-      - run: npm run test
-      - run: npm run build
-      - run: npm run build
+        run: npm ci
+
+      - name: Frontend tests
+        run: npm run test
+
+      - name: Frontend build
+        run: npm run build
+
+      - name: Backend build
         working-directory: server
+        run: npm run build
 
   factuality:
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - run: node tools/prompt_quality/check_prompt_factuality.mjs
+
+      - name: Install deps (root)
+        run: npm ci
+
+      # Si check_prompt_factuality necesita un servidor local, arrancarlo antes (ej. npm run dev &)
+      - name: Run prompt factuality checks
+        run: node tools/prompt_quality/check_prompt_factuality.mjs
         env:
           API_URL: http://localhost:3000
 
@@ -59,10 +104,19 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: factuality
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: webfactory/ssh-agent@v0.9.0
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.NODE0_SSH_KEY }}
-      - run: ./tools/deploy/deploy_canary.sh
-      - run: ./tools/deploy/post_deploy_check.sh
+
+      - name: Canary deploy
+        run: ./tools/deploy/deploy_canary.sh
+
+      - name: Post-deploy health check
+        run: ./tools/deploy/post_deploy_check.sh

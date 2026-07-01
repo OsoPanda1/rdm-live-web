@@ -15,6 +15,24 @@ interface LogContext {
   [key: string]: unknown;
 }
 
+type LogInput = LogContext | string | number | boolean | Error | null | undefined | unknown;
+
+function normalizeCtx(input?: LogInput, extra?: LogInput): LogContext | undefined {
+  if (input == null && extra == null) return undefined;
+  const out: LogContext = {};
+  if (input instanceof Error) out.error = input;
+  else if (typeof input === "object" && input !== null) Object.assign(out, input as LogContext);
+  else if (input !== undefined) out.detail = input;
+  if (extra !== undefined) {
+    if (typeof extra === "object" && extra !== null && !(extra instanceof Error)) {
+      Object.assign(out, extra as LogContext);
+    } else {
+      out.extra = extra;
+    }
+  }
+  return out;
+}
+
 const LEVEL_ORDER: Record<Level, number> = { debug: 10, info: 20, warn: 30, error: 40 };
 
 const MIN_LEVEL: Level = clientEnv.VITE_APP_ENV === "production" ? "info" : "debug";

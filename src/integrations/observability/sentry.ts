@@ -17,7 +17,8 @@ export async function initSentry(): Promise<void> {
   initialized = true;
 
   try {
-    const Sentry = await import("@sentry/react");
+    const pkg = "@sentry/react";
+    const Sentry = await import(/* @vite-ignore */ pkg);
     Sentry.init({
       dsn,
       environment: clientEnv.VITE_APP_ENV,

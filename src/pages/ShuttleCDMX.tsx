@@ -20,7 +20,7 @@ export default function ShuttleCDMX() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("shuttle_routes")
         .select("*, shuttle_companies(name)")
         .eq("status", "active")

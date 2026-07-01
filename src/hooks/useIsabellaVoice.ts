@@ -1,74 +1,220 @@
-import { useCallback, useRef, useState } from "react";
-import { isabellaIdentidad } from "@/isabella/core/identity";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-type VoiceState = "idle" | "speaking" | "loading" | "error" | "unsupported";
+export type IsabellaVoiceMode = "local" | "cloud";
 
-export function useIsabellaVoice() {
-  const [voiceState, setVoiceState] = useState<VoiceState>("idle");
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const introAudioRef = useRef<HTMLAudioElement | null>(null);
+export interface IsabellaVoiceContext {
+  federation?: "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7";
+  useCase?: "turismo" | "comercio" | "gobernanza" | "comunidad" | "general";
+  language?: string;
+}
 
-  const getVoice = useCallback((): SpeechSynthesisVoice | null => {
-    const voices = window.speechSynthesis?.getVoices() ?? [];
-    return (
-      voices.find((v) => v.lang.startsWith("es") && v.name.toLowerCase().includes("mexican"))
-      || voices.find((v) => v.lang.startsWith("es"))
-      || null
-    );
-  }, []);
+interface TtsIsabellaResponse {
+  audioUrl: string;
+  mode: IsabellaVoiceMode;
+}
 
-  const speak = useCallback((text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) {
-      setVoiceState("unsupported");
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voice = getVoice();
-    if (voice) utterance.voice = voice;
-    utterance.lang = "es-MX";
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
-    utterance.volume = 1;
-    utteranceRef.current = utterance;
-    setVoiceState("speaking");
-    utterance.onend = () => setVoiceState("idle");
-    utterance.onerror = () => setVoiceState("error");
-    window.speechSynthesis.speak(utterance);
-  }, [getVoice]);
+interface UseIsabellaVoiceOptions {
+  preferredMode?: IsabellaVoiceMode;
+  consentAudio?: boolean;
+}
 
-  const stop = useCallback(() => {
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    if (introAudioRef.current) {
-      introAudioRef.current.pause();
-      introAudioRef.current.currentTime = 0;
-    }
-    setVoiceState("idle");
-  }, []);
+interface AudioClip {
+  id: string;
+  text: string;
+  audioUrl?: string;
+  mode: IsabellaVoiceMode;
+  context?: IsabellaVoiceContext;
+}
 
-  const playIntro = useCallback(() => {
-    if (typeof window === "undefined") return;
-    const audio = new Audio("/audio/isabella-intro.mp3");
-    introAudioRef.current = audio;
-    audio.volume = 0.5;
-    setVoiceState("loading");
-    audio.addEventListener("canplaythrough", () => {
-      audio.play().then(() => setVoiceState("speaking")).catch(() => setVoiceState("error"));
-    }, { once: true });
-    audio.addEventListener("ended", () => setVoiceState("idle"), { once: true });
-    audio.addEventListener("error", () => setVoiceState("error"), { once: true });
-    if (audio.readyState >= 3) {
-      audio.play().catch(() => setVoiceState("error"));
+const TTS_ENDPOINT = import.meta.env.VITE_TTS_ENDPOINT || "/api/tts-isabella";
+
+export function useIsabellaVoice(options: UseIsabellaVoiceOptions = {}) {
+  const { preferredMode = "cloud", consentAudio = true } = options;
+
+  const [mode, setMode] = useState<IsabellaVoiceMode>(preferredMode);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [queue, setQueue] = useState<AudioClip[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const isPlayingRef = useRef(false);
+
+  const hasWebSpeech = typeof window !== "undefined" && "speechSynthesis" in window;
+
+  const ensureAudioElement = useCallback(() => {
+    if (!audioRef.current) {
+      const audio = new Audio();
+      audioRef.current = audio;
+      audio.addEventListener("ended", () => {
+        isPlayingRef.current = false;
+        setIsSpeaking(false);
+        playNextFromQueue();
+      });
+      audio.addEventListener("error", () => {
+        isPlayingRef.current = false;
+        setIsSpeaking(false);
+      });
     }
   }, []);
 
-  return {
-    voiceState,
-    speak,
-    stop,
-    playIntro,
-    isSpeaking: voiceState === "speaking",
-  };
+  const playNextFromQueue = useCallback(() => {
+    setQueue((prev) => {
+      if (prev.length === 0) return prev;
+      if (isPlayingRef.current) return prev;
+
+      const [next, ...rest] = prev;
+      isPlayingRef.current = true;
+      setIsSpeaking(true);
+
+      if (next.mode === "local") {
+        if (!hasWebSpeech) {
+          isPlayingRef.current = false;
+          setIsSpeaking(false);
+          setError("Web Speech API no disponible");
+          return rest;
+        }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(next.text);
+        speechUtteranceRef.current = utterance;
+        utterance.lang = next.context?.language ?? "es-MX";
+        if (next.context?.federation === "F6" || next.context?.useCase === "comunidad") {
+          utterance.rate = 0.9;
+          utterance.pitch = 1.0;
+        } else if (next.context?.federation === "F4" || next.context?.useCase === "comercio") {
+          utterance.rate = 1.1;
+          utterance.pitch = 1.05;
+        }
+        utterance.onstart = () => { isPlayingRef.current = true; setIsSpeaking(true); };
+        utterance.onend = () => { isPlayingRef.current = false; setIsSpeaking(false); playNextFromQueue(); };
+        utterance.onerror = () => { isPlayingRef.current = false; setIsSpeaking(false); setError("Error en síntesis local"); };
+        window.speechSynthesis.speak(utterance);
+        return rest;
+      }
+
+      if (next.mode === "cloud" && next.audioUrl) {
+        ensureAudioElement();
+        const audioEl = audioRef.current;
+        if (!audioEl) {
+          isPlayingRef.current = false;
+          setIsSpeaking(false);
+          return rest;
+        }
+        audioEl.src = next.audioUrl;
+        audioEl.currentTime = 0;
+        audioEl.onplay = () => { isPlayingRef.current = true; setIsSpeaking(true); };
+        audioEl.onended = () => { isPlayingRef.current = false; setIsSpeaking(false); playNextFromQueue(); };
+        audioEl.onerror = () => { isPlayingRef.current = false; setIsSpeaking(false); setError("Error reproduciendo cloud TTS"); };
+        audioEl.play().catch(() => {
+          isPlayingRef.current = false;
+          setIsSpeaking(false);
+        });
+        return rest;
+      }
+
+      isPlayingRef.current = false;
+      setIsSpeaking(false);
+      return rest;
+    });
+  }, [hasWebSpeech, ensureAudioElement]);
+
+  const fetchCloudTts = useCallback(async (
+    text: string,
+    context?: IsabellaVoiceContext
+  ): Promise<TtsIsabellaResponse | null> => {
+    try {
+      const res = await fetch(TTS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text,
+          context: {
+            federation: context?.federation ?? "F6",
+            useCase: context?.useCase ?? "general",
+            language: context?.language ?? "es-MX",
+          },
+        }),
+      });
+      if (!res.ok) throw new Error(`TTS request failed with status ${res.status}`);
+      const data = (await res.json()) as TtsIsabellaResponse;
+      if (!data.audioUrl) throw new Error("Edge Function no devolvió audioUrl");
+      return { audioUrl: data.audioUrl, mode: data.mode ?? "cloud" };
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Error en tts-isabella");
+      return null;
+    }
+  }, []);
+
+  const speak = useCallback(
+    async (text: string, context?: IsabellaVoiceContext) => {
+      setError(null);
+      if (!consentAudio) {
+        setError("Audio deshabilitado por configuración del usuario");
+        return;
+      }
+
+      if (mode === "cloud") {
+        const resp = await fetchCloudTts(text, context);
+        const clip: AudioClip = {
+          id: `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+          text,
+          audioUrl: resp?.audioUrl,
+          mode: resp ? "cloud" : (hasWebSpeech ? "local" : "cloud"),
+          context,
+        };
+        setQueue((prev) => [...prev, clip]);
+        if (!isPlayingRef.current) playNextFromQueue();
+        return;
+      }
+
+      if (hasWebSpeech) {
+        const clip: AudioClip = {
+          id: `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+          text,
+          mode: "local",
+          context,
+        };
+        setQueue((prev) => [...prev, clip]);
+        if (!isPlayingRef.current) playNextFromQueue();
+        return;
+      }
+
+      const resp = await fetchCloudTts(text, context);
+      if (resp?.audioUrl) {
+        const clip: AudioClip = {
+          id: `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
+          text,
+          audioUrl: resp.audioUrl,
+          mode: "cloud",
+          context,
+        };
+        setQueue((prev) => [...prev, clip]);
+        if (!isPlayingRef.current) playNextFromQueue();
+      }
+    },
+    [mode, consentAudio, hasWebSpeech, fetchCloudTts, playNextFromQueue]
+  );
+
+  const cancelAll = useCallback(() => {
+    setQueue([]);
+    isPlayingRef.current = false;
+    setIsSpeaking(false);
+    setError(null);
+    if (hasWebSpeech) window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [hasWebSpeech]);
+
+  const switchMode = useCallback((nextMode: IsabellaVoiceMode) => {
+    cancelAll();
+    setMode(nextMode);
+  }, [cancelAll]);
+
+  useEffect(() => {
+    return () => cancelAll();
+  }, [cancelAll]);
+
+  return { mode, isSpeaking, queue, error, speak, cancelAll, switchMode };
 }

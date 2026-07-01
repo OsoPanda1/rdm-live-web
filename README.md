@@ -89,6 +89,8 @@ La IA no es un añadido. Es la capa que hace preguntable al sistema.
 
 **Dashboards** — Telemetry dashboard con health de 7 federaciones, KPIs 24h, alertas activas. Panel de administración. Dashboard general. Panel operativo. Dashboard territorial. Centro de control. Panel del guardian.
 
+**Isabella Voice Engine** — Pipeline de voz con doble modo de síntesis bajo principios de Open Science. Modo local (Web Speech API, experimental) y Cloud TTS vía edge function con SSML cacheado en Supabase. Perfiles de voz diferenciados por federación (F1–F7) con prosodia, ritmo y énfasis documentados. Cola de audio secuencial con cancelación y sincronización por segment_id. Trazabilidad completa en `isabella_voice_logs` con hash SHA-256 determinista. Documentación científica en `docs/ISABELLA-VOICE-ENGINE.md`.
+
 **Seguridad** — Criptografía post-cuántica (AES-256-GCM + HMAC SHA-512). Aislamiento de contexto. Validación de inputs (Zod). Protocolo de apagado graceful. Blockchain connector para Polygon/MSR. CSP enforcement. HSTS. Rate limiting. Auditoría SHA-256. Gitleaks + TruffleHog + CodeQL en CI/CD.
 
 **Infraestructura** — CI/CD con GitHub Actions (lint → typecheck → test → build → deploy a Vercel). Docker Compose con PostgreSQL 15 + app. Kubernetes (deployment, service, ingress, namespace, kustomization). Vercel Edge Network con Node 24.x. PWA con Service Worker.

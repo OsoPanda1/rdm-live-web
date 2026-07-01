@@ -68,7 +68,7 @@ jobs:
       # Setup específico para JS/TS (si aplica)
       - name: Setup Node.js
         if: matrix.language == 'javascript-typescript'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           # Usa la versión fijada en package.json, o ajusta según necesidad
           node-version-file: "package.json"

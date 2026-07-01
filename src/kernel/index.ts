@@ -20,7 +20,7 @@ if (!databaseUrl || !redisUrl) {
   logger.warn('[KERNEL] DATABASE_URL y REDIS_URL no configurados. Se usará modo mock local.');
 }
 
-const chronus = new ChronusEngine(mockDb, mockPubSub);
+const chronus = new ChronusEngine({ db: mockDb, pubsub: mockPubSub });
 
 setInterval(async () => {
   try {

@@ -1,6 +1,5 @@
 import React from "react"
-import { type LSMRenderProps } from "@/components/map/LSMRenderEngine"
-import LSMRenderEngine from "@/components/map/LSMRenderEngine"
+import { type LSMRenderProps, LSMRenderEngine } from "@/components/map/LSMRenderEngine"
 import TerritorialSVGMap, {
   type TerritorialSVGMapProps,
 } from "@/components/map/TerritorialSVGMap"

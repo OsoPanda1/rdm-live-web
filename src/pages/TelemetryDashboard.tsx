@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Activity, Cpu, Database, Shield, Radio, AlertTriangle, TrendingUp, Users, MapPin } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FedStatus {
   key: string; name: string; status: "online" | "degraded" | "offline";

@@ -15,6 +15,24 @@ interface LogContext {
   [key: string]: unknown;
 }
 
+type LogInput = LogContext | string | number | boolean | Error | null | undefined | unknown;
+
+function normalizeCtx(input?: LogInput, extra?: LogInput): LogContext | undefined {
+  if (input == null && extra == null) return undefined;
+  const out: LogContext = {};
+  if (input instanceof Error) out.error = input;
+  else if (typeof input === "object" && input !== null) Object.assign(out, input as LogContext);
+  else if (input !== undefined) out.detail = input;
+  if (extra !== undefined) {
+    if (typeof extra === "object" && extra !== null && !(extra instanceof Error)) {
+      Object.assign(out, extra as LogContext);
+    } else {
+      out.extra = extra;
+    }
+  }
+  return out;
+}
+
 const LEVEL_ORDER: Record<Level, number> = { debug: 10, info: 20, warn: 30, error: 40 };
 
 const MIN_LEVEL: Level = clientEnv.VITE_APP_ENV === "production" ? "info" : "debug";
@@ -33,15 +51,16 @@ function getSentry(): SentryLike | undefined {
   return (globalThis as { Sentry?: SentryLike }).Sentry;
 }
 
-function emit(level: Level, message: string, context?: LogContext): void {
+function emit(level: Level, message: string, ctxInput?: LogInput, extra?: LogInput): void {
   if (!shouldEmit(level)) return;
+  const context = normalizeCtx(ctxInput, extra);
 
   const entry = {
     level,
     message,
     timestamp: new Date().toISOString(),
     env: clientEnv.VITE_APP_ENV,
-    ...context,
+    ...(context ?? {}),
   };
 
   const isProd = clientEnv.VITE_APP_ENV === "production";
@@ -63,8 +82,8 @@ function emit(level: Level, message: string, context?: LogContext): void {
 }
 
 export const logger = {
-  debug: (msg: string, ctx?: LogContext) => emit("debug", msg, ctx),
-  info: (msg: string, ctx?: LogContext) => emit("info", msg, ctx),
-  warn: (msg: string, ctx?: LogContext) => emit("warn", msg, ctx),
-  error: (msg: string, ctx?: LogContext) => emit("error", msg, ctx),
+  debug: (msg: string, ctx?: LogInput, extra?: LogInput) => emit("debug", msg, ctx, extra),
+  info: (msg: string, ctx?: LogInput, extra?: LogInput) => emit("info", msg, ctx, extra),
+  warn: (msg: string, ctx?: LogInput, extra?: LogInput) => emit("warn", msg, ctx, extra),
+  error: (msg: string, ctx?: LogInput, extra?: LogInput) => emit("error", msg, ctx, extra),
 };

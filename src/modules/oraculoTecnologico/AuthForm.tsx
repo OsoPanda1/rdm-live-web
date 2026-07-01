@@ -56,7 +56,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    logger.info(values);
+    logger.info("auth form submit", { email: values.email });
     toast.success(`${type === "login" ? "Inicio de sesión" : "Registro"} exitoso! Redirigiendo...`);
     
     // Simulate successful authentication

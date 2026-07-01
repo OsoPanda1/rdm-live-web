@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../integrations/supabase/admin";
+import { supabase as supabaseAdmin } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
 
 export enum Federacion {
@@ -154,12 +154,10 @@ export class FederationBus {
   }
 
   private async handleCheckIn(payload: CheckInPayload) {
-    logger.info(
-      "[FEDERACION] Protocolo de Retención :: Turista",
-      payload.turistaId,
-      "Hotel",
-      payload.hotelId,
-    );
+    logger.info("[FEDERACION] Protocolo de Retención :: Turista", {
+      turistaId: payload.turistaId,
+      hotelId: payload.hotelId,
+    });
 
     // En una versión futura, esto podría consultar Supabase / PG para ofertas contextuales.
     const oferta = await this.generarOfertaGastronomica(payload.hotelId);

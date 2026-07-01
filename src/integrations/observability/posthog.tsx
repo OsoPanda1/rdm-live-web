@@ -35,7 +35,8 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const mod = await import("posthog-js");
+        const pkg = "posthog-js";
+        const mod: any = await import(/* @vite-ignore */ pkg);
         const posthog = mod.default;
         posthog.init(key, {
           api_host: clientEnv.VITE_POSTHOG_HOST ?? "https://us.i.posthog.com",

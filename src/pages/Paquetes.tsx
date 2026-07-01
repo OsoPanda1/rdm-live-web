@@ -28,7 +28,7 @@ export default function Paquetes() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.from("packages").select("*").eq("status", "active").order("created_at", { ascending: false });
+      const { data } = await (supabase as any).from("packages").select("*").eq("status", "active").order("created_at", { ascending: false });
       if (data) setPackages(data);
     }
     load();

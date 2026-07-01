@@ -7,6 +7,8 @@ import { logger } from "@/lib/logger";
 interface Props {
   children: ReactNode
   fallback?: ReactNode
+  /** Optional identifier for telemetry / debugging. */
+  boundaryId?: string
 }
 
 interface State {
@@ -26,7 +28,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log mínimo en consola, útil en dev
-    logger.error('ErrorBoundary caught:', error, errorInfo)
+    logger.error('ErrorBoundary caught:', { error, errorInfo, boundaryId: this.props.boundaryId })
 
     // Emite evento global para cualquier listener de telemetría/UI
     if (typeof window !== 'undefined') {

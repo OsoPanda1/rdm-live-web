@@ -154,6 +154,7 @@ const TelemetryDashboard = lazy(() => import('./pages/TelemetryDashboard'))
 const Tenochtitlan = lazy(() => import('./pages/Tenochtitlan'))
 const TerritorialDashboard = lazy(() => import('./pages/TerritorialDashboard'))
 const Wiki = lazy(() => import('./pages/Wiki'))
+const InahRealDelMonte = lazy(() => import('./pages/InahRealDelMonte'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -389,6 +390,8 @@ const AnimatedRoutes = () => {
           <Route path="/tenochtitlan" element={<Tenochtitlan />} />
           <Route path="/territorial-dashboard" element={<TerritorialDashboard />} />
           <Route path="/wiki" element={<Wiki />} />
+          <Route path="/inah" element={<InahRealDelMonte />} />
+          <Route path="/historia-inah" element={<InahRealDelMonte />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

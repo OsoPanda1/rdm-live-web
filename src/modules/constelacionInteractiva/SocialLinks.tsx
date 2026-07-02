@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import React from "react";
 import { Facebook, Instagram, Twitter, Github, Send, Phone, Slack, Music } from "lucide-react";

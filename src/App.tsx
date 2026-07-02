@@ -118,6 +118,43 @@ const EcosistemaLTOS = lazy(() => import('./pages/EcosistemaLTOS'))
 const Perfil = lazy(() => import('./pages/Perfil'))
 const Leaderboard = lazy(() => import('./pages/Leaderboard'))
 
+// ===== Newly integrated modules (reference hub) =====
+const Admin = lazy(() => import('./pages/Admin'))
+const ArchivoSonoro = lazy(() => import('./pages/ArchivoSonoro'))
+const AuthCallback = lazy(() => import('./pages/AuthCallback'))
+const B2BPortal = lazy(() => import('./pages/B2BPortal'))
+const ComerciosCheckout = lazy(() => import('./pages/ComerciosCheckout'))
+const ComerciosRegistro = lazy(() => import('./pages/ComerciosRegistro'))
+const ControlCenter = lazy(() => import('./pages/ControlCenter'))
+const DemoChecklist = lazy(() => import('./pages/DemoChecklist'))
+const Evolucion = lazy(() => import('./pages/Evolucion'))
+const FAQ = lazy(() => import('./pages/FAQ'))
+const FusionEcosystem = lazy(() => import('./pages/FusionEcosystem'))
+const GamePortal = lazy(() => import('./pages/GamePortal'))
+const Juegos = lazy(() => import('./pages/Juegos'))
+const LTOS = lazy(() => import('./pages/LTOS'))
+const Membresias = lazy(() => import('./pages/Membresias'))
+const Mina = lazy(() => import('./pages/Mina'))
+const Mitos = lazy(() => import('./pages/Mitos'))
+const Music = lazy(() => import('./pages/Music'))
+const MusicDetail = lazy(() => import('./pages/MusicDetail'))
+const Operativo = lazy(() => import('./pages/Operativo'))
+const PremiumPlans = lazy(() => import('./pages/PremiumPlans'))
+const RFCDetail = lazy(() => import('./pages/RFCDetail'))
+const RFCList = lazy(() => import('./pages/RFCList'))
+const RealitoAI = lazy(() => import('./pages/RealitoAI'))
+const Recorridos = lazy(() => import('./pages/Recorridos'))
+const RegistrarComercio = lazy(() => import('./pages/RegistrarComercio'))
+const RutaDelPaste = lazy(() => import('./pages/RutaDelPaste'))
+const TAMVApiExplorer = lazy(() => import('./pages/TAMVApiExplorer'))
+const TAMVHub = lazy(() => import('./pages/TAMVHub'))
+const TAMVStatus = lazy(() => import('./pages/TAMVStatus'))
+const TAMVThesis = lazy(() => import('./pages/TAMVThesis'))
+const TelemetryDashboard = lazy(() => import('./pages/TelemetryDashboard'))
+const Tenochtitlan = lazy(() => import('./pages/Tenochtitlan'))
+const TerritorialDashboard = lazy(() => import('./pages/TerritorialDashboard'))
+const Wiki = lazy(() => import('./pages/Wiki'))
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -315,7 +352,44 @@ const AnimatedRoutes = () => {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/ranking" element={<Leaderboard />} />
 
-          {/* Catch-all */}
+          {/* === Newly integrated modules === */}
+          <Route path="/admin-control" element={<Admin />} />
+          <Route path="/archivo-sonoro" element={<ArchivoSonoro />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/b2b" element={<B2BPortal />} />
+          <Route path="/b2b-portal" element={<B2BPortal />} />
+          <Route path="/comercios/checkout" element={<ComerciosCheckout />} />
+          <Route path="/comercios/registro" element={<ComerciosRegistro />} />
+          <Route path="/control-center" element={<ControlCenter />} />
+          <Route path="/demo-checklist" element={<DemoChecklist />} />
+          <Route path="/evolucion" element={<Evolucion />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/fusion" element={<FusionEcosystem />} />
+          <Route path="/game-portal" element={<GamePortal />} />
+          <Route path="/juegos" element={<Juegos />} />
+          <Route path="/ltos" element={<LTOS />} />
+          <Route path="/membresias" element={<Membresias />} />
+          <Route path="/mina" element={<Mina />} />
+          <Route path="/mitos" element={<Mitos />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/music/:slug" element={<MusicDetail />} />
+          <Route path="/operativo" element={<Operativo />} />
+          <Route path="/premium" element={<PremiumPlans />} />
+          <Route path="/rfc" element={<RFCList />} />
+          <Route path="/rfc/:id" element={<RFCDetail />} />
+          <Route path="/realito-ai" element={<RealitoAI />} />
+          <Route path="/recorridos" element={<Recorridos />} />
+          <Route path="/registrar-comercio" element={<RegistrarComercio />} />
+          <Route path="/ruta-del-paste" element={<RutaDelPaste />} />
+          <Route path="/tamv" element={<TAMVHub />} />
+          <Route path="/tamv/api" element={<TAMVApiExplorer />} />
+          <Route path="/tamv/status" element={<TAMVStatus />} />
+          <Route path="/tamv/thesis" element={<TAMVThesis />} />
+          <Route path="/telemetry" element={<TelemetryDashboard />} />
+          <Route path="/tenochtitlan" element={<Tenochtitlan />} />
+          <Route path="/territorial-dashboard" element={<TerritorialDashboard />} />
+          <Route path="/wiki" element={<Wiki />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

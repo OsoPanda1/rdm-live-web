@@ -2,7 +2,7 @@
 
 Modelo: **M0** Conceptual · **M1** Scaffolded · **M2** Functional · **M3** Stable · **M4** Verified · **M5** Frozen
 
-Actualizado: **Parches P0-P2 completados** — Auth Isabella estricto, Model Router, Stripe idempotency, Rate limiting IP, RLS CI gate, Voice Engine dual-mode.
+Actualizado: **Consolidación de duplicados completada** — Eliminados api/tts-isabella.js, api/ai/chat.js, .github/.github/. Unificados CORS, auth, rate limiting en api/_shared/. Fix isabella-ontology auth. RLS migration para ai_prompts_log. Propuesta database splitting (5 servicios free tier, $0/mo).
 
 **Nota:** Los directorios `packages/`, `services/` y `apps/` existen como espacios reservados (planned-only) con READMEs internos. La implementación real vive en `src/` con aliases `@/*`.
 

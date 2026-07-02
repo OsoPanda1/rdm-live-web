@@ -1,16 +1,16 @@
 // api/model-router.ts — Vercel Serverless Function
-// Nodo cardinal de F5 (IA y Automatización) · Atlas Trascendence
-// Unified entry point for open-source models (Hugging Face, OpenLLM, etc.).
-// No API keys exposed to frontend. Traza todas las solicitudes con contexto federado
-// y está preparado para integración con ai_prompts_log vía Supabase o log drain.
+// Unified entry point for open-source models (Hugging Face, OpenLLM, etc.)
+// Auth + Rate limiting + CORS unified
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { requireAuth } from "./_shared/auth.js";
+import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
 
 type ModelProvider = "huggingface" | "openllm" | "fallback";
 
 interface FederationContext {
   nodeId: string;
-  federation: string; // F1–F7
+  federation: string;
   useCase: string;
   environment: "dev" | "staging" | "prod";
   userId?: string | null;
@@ -40,16 +40,18 @@ interface ModelRouterResponse {
   };
 }
 
-function buildFederationContext(ctx?: ModelRouterRequest["context"]): FederationContext {
-  const env =
-    (process.env.NODE_ENV as "dev" | "staging" | "prod") || "dev";
+function buildFederationContext(
+  ctx?: ModelRouterRequest["context"],
+  userId?: string,
+): FederationContext {
+  const env = (process.env.NODE_ENV as "dev" | "staging" | "prod") || "dev";
 
   return {
     nodeId: process.env.NODE_ID || "nodo-cero-model-router",
     federation: ctx?.federation || "F5",
     useCase: ctx?.useCase || "model-router",
     environment: env,
-    userId: ctx?.userId ?? null,
+    userId: ctx?.userId ?? userId ?? null,
   };
 }
 
@@ -68,35 +70,48 @@ function emitTelemetry(
     federation,
     data,
   };
-
-  // Cardinalidad controlada: un solo JSON por evento.
-  // En producción puedes mandar esto al endpoint perimetral de telemetría.
   console.log("[model-router]", JSON.stringify(payload));
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Auth check
+  const auth = await requireAuth(req as unknown as Request);
+  if (auth.error) {
+    return (auth.error as unknown as VercelResponse).status(401).json({ error: auth.error });
+  }
+
+  // Rate limit
+  const rateLimit = checkRateLimit(req as unknown as Request, RATE_LIMITS.model);
+  if (!rateLimit.allowed) {
+    return res.status(429).json({
+      error: "Rate limit exceeded",
+      retryAfter: rateLimit.retryAfter,
+    });
   }
 
   const start = Date.now();
   const traceId = `${start}-${Math.random().toString(36).slice(2, 10)}`;
 
-  // EOCT: contexto federado desde el request
   const body = req.body as ModelRouterRequest;
-  const federation = buildFederationContext(body.context);
+  const federation = buildFederationContext(body.context, auth.userId);
 
   try {
     const { model, prompt, max_tokens = 512, temperature = 0.7 } = body;
 
     if (!model || !prompt) {
-      emitTelemetry(
-        "warn",
-        "Missing model or prompt",
-        federation,
-        traceId,
-        { model, promptLength: prompt?.length ?? 0 },
-      );
+      emitTelemetry("warn", "Missing model or prompt", federation, traceId, {
+        model,
+        promptLength: prompt?.length ?? 0,
+      });
       return res.status(400).json({ error: "Missing model or prompt" });
     }
 
@@ -104,17 +119,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let output = "";
     let tokens: number | undefined;
 
-    emitTelemetry(
-      "info",
-      "Model router request received",
-      federation,
-      traceId,
-      {
-        model,
-        max_tokens,
-        temperature,
-      },
-    );
+    emitTelemetry("info", "Model router request received", federation, traceId, {
+      model,
+      max_tokens,
+      temperature,
+    });
 
     // Hugging Face provider
     if (
@@ -127,43 +136,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const hfToken = process.env.HUGGINGFACE_API_TOKEN;
 
       if (!hfToken) {
-        emitTelemetry(
-          "error",
-          "HUGGINGFACE_API_TOKEN not configured",
-          federation,
-          traceId,
-          { model },
-        );
+        emitTelemetry("error", "HUGGINGFACE_API_TOKEN not configured", federation, traceId, { model });
         return res.status(500).json({
           error: "HF provider not configured",
           meta: { traceId, federation },
         });
       }
 
-      const hfRes = await fetch(
-        `https://api-inference.huggingface.co/models/${model}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${hfToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: { max_new_tokens: max_tokens, temperature },
-          }),
+      const hfRes = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${hfToken}`,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          inputs: prompt,
+          parameters: { max_new_tokens: max_tokens, temperature },
+        }),
+      });
 
       if (!hfRes.ok) {
         const errText = await hfRes.text();
-        emitTelemetry(
-          "error",
-          "HF API error",
-          federation,
-          traceId,
-          { status: hfRes.status, snippet: errText.slice(0, 200) },
-        );
+        emitTelemetry("error", "HF API error", federation, traceId, {
+          status: hfRes.status,
+          snippet: errText.slice(0, 200),
+        });
         return res.status(502).json({
           error: "HF API error",
           meta: { traceId, federation },
@@ -171,18 +168,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const hfData = await hfRes.json();
-      const candidate =
-        Array.isArray(hfData) ? hfData[0] : hfData;
+      const candidate = Array.isArray(hfData) ? hfData[0] : hfData;
 
-      output =
-        candidate?.generated_text ??
-        JSON.stringify(hfData);
-
-      // Si el provider devuelve uso de tokens, podrías mapearlo aquí
-      tokens =
-        typeof candidate?.tokens === "number"
-          ? candidate.tokens
-          : undefined;
+      output = candidate?.generated_text ?? JSON.stringify(hfData);
+      tokens = typeof candidate?.tokens === "number" ? candidate.tokens : undefined;
     } else {
       // OpenLLM / future provider
       const openllmUrl = process.env.OPENLLM_API_URL;
@@ -190,53 +179,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (openllmUrl) {
         provider = "openllm";
 
-        const ollmRes = await fetch(
-          `${openllmUrl}/v1/chat/completions`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                process.env.OPENLLM_API_TOKEN || ""
-              }`,
-            },
-            body: JSON.stringify({
-              model,
-              messages: [{ role: "user", content: prompt }],
-              max_tokens,
-              temperature,
-            }),
+        const ollmRes = await fetch(`${openllmUrl}/v1/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.OPENLLM_API_TOKEN || ""}`,
           },
-        );
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "user", content: prompt }],
+            max_tokens,
+            temperature,
+          }),
+        });
 
         if (!ollmRes.ok) {
           const text = await ollmRes.text();
-          emitTelemetry(
-            "error",
-            "OpenLLM API error",
-            federation,
-            traceId,
-            { status: ollmRes.status, snippet: text.slice(0, 200) },
-          );
+          emitTelemetry("error", "OpenLLM API error", federation, traceId, {
+            status: ollmRes.status,
+            snippet: text.slice(0, 200),
+          });
           output = `Model ${model} unavailable via OpenLLM.`;
         } else {
           const ollmData = await ollmRes.json();
-          output =
-            ollmData?.choices?.[0]?.message?.content ??
-            JSON.stringify(ollmData);
+          output = ollmData?.choices?.[0]?.message?.content ?? JSON.stringify(ollmData);
           tokens =
             typeof ollmData?.usage?.total_tokens === "number"
               ? ollmData.usage.total_tokens
               : undefined;
         }
       } else {
-        emitTelemetry(
-          "warn",
-          "No provider configured for model",
-          federation,
-          traceId,
-          { model },
-        );
+        emitTelemetry("warn", "No provider configured for model", federation, traceId, { model });
         output = `No provider configured for model: ${model}`;
       }
     }
@@ -255,31 +228,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     };
 
-    emitTelemetry(
-      "info",
-      "Model router response ready",
-      federation,
-      traceId,
-      { provider, latencyMs, tokens },
-    );
-
-    // Aquí podrías integrar con ai_prompts_log vía Supabase:
-    // - prompt, model, provider, output, latencyMs, federation, traceId
-    // Mantenerlo fuera de esta función mantiene la latencia baja.
+    emitTelemetry("info", "Model router response ready", federation, traceId, {
+      provider,
+      latencyMs,
+      tokens,
+    });
 
     return res.status(200).json(response);
-  } catch (e: any) {
-    emitTelemetry(
-      "error",
-      "Model router fatal error",
-      federation,
-      traceId,
-      { error: e?.message },
-    );
+  } catch (e: unknown) {
+    const errMsg = e instanceof Error ? e.message : "unknown error";
+    emitTelemetry("error", "Model router fatal error", federation, traceId, { error: errMsg });
     console.error("Model router error:", e);
     return res.status(500).json({
       error: "Model router error",
-      detail: process.env.NODE_ENV === "development" ? e?.message : undefined,
+      detail: process.env.NODE_ENV === "development" ? errMsg : undefined,
       meta: { traceId, federation },
     });
   }

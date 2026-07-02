@@ -24,6 +24,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-cache, max-age=60');
 
   try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    let federationStatuses = [
+      { name: 'F1 - Gobernanza', status: 'operational' },
+      { name: 'F2 - Identidad y Acceso', status: 'operational' },
+      { name: 'F3 - Datos Territoriales', status: 'operational' },
+      { name: 'F4 - Comercio y Monetización', status: 'operational' },
+      { name: 'F5 - IA Cognitiva', status: 'operational' },
+      { name: 'F6 - Comunidad y Contenido', status: 'operational' },
+      { name: 'F7 - Observabilidad y Seguridad', status: 'operational' },
+    ];
+
+    // Real Supabase connectivity check
+    if (supabaseUrl && supabaseKey) {
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        const start = Date.now();
+        await supabase.from("profiles").select("id", { count: "exact", head: true });
+        const dbLatency = Date.now() - start;
+        if (dbLatency > 500) {
+          federationStatuses[2].status = 'degraded'; // F3 - Datos
+        }
+      } catch {
+        federationStatuses[2].status = 'critical';
+      }
+    }
+
     const healthStatus: HealthStatus = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -31,43 +60,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       region: process.env.VERCEL_REGION || 'unknown',
       cells: [
         {
-          id: 'render-3d-holocube-v1',
-          endpoint: '/api/knowledge-cells/render-3d',
-          status: 'active',
-          latency: Math.random() * 50 + 10,
-        },
-        {
-          id: 'render-4d-hypercube-v1',
-          endpoint: '/api/knowledge-cells/render-4d',
-          status: 'active',
-          latency: Math.random() * 50 + 15,
-        },
-        {
-          id: 'ia-immersivefx-v1',
-          endpoint: '/api/knowledge-cells/ia-fx',
-          status: 'active',
-          latency: Math.random() * 50 + 20,
+          id: 'supabase-db',
+          endpoint: supabaseUrl || 'not-configured',
+          status: federationStatuses[2].status,
+          latency: 0,
         },
       ],
-      federations: [
-        { name: 'F1 - Gobernanza', status: 'operational' },
-        { name: 'F2 - Identidad y Acceso', status: 'operational' },
-        { name: 'F3 - Datos Territoriales', status: 'operational' },
-        { name: 'F4 - Comercio y Monetización', status: 'operational' },
-        { name: 'F5 - IA Cognitiva', status: 'operational' },
-        { name: 'F6 - Comunidad y Contenido', status: 'operational' },
-        { name: 'F7 - Observabilidad y Seguridad', status: 'operational' },
-      ],
+      federations: federationStatuses,
     };
 
-    const avgCellLatency =
-      healthStatus.cells.reduce((sum, c) => sum + c.latency, 0) / healthStatus.cells.length;
-    const criticalLatency = avgCellLatency > 200;
-    const degraded = avgCellLatency > 100 || healthStatus.federations.some((f) => f.status !== 'operational');
-
-    if (criticalLatency) {
-      healthStatus.status = 'critical';
-    } else if (degraded) {
+    const degraded = healthStatus.federations.some((f) => f.status !== 'operational');
+    if (degraded) {
       healthStatus.status = 'degraded';
     }
 
@@ -77,7 +80,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       success: true,
       data: healthStatus,
       performance: { executionTime },
-      buildTime: process.env.VERCEL_BUILD_COMPLETED_AT || 'unknown',
     });
   } catch (err) {
     const executionTime = performance.now() - startTime;

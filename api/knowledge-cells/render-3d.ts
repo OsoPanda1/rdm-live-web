@@ -42,7 +42,7 @@ async function performRender(payload: Record<string, unknown>) {
     triangleCount: 12,
     renderTime,
     totalTime: Date.now() - startTime,
-    lightConfig: (payload as any).lightConfig || { intensity: 1.0, color: '#ffffff' },
+    lightConfig: (payload as Record<string, unknown>).lightConfig || { intensity: 1.0, color: '#ffffff' },
     metadata: {
       renderer: 'WebGL2',
       shaders: ['vertex', 'fragment'],
@@ -52,7 +52,7 @@ async function performRender(payload: Record<string, unknown>) {
 }
 
 async function syncAudio(payload: Record<string, unknown>) {
-  const audioSignal = (payload as any).audioSignal as number[] || [];
+  const audioSignal = (payload.audioSignal as number[]) || [];
   const frequencyBands = analyzeFrequencies(audioSignal);
   const immersion = calculateImmersion(frequencyBands);
 
@@ -62,23 +62,23 @@ async function syncAudio(payload: Record<string, unknown>) {
     spatialAudioEnabled: true,
     immersionLevel: immersion,
     audioConfig: {
-      sampleRate: (payload as any).sampleRate || 44100,
-      channels: (payload as any).channels || 2,
-      bitDepth: (payload as any).bitDepth || 16,
+      sampleRate: (payload.sampleRate as number) || 44100,
+      channels: (payload.channels as number) || 2,
+      bitDepth: (payload.bitDepth as number) || 16,
     },
   };
 }
 
 async function updateColor(payload: Record<string, unknown>) {
-  const frequency = (payload as any).frequency as number || 440;
+  const frequency = (payload.frequency as number) || 440;
   const targetColor = frequencyToColor(frequency);
 
   return {
     status: 'updated',
     color: targetColor,
     frequency,
-    transitionDuration: (payload as any).transitionDuration || 300,
-    easing: (payload as any).easing || 'easeInOutQuad',
+    transitionDuration: (payload.transitionDuration as number) || 300,
+    easing: (payload.easing as string) || 'easeInOutQuad',
   };
 }
 

@@ -70,6 +70,7 @@ function emitTelemetry(
     federation,
     data,
   };
+  // eslint-disable-next-line no-console
   console.log("[model-router]", JSON.stringify(payload));
 }
 
@@ -238,6 +239,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (e: unknown) {
     const errMsg = e instanceof Error ? e.message : "unknown error";
     emitTelemetry("error", "Model router fatal error", federation, traceId, { error: errMsg });
+    // eslint-disable-next-line no-console
     console.error("Model router error:", e);
     return res.status(500).json({
       error: "Model router error",

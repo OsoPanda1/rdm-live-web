@@ -112,8 +112,8 @@ function createHypercube() {
 }
 
 function rotate4D(payload: Record<string, unknown>) {
-  const angle = (payload as any).angle as number || 0.1;
-  const plane = (payload as any).plane as string || 'xy';
+  const angle = (payload.angle as number) || 0.1;
+  const plane = (payload.plane as string) || 'xy';
 
   const rotationMatrix = generateRotationMatrix(angle, plane);
 
@@ -127,8 +127,8 @@ function rotate4D(payload: Record<string, unknown>) {
 }
 
 function projectTo3D(payload: Record<string, unknown>) {
-  const method = (payload as any).method as string || 'schlegel';
-  const distance = (payload as any).distance as number || 2;
+  const method = (payload.method as string) || 'schlegel';
+  const distance = (payload.distance as number) || 2;
 
   const projection = [
     { x: 1, y: 1, z: 1 },
@@ -157,8 +157,8 @@ function projectTo3D(payload: Record<string, unknown>) {
 }
 
 function colorMap(payload: Record<string, unknown>) {
-  const frequency = (payload as any).frequency as number || 440;
-  const colorScheme = (payload as any).colorScheme as string || 'spectrum';
+  const frequency = (payload.frequency as number) || 440;
+  const colorScheme = (payload.colorScheme as string) || 'spectrum';
 
   const baseColor = frequencyToRGB(frequency);
 

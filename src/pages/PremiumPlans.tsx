@@ -140,6 +140,7 @@ export default function PremiumPlans() {
       const fn = getCheckoutFunctionName(planId, isCommerce);
 
       // Punto de auditoría mínimo: log informativo (idealmente enviar a telemetría backend)
+      // eslint-disable-next-line no-console
       console.info("Iniciando checkout premium", {
         userId: user.id,
         planId,
@@ -151,20 +152,22 @@ export default function PremiumPlans() {
       });
 
       if (error) {
+        // eslint-disable-next-line no-console
         console.error("Error en checkout premium:", error);
         throw new Error(error.message || "Error en la función de pago");
       }
 
       const url = data?.url;
       if (typeof url !== "string" || !url.startsWith("http")) {
+        // eslint-disable-next-line no-console
         console.error("URL de checkout inválida:", url);
         throw new Error("Respuesta de pago inválida. Intenta más tarde.");
       }
 
       window.location.href = url;
-    } catch (e: any) {
+    } catch (e: unknown) {
       const message =
-        e?.message ||
+        (e instanceof Error ? e.message : null) ||
         "No se pudo iniciar el pago. Revisa tu conexión o intenta más tarde.";
       toast.error(message);
       setBusy(null);

@@ -38,6 +38,7 @@ async function sha256(data: string | Uint8Array): Promise<ArrayBuffer> {
 // -----------------------------------------------------------------------
 // WASM loader for liboqs (browser-compatible)
 // -----------------------------------------------------------------------
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let oqsWasmModule: any = null
 let wasmLoadAttempted = false
 let wasmAvailable = false
@@ -48,7 +49,7 @@ async function loadOqsWasm(): Promise<boolean> {
   try {
     // Attempt to load liboqs WASM from various CDN sources
     const wasmUrl =
-      (typeof globalThis !== "undefined" && (globalThis as any).OQS_WASM_URL) ||
+      (typeof globalThis !== "undefined" && (globalThis as Record<string, unknown>).OQS_WASM_URL as string) ||
       "https://cdn.jsdelivr.net/npm/oqs-wasm@0.1.0/dist/oqs.wasm"
     const response = await fetch(wasmUrl)
     if (!response.ok) throw new Error(`WASM fetch failed: ${response.status}`)

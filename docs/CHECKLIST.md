@@ -19,7 +19,7 @@
 - [x] B-02: Eliminar `bun.lock` y `bun.lockb`
 - [x] B-03: Remover `rollupOptions.external` para Sentry + PostHog
 - [x] B-04: Agregar deploy de Vercel en CI
-- [ ] B-05: Verificar `npm install` limpio con lockfile único
+- [x] B-05: Verificar `npm install` limpio con lockfile único
 
 ## D-01..15 — Documentación
 
@@ -41,9 +41,9 @@
 
 ## H-01..07 — Hardening
 
-- [ ] H-01: Agregar script `postinstall` que verifica lockfile único
-- [ ] H-02: Revisar rutas Isabella en `src/app/api/` que usan `"anonymous"`
-- [ ] H-03: Rate limiting en Edge Functions públicas
+- [x] H-01: Agregar script `postinstall` que verifica lockfile único
+- [x] H-02: Revisar rutas Isabella en `src/app/api/` que usan `"anonymous"` — Edge Functions migradas a 401 estricto
+- [x] H-03: Rate limiting en Edge Functions públicas — `_shared/rate-limit.ts` con soporte multi-key (IP, user, categoría)
 - [ ] H-04: Health check post-deploy en CI
 - [ ] H-05: Verificación de artefacto build en CI
 - [ ] H-06: Migrar CSP dinámica por entorno

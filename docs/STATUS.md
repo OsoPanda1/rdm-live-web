@@ -2,7 +2,9 @@
 
 Modelo: **M0** Conceptual · **M1** Scaffolded · **M2** Functional · **M3** Stable · **M4** Verified · **M5** Frozen
 
-Actualizado: **Etapas 1-3 del refactor federado completadas** (façades en `packages/`, `services/` y `apps/`).
+Actualizado: **Parches P0-P2 completados** — Auth Isabella estricto, Model Router, Stripe idempotency, Rate limiting IP, RLS CI gate, Voice Engine dual-mode.
+
+**Nota:** Los directorios `packages/`, `services/` y `apps/` existen como espacios reservados (planned-only) con READMEs internos. La implementación real vive en `src/` con aliases `@/*`.
 
 ## Capas y aliases activos
 

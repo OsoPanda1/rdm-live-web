@@ -1,0 +1,55 @@
+# rls-ci-gate.yml
+# Verifica que todas las tablas tengan RLS habilitado tras cada migración
+
+name: RLS CI Gate
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+  workflow_dispatch:
+
+jobs:
+  audit-rls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply migrations to test DB
+        env:
+          PGPASSWORD: postgres
+        run: |
+          for f in supabase/migrations/*.sql; do
+            echo "Applying $f..."
+            psql -h localhost -U postgres -d postgres -f "$f"
+          done
+
+      - name: Run RLS audit
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -f scripts/audit-rls.sql
+
+      - name: Security check — warn on unprotected tables
+        if: failure()
+        run: |
+          echo "::warning::RLS audit failed — some tables may be unprotected"
+          exit 1

@@ -352,7 +352,44 @@ const AnimatedRoutes = () => {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/ranking" element={<Leaderboard />} />
 
-          {/* Catch-all */}
+          {/* === Newly integrated modules === */}
+          <Route path="/admin-control" element={<Admin />} />
+          <Route path="/archivo-sonoro" element={<ArchivoSonoro />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/b2b" element={<B2BPortal />} />
+          <Route path="/b2b-portal" element={<B2BPortal />} />
+          <Route path="/comercios/checkout" element={<ComerciosCheckout />} />
+          <Route path="/comercios/registro" element={<ComerciosRegistro />} />
+          <Route path="/control-center" element={<ControlCenter />} />
+          <Route path="/demo-checklist" element={<DemoChecklist />} />
+          <Route path="/evolucion" element={<Evolucion />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/fusion" element={<FusionEcosystem />} />
+          <Route path="/game-portal" element={<GamePortal />} />
+          <Route path="/juegos" element={<Juegos />} />
+          <Route path="/ltos" element={<LTOS />} />
+          <Route path="/membresias" element={<Membresias />} />
+          <Route path="/mina" element={<Mina />} />
+          <Route path="/mitos" element={<Mitos />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/music/:slug" element={<MusicDetail />} />
+          <Route path="/operativo" element={<Operativo />} />
+          <Route path="/premium" element={<PremiumPlans />} />
+          <Route path="/rfc" element={<RFCList />} />
+          <Route path="/rfc/:id" element={<RFCDetail />} />
+          <Route path="/realito-ai" element={<RealitoAI />} />
+          <Route path="/recorridos" element={<Recorridos />} />
+          <Route path="/registrar-comercio" element={<RegistrarComercio />} />
+          <Route path="/ruta-del-paste" element={<RutaDelPaste />} />
+          <Route path="/tamv" element={<TAMVHub />} />
+          <Route path="/tamv/api" element={<TAMVApiExplorer />} />
+          <Route path="/tamv/status" element={<TAMVStatus />} />
+          <Route path="/tamv/thesis" element={<TAMVThesis />} />
+          <Route path="/telemetry" element={<TelemetryDashboard />} />
+          <Route path="/tenochtitlan" element={<Tenochtitlan />} />
+          <Route path="/territorial-dashboard" element={<TerritorialDashboard />} />
+          <Route path="/wiki" element={<Wiki />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

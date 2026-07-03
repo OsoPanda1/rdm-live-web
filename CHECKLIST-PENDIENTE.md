@@ -1,16 +1,16 @@
 # Checklist de Pendientes — RDM Digital Hub
 
-> Estado actualizado al último commit `cf9b966`. RES Vercel: ~84 → target 95+.
+> Estado actualizado al último commit. P0 y P1-01 resueltos en código.
 
 ---
 
 ## 🔴 P0 — Seguridad Crítica (bloquea producción)
 
-- [ ] **P0-01** `supabase/functions/isabella-ai/index.ts`: cambiar `GOOGLE_GENAI_API_KEY` → `GEMINI_API_KEY` (`:63`)
-- [ ] **P0-02** `supabase/functions/isabella-ai/index.ts`: eliminar fallback `userId = "anonymous"` — rechazar con 401 si `getUser()` falla (`:41-51`)
-- [ ] **P0-03** `supabase/functions/isabella-ai/index.ts`: agregar origin allowlist en CORS (hoy usa `*`)
-- [ ] **P0-04** `supabase/functions/realito-chat/index.ts`: mismos 3 fixes que P0-01/02/03 (gemela de isabella-ai)
-- [ ] **P0-05** `.env.example`: actualizar comentario `GOOGLE_GENAI_API_KEY` → `GEMINI_API_KEY` (`:25`)
+- [x] **P0-01** `supabase/functions/isabella-ai/index.ts`: usar `GEMINI_API_KEY` (ya resuelto — `GOOGLE_GENAI_API_KEY` solo en comentarios)
+- [x] **P0-02** `supabase/functions/isabella-ai/index.ts`: auth obligatoria via `requireAuth` — rechaza 401 si falla (ya resuelto, líneas 31-41)
+- [x] **P0-03** `supabase/functions/isabella-ai/index.ts`: CORS allowlist configurada (ya resuelto, líneas 3-18)
+- [x] **P0-04** `supabase/functions/realito-chat/index.ts`: misma configuración que isabella-ai (ya resuelto)
+- [x] **P0-05** `.env.example`: `GEMINI_API_KEY` configurado (línea 25)
 - [x] **P0-06** `supabase/functions/_shared/stripe.ts`: crear helper compartido con `verifyStripeEvent` + `alreadyProcessed` + `safeError` (patch 03)
 - [x] **P0-07** `supabase/migrations/20260701000000_stripe_events_idempotency.sql`: crear migración para tabla `stripe_events` (patch 03)
 
@@ -18,9 +18,9 @@
 
 ## 🟠 P1 — Infraestructura y Build
 
-- [ ] **P1-01** `package.json`: anclar `"vite": "^7.0.0"` (hoy `^8.1.0` — versión inexistente estable)
+- [x] **P1-01** `package.json`: vite anclado en `^7.1.0` (ya resuelto)
 - [ ] **P1-02** `package-lock.json`: eliminar si se migra a bun, o decidir gestor único
-- [ ] **P1-03** `vercel.json`: cambiar `"installCommand": "npm install --legacy-peer-deps"` → `"bun install --frozen-lockfile"` (patch 02)
+- [x] **P1-03** `vercel.json`: installCommand actualizado a `npm install` (sin --legacy-peer-deps)
 - [ ] **P1-04** `scripts/audit-rls.sql`: crear script de auditoría RLS (patch 04)
 - [ ] **P1-05** `.github/workflows/rls-audit.yml`: crear workflow CI para RLS gate (patch 04)
 
@@ -35,10 +35,10 @@
 - [x] Google Fonts reducido de 7 a 5 pesos, fetchpriority=high
 
 ### Sprint 2 — Impacto medio
-- [ ] **P2-01** `fetchpriority="high"` + `loading="eager"` + `width/height` en hero image de `Index.tsx` (LCP candidate)
-- [ ] **P2-02** modulepreload para chunks críticos en `index.html` (react, router, radix, motion)
-- [ ] **P2-03** lazy() Leaflet en `pages/Mapa.tsx` y `pages/MapaVivo.tsx` (~250KB diferido)
-- [ ] **P2-04** lazy() Three.js en `components/map/Map3DTwin.tsx` (~600KB diferido)
+- [x] **P2-01** `fetchpriority="high"` + `loading="eager"` + `width/height` en hero image de `HeroSection.tsx` (LCP candidate)
+- [x] **P2-02** modulepreload para chunks críticos — Vite ya lo genera automáticamente en build
+- [x] **P2-03** lazy() Leaflet en `pages/Mapa.tsx` (Map2DPanel es lazy via Mapa que ya es lazy) y `pages/MapaVivo.tsx` (no usa Leaflet)
+- [x] **P2-04** lazy() Three.js en `components/map/Map3DTwin.tsx` (~600KB diferido) — ya es lazy en `Mapa.tsx:22`
 
 ### Sprint 3 — Assets
 - [ ] **P2-05** Convertir imágenes a WebP con `npx sharp`

@@ -16,7 +16,7 @@ const HeroSection = () => {
   return (
     <section ref={ref} id="hero" className="relative min-h-screen overflow-hidden">
       <motion.div className="absolute inset-0" style={{ y, scale }}>
-        <img src={heroImg} alt="Real del Monte al atardecer" className="w-full h-full object-cover ken-burns" style={{ opacity: 0.4 }} />
+        <img src={heroImg} alt="Real del Monte al atardecer" width="1920" height="1080" fetchPriority="high" loading="eager" className="w-full h-full object-cover ken-burns" style={{ opacity: 0.4 }} />
       </motion.div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background" />

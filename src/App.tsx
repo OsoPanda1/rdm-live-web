@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import { useState, useCallback, useEffect, lazy, Suspense, Component, ErrorInfo } from 'react'
+import { useState, useCallback, useEffect, lazy, Suspense, Component, ErrorInfo, ReactNode } from 'react'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -219,6 +219,62 @@ const AuthStatusBanner = () => {
   )
 }
 
+const AppCrashFallback = () => (
+  <div className="min-h-screen w-full flex items-center justify-center bg-background p-6">
+    <div className="max-w-lg rounded-2xl border border-destructive/30 bg-card p-6 text-center shadow-xl">
+      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-destructive">
+        Error crítico
+      </p>
+      <h1 className="mt-3 font-serif text-2xl font-bold text-foreground">
+        No pudimos iniciar la experiencia
+      </h1>
+      <p className="mt-3 text-sm text-muted-foreground">
+        Se detectó un fallo durante el arranque de la aplicación. Recarga la página o
+        vuelve a intentar en unos segundos.
+      </p>
+      <button
+        onClick={() => window.location.reload()}
+        className="btn-hero-primary mt-6 inline-flex items-center justify-center"
+      >
+        Recargar aplicación
+      </button>
+    </div>
+  </div>
+)
+
+class AppCrashBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('AppCrashBoundary caught a bootstrap error:', { error, errorInfo })
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('rdm-error', {
+          detail: {
+            error,
+            errorInfo,
+            timestamp: new Date().toISOString(),
+            boundary: 'AppCrashBoundary',
+          },
+        }),
+      )
+    }
+  }
+
+  render() {
+    if (this.state.hasError) return <AppCrashFallback />
+    return this.props.children
+  }
+}
+
 const AnimatedRoutes = () => {
   const location = useLocation()
 
@@ -294,6 +350,7 @@ const AnimatedRoutes = () => {
           <Route path="/economia-federada" element={<RouteErrorBoundary route="/economia-federada"><EconomiaFederada /></RouteErrorBoundary>} />
           <Route path="/quantum-computing" element={<RouteErrorBoundary route="/quantum-computing"><QuantumComputing /></RouteErrorBoundary>} />
           <Route path="/enciclopedia" element={<RouteErrorBoundary route="/enciclopedia"><EnciclopediaUniversal /></RouteErrorBoundary>} />
+          <Route path="/isabella" element={<Navigate to="/isabella-ai" replace />} />
           <Route path="/isabella-ai" element={<RouteErrorBoundary route="/isabella-ai"><IsabellaAI /></RouteErrorBoundary>} />
           <Route path="/impacto-civilizatorio" element={<RouteErrorBoundary route="/impacto-civilizatorio"><ImpactoCivilizatorio /></RouteErrorBoundary>} />
           <Route path="/documentation" element={<RouteErrorBoundary route="/documentation"><Documentation /></RouteErrorBoundary>} />
@@ -476,15 +533,17 @@ const AppInner = () => {
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <RDMAuthProvider>
-          <NotificationProvider>
-            <AppInner />
-          </NotificationProvider>
-        </RDMAuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <AppCrashBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <RDMAuthProvider>
+            <NotificationProvider>
+              <AppInner />
+            </NotificationProvider>
+          </RDMAuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </AppCrashBoundary>
   )
 }
 

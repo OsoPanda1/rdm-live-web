@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
+import { useState, useCallback, useEffect, lazy, Suspense, Component, ErrorInfo } from 'react'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -361,12 +361,57 @@ const AnimatedRoutes = () => {
   )
 }
 
+// Error boundary that catches CinematicIntro errors and unblocks main content
+class CinematicIntroSafe extends Component<
+  { onEnter: () => void },
+  { hasError: boolean }
+> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(_error: Error, _info: ErrorInfo) {
+    // Unblock main content on error
+    setTimeout(() => this.props.onEnter(), 0)
+  }
+
+  render() {
+    if (this.state.hasError) return null
+    return <CinematicIntro onEnter={this.props.onEnter} />
+  }
+}
+
 const AppInner = () => {
   const [introComplete, setIntroComplete] = useState(false)
+
+  const [showIntro] = useState(() => {
+    const isBrowser = typeof window !== 'undefined'
+    if (!isBrowser) {
+      return false
+    }
+
+    // Solo mostrar CinematicIntro en la landing page /
+    if (window.location.pathname !== '/') return false
+
+    if (sessionStorage.getItem('rdm_intro_shown')) return false
+    sessionStorage.setItem('rdm_intro_shown', 'true')
+    return true
+  })
 
   const handleIntroComplete = useCallback(() => {
     setIntroComplete(true)
   }, [])
+
+  // Safety net: if CinematicIntro fails to load or never calls onEnter,
+  // force-complete after 5s so main content always renders
+  useEffect(() => {
+    if (showIntro && !introComplete) {
+      const timer = setTimeout(() => setIntroComplete(true), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [showIntro, introComplete])
 
   // Analytics post-pintado: se montan vía requestIdleCallback para no bloquear el main thread
   const [analyticsReady, setAnalyticsReady] = useState(false)
@@ -388,20 +433,6 @@ const AppInner = () => {
     }).catch(() => {})
   }, [])
 
-  const [showIntro] = useState(() => {
-    const isBrowser = typeof window !== 'undefined'
-    if (!isBrowser) {
-      return false
-    }
-
-    // Solo mostrar CinematicIntro en la landing page /
-    if (window.location.pathname !== '/') return false
-
-    if (sessionStorage.getItem('rdm_intro_shown')) return false
-    sessionStorage.setItem('rdm_intro_shown', 'true')
-    return true
-  })
-
   return (
     <ErrorBoundary>
       <TooltipProvider>
@@ -413,7 +444,7 @@ const AppInner = () => {
         <AnimatePresence>
           {showIntro && !introComplete && (
             <Suspense fallback={null}>
-              <CinematicIntro onEnter={handleIntroComplete} />
+              <CinematicIntroSafe onEnter={handleIntroComplete} />
             </Suspense>
           )}
         </AnimatePresence>

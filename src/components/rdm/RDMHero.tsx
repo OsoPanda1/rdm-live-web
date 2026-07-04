@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { ChevronDown, Mountain, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import { RDM_IMAGES } from "@/data/rdm-images";
 
 /**
  * RDMHero — cinematic video background with gradient fallback.
@@ -11,7 +12,7 @@ import { Link } from "react-router-dom";
  */
 export function RDMHero() {
   const ref = useRef<HTMLDivElement>(null);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
@@ -28,20 +29,15 @@ export function RDMHero() {
           }}
         />
 
-        {/* ── Cinematic video ── */}
-        <motion.video
-          src="/video/hero.mp4"
-          poster="/images/rdm-hero.png"
-          autoPlay
-          muted
-          loop
-          playsInline
-          onCanPlay={() => setVideoLoaded(true)}
+        {/* ── Production-safe visual: bundled asset, no missing /video dependency ── */}
+        <motion.img
+          src={RDM_IMAGES.aerialPueblo}
+          alt="Vista panorámica de Real del Monte"
+          onLoad={() => setImageLoaded(true)}
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ opacity: videoLoaded ? 1 : 0 }}
-          animate={{ opacity: videoLoaded ? 1 : 0 }}
+          style={{ opacity: imageLoaded ? 1 : 0.35 }}
+          animate={{ opacity: imageLoaded ? 1 : 0.35, scale: imageLoaded ? 1 : 1.02 }}
           transition={{ duration: 1.4 }}
-          aria-hidden="true"
         />
 
         {/* ── Cinematic grading overlay ── */}

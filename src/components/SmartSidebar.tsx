@@ -139,7 +139,8 @@ export default function SmartSidebar() {
 
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return true
-    return window.localStorage.getItem(STORAGE_KEY) === "1"
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    return stored === null ? true : stored === "1"
   })
   const [openSection, setOpenSection] = useState<string>("")
 

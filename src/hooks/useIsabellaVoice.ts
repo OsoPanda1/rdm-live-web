@@ -43,6 +43,13 @@ export function useIsabellaVoice(options: UseIsabellaVoiceOptions = {}) {
 
   const hasWebSpeech = typeof window !== "undefined" && "speechSynthesis" in window;
 
+  // Removes the finished clip from the head of the queue and starts the next.
+  const finishCurrentClip = useCallback(() => {
+    isPlayingRef.current = false;
+    setIsSpeaking(false);
+    setQueue((prev) => prev.slice(1));
+  }, []);
+
   const ensureAudioElement = useCallback(() => {
     if (!audioRef.current) {
       const audio = new Audio();
@@ -53,18 +60,12 @@ export function useIsabellaVoice(options: UseIsabellaVoiceOptions = {}) {
         playNextFromQueueRef.current();
       });
       audio.addEventListener("error", () => {
-        isPlayingRef.current = false;
-        setIsSpeaking(false);
+        finishCurrentClip();
+        setError("Error reproduciendo cloud TTS");
+        playNextFromQueueRef.current();
       });
     }
-  }, []);
-
-  // Removes the finished clip from the head of the queue and starts the next.
-  const finishCurrentClip = useCallback(() => {
-    isPlayingRef.current = false;
-    setIsSpeaking(false);
-    setQueue((prev) => prev.slice(1));
-  }, []);
+  }, [finishCurrentClip]);
 
   const playNextFromQueue = useCallback(() => {
     // The currently-playing clip stays at the head of the queue while it plays
@@ -115,8 +116,15 @@ export function useIsabellaVoice(options: UseIsabellaVoiceOptions = {}) {
         audioEl.currentTime = 0;
         audioEl.onplay = () => { isPlayingRef.current = true; setIsSpeaking(true); };
         audioEl.onended = () => { finishCurrentClip(); playNextFromQueue(); };
-        audioEl.onerror = () => { finishCurrentClip(); setError("Error reproduciendo cloud TTS"); };
-        audioEl.play().catch(() => { finishCurrentClip(); });
+        audioEl.onerror = () => {
+          finishCurrentClip();
+          setError("Error reproduciendo cloud TTS");
+          playNextFromQueueRef.current();
+        };
+        audioEl.play().catch(() => {
+          finishCurrentClip();
+          playNextFromQueueRef.current();
+        });
         return prev;
       }
 

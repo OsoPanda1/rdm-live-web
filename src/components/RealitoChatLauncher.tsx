@@ -21,7 +21,22 @@ function OrbButton({ onClick }: { onClick: () => void }) {
     ctx.scale(dpr, dpr);
 
     let t = 0;
+    let isVisible = document.visibilityState === "visible";
+    let isIntersecting = true;
+
+    const stop = () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
+    };
+
     const draw = () => {
+      if (!isVisible || !isIntersecting) {
+        rafRef.current = 0;
+        return;
+      }
+
       rafRef.current = requestAnimationFrame(draw);
       t += 0.02;
       ctx.clearRect(0, 0, size, size);
@@ -79,8 +94,33 @@ function OrbButton({ onClick }: { onClick: () => void }) {
       }
     };
 
-    draw();
-    return () => cancelAnimationFrame(rafRef.current);
+    const start = () => {
+      if (!rafRef.current && isVisible && isIntersecting) {
+        rafRef.current = requestAnimationFrame(draw);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      isVisible = document.visibilityState === "visible";
+      if (isVisible) start();
+      else stop();
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isIntersecting = entry?.isIntersecting ?? true;
+      if (isIntersecting) start();
+      else stop();
+    });
+
+    observer.observe(canvas);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    start();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      stop();
+    };
   }, []);
 
   return (

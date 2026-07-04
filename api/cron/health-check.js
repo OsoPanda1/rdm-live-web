@@ -20,6 +20,35 @@ const DEFENSIVE_HEADERS = {
   "Content-Type": "application/json",
 };
 
+async function measureSupabaseHealth(supabase, federationId) {
+  const started = Date.now();
+  const probe = supabase
+    .from("federation_health_log")
+    .select("checked_at")
+    .eq("federation_id", federationId)
+    .order("checked_at", { ascending: false })
+    .limit(1);
+
+  const timeout = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error("Supabase health probe timeout")), 4_000);
+  });
+
+  try {
+    const { error } = await Promise.race([probe, timeout]);
+    return {
+      status: error ? "degraded" : "healthy",
+      latency: Date.now() - started,
+      error: error?.message,
+    };
+  } catch (error) {
+    return {
+      status: "degraded",
+      latency: Date.now() - started,
+      error: error instanceof Error ? error.message : "Unknown health probe error",
+    };
+  }
+}
+
 /**
  * @param {Request} request
  */
@@ -59,14 +88,13 @@ export default async function handler(request) {
     const timestamp = new Date().toISOString();
 
     for (const fed of FEDERATIONS) {
-      const status = Math.random() > 0.1 ? "healthy" : "degraded";
-      const latency = Math.floor(Math.random() * 200) + 20;
+      const health = await measureSupabaseHealth(supabase, fed.id);
 
       const { error } = await supabase.from("federation_health_log").insert({
         federation_id: fed.id,
         federation_name: fed.name,
-        status,
-        latency_ms: latency,
+        status: health.status,
+        latency_ms: health.latency,
         checked_at: timestamp,
         source: "cron-vercel",
       });
@@ -74,9 +102,10 @@ export default async function handler(request) {
       results.push({
         federation: fed.id,
         name: fed.name,
-        status,
-        latency_ms: latency,
+        status: health.status,
+        latency_ms: health.latency,
         logged: !error,
+        error: health.error || error?.message,
       });
     }
 

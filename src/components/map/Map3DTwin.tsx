@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
 import { PlaneGeometry, ShaderMaterial, FogExp2 } from "three";
 import type { MapMarkerData, MapViewportState } from "@/features/places/mapTypes";
+import { LoadingFallback } from "@/components/LoadingFallback";
 
 const GEO_LNG_OFFSET = 98.6732;
 const GEO_LAT_OFFSET = 20.1374;
@@ -176,7 +177,7 @@ export function Map3DTwin({ viewport, markers, onViewportChange }: Map3DTwinProp
     <div className="relative h-[420px] w-full overflow-hidden rounded-2xl border border-white/10 bg-[#070b14] md:h-[640px]">
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_30%_15%,rgba(255,255,255,.12),transparent_45%),radial-gradient(circle_at_70%_80%,rgba(245,158,11,.18),transparent_40%)]" />
       <Canvas shadows camera={{ position: [8, 6, 8], fov: 48 }} dpr={[1, 1.5]}>
-        <Suspense fallback={null}>
+        <Suspense fallback={<LoadingFallback />}>
           <Atmosphere />
           <FoggyTerrain points={markers} />
           <FogPlane />

@@ -22,6 +22,7 @@ export function useIsabellaSSE(options: Options = {}) {
 
   useEffect(() => {
     if (!url) {
+      console.error("[Isabella SSE] Missing VITE_API_GATEWAY or stream URL; SSE disabled.");
       setState("closed");
       return;
     }
@@ -39,7 +40,8 @@ export function useIsabellaSSE(options: Options = {}) {
       source.onmessage = (event) => {
         try {
           setDecision(JSON.parse(event.data));
-        } catch {
+        } catch (err) {
+          console.error("[Isabella SSE] Malformed event payload", err);
           // keep stream healthy despite malformed packets
         }
       };

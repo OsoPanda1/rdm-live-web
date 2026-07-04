@@ -488,20 +488,23 @@ const AppInner = () => {
     if (!isBrowser) return
     import('@/core/territorial/TerritorialFusionEngine').then(({ fusionEngine }) => {
       fusionEngine.start()
-    }).catch(() => {})
+    }).catch((err) => {
+      console.error('[FUSION ENGINE]', err)
+      captureException(err, { module: 'TerritorialFusionEngine' })
+    })
   }, [])
 
   return (
     <ErrorBoundary>
       <TooltipProvider>
-        <Suspense fallback={null}><AmbientLayer /></Suspense>
+        <Suspense fallback={<LoadingFallback />}><AmbientLayer /></Suspense>
         {/* Banner global de estado de auth/Supabase */}
         <AuthStatusBanner />
         <Toaster />
         <Sonner />
         <AnimatePresence>
           {showIntro && !introComplete && (
-            <Suspense fallback={null}>
+            <Suspense fallback={<LoadingFallback />}>
               <CinematicIntroSafe onEnter={handleIntroComplete} />
             </Suspense>
           )}
@@ -509,20 +512,20 @@ const AppInner = () => {
           {(!showIntro || introComplete) && (
             <>
               <AudioPlayerProvider>
-                <Suspense fallback={null}><MicroPageIntro /></Suspense>
+                <Suspense fallback={<LoadingFallback />}><MicroPageIntro /></Suspense>
                 <AnimatedRoutes />
-                <Suspense fallback={null}><GlobalPlayerBar /></Suspense>
-                <Suspense fallback={null}><LiveTelemetryBadge /></Suspense>
-                <Suspense fallback={null}><SearchOverlay /></Suspense>
+                <Suspense fallback={<LoadingFallback />}><GlobalPlayerBar /></Suspense>
+                <Suspense fallback={<LoadingFallback />}><LiveTelemetryBadge /></Suspense>
+                <Suspense fallback={<LoadingFallback />}><SearchOverlay /></Suspense>
                 {/* CompassNav disabled — RDMNavbar now covers all navigation */}
-                <Suspense fallback={null}><SmartSidebar /></Suspense>
+                <Suspense fallback={<LoadingFallback />}><SmartSidebar /></Suspense>
               </AudioPlayerProvider>
             </>
           )}
-          <Suspense fallback={null}><RealitoChatLauncher /></Suspense>
+          <Suspense fallback={<LoadingFallback />}><RealitoChatLauncher /></Suspense>
           {/* SpeedInsights + Analytics: diferidos al primer idle del navegador */}
           {analyticsReady && (
-            <Suspense fallback={null}>
+            <Suspense fallback={<LoadingFallback />}>
               <SpeedInsights />
               <Analytics debug={import.meta.env.DEV} />
             </Suspense>

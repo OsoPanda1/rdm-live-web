@@ -7,7 +7,6 @@
  *  - Never inline `process.env` or `import.meta.env` outside this module.
  */
 import { z } from "zod";
-import { logger } from "@/lib/logger";
 
 const clientSchema = z.object({
   VITE_SUPABASE_URL: z.string().url().optional(),
@@ -31,10 +30,10 @@ function parseClient(): ClientEnv {
   };
   const parsed = clientSchema.safeParse(raw);
   if (!parsed.success) {
-    // Don't crash the bundle — degrade gracefully and log once.
-    if (typeof logger !== "undefined") {
-      logger.error("[env] Invalid client env", parsed.error.flatten().fieldErrors);
-    }
+    // Do not import the app logger here: logger imports this env module, so that
+    // cycle can throw during module evaluation and leave the root completely
+    // blank before React has a chance to render an error boundary.
+    console.error("[env] Invalid client env", parsed.error.flatten().fieldErrors);
     return clientSchema.parse({});
   }
   return parsed.data;

@@ -5,6 +5,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { requireAuth } from "./_shared/auth.js";
 import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
+import { sendWebResponse, vercelRequestToWebRequest } from "./_edge-adapter";
 
 type ModelProvider = "huggingface" | "openllm" | "fallback";
 
@@ -84,14 +85,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const webRequest = vercelRequestToWebRequest(req);
+
   // Auth check
-  const auth = await requireAuth(req as unknown as Request);
+  const auth = await requireAuth(webRequest);
   if (auth.errorResponse) {
-    return auth.errorResponse as unknown as VercelResponse;
+    return sendWebResponse(res, auth.errorResponse);
   }
 
   // Rate limit
-  const rateLimit = checkRateLimit(req as unknown as Request, RATE_LIMITS.model);
+  const rateLimit = checkRateLimit(webRequest, RATE_LIMITS.model);
   if (!rateLimit.allowed) {
     return res.status(429).json({
       error: "Rate limit exceeded",

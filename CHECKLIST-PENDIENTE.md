@@ -20,6 +20,7 @@ Legend:
 - [AI COMPLETE] **P0-07** — Federation Dashboard: /federacion route with health monitoring for all 7 federations
 - [AI COMPLETE] **P0-08** — Federation Tables: yun_federation_health, yun_event_log, yun_data_catalog, yun_adrs, isabella_voice_logs
 - [AI COMPLETE] **P0-09** — Real Storage Adapters: all 5 YUN domains have real Supabase-backed implementations (Identity, Commerce, Knowledge, Telemetry, Gameplay)
+- [AI COMPLETE] **P0-10** — ISA-API v.1.0.0-evolved: OpenAPI YAML + TypeScript types + double hexagon security middleware + router with all 15 endpoints bridged to existing Isabella skills + architecture document
 
 ## P1 — Alto (funcionalidad core)
 

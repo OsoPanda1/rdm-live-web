@@ -5,6 +5,8 @@ import { almaYCorazon } from "../emotional/heart";
 import { memoriaEmocional } from "../emotional/memory";
 import { logger } from "@/lib/logger";
 
+// ─── Legacy IsabellaAPI (backward compatible) ──────────────────────────────
+
 export class IsabellaAPI {
   identidad() {
     return isabellaIdentidad.getIdentidad();
@@ -71,3 +73,41 @@ export class IsabellaAPI {
 }
 
 export const isabellaAPI = new IsabellaAPI();
+
+// ─── ISA-API v.1.0.0-evolved (new sovereign API) ──────────────────────────
+
+export { dispatchISARequest, ISA_ROUTES } from './router';
+export {
+  createISAContext,
+  validateApiKey,
+  validateTerritorialToken,
+  validateHexagon,
+  generateTraceId,
+  buildErrorResponse,
+} from './middleware';
+export type { ISAContext } from './types';
+export type { SecurityResult } from './middleware';
+export type {
+  OrionSearchRequest,
+  OrionSearchResponse,
+  SophiaResearchRequest,
+  SophiaResearchResponse,
+  ArgusSimulationRequest,
+  ArgusSimulationResponse,
+  MnemosRecordRequest,
+  MnemosRecordResponse,
+  LumenEvaluateRequest,
+  LumenEvaluateResponse,
+  ResonanceUpdateRequest,
+  ResonanceUpdateResponse,
+  TimeUpAnchorRequest,
+  TimeUpAnchorResponse,
+  HeptafederationTopology,
+  NodoCeroWorkflow,
+  SystemHealthResponse,
+  HexagonValidationRequest,
+  HexagonValidationResponse,
+  IntegrationOrchestrationRequest,
+  IntegrationOrchestrationResponse,
+  ErrorResponse,
+} from './types';

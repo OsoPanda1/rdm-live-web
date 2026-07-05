@@ -51,6 +51,13 @@ Cada ADR sigue este formato:
 | ADR-004 | Modelo heptafederado | 2026-07-04 | Accepted | [ADR-004-heptafederation.md](adr/ADR-004-heptafederation.md) |
 | ADR-005 | Commerce → Neon Postgres | 2026-07-04 | Proposed | [ADR-005-commerce-neon-migration.md](adr/ADR-005-commerce-neon-migration.md) |
 
+**Documentos de Arquitectura ISA-API:**
+
+| Documento | Versión | Fecha | Archivo |
+|-----------|---------|-------|---------|
+| ISA-API OpenAPI Spec | v.1.0.0-evolved | 2026-07-04 | [isa-api.yaml](isa-api.yaml) |
+| ISA-API Architecture | v.1.0.0-evolved | 2026-07-04 | [09-isa-api-architecture.md](09-isa-api-architecture.md) |
+
 ---
 
 ## 4. Estados de ADR

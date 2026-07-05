@@ -70,3 +70,38 @@ export {
   getUnifiedFederationHealth,
   initEventBusBridge,
 } from './event-bus-bridge';
+
+// YUN-native Sovereign Module Manifest
+export {
+  RDMX_MODULES,
+  MODULE_ALIASES,
+} from './rdmxManifest';
+export type {
+  ModuleType,
+  ModuleStatus,
+  CriticalityLevel,
+  SovereignDomain,
+  YunDomain,
+  FederationId,
+  ResilienceMode,
+  YunBinding,
+  RepoModule,
+} from './rdmxManifest';
+
+// YUN Manifest Validator
+export {
+  validateYunManifest,
+} from './manifestValidator';
+export type {
+  Severity,
+  ValidationIssue,
+} from './manifestValidator';
+
+// YUN Manifest Artifacts
+export {
+  buildYunAccessMatrix,
+  buildYunEventsMap,
+  buildFederationResilience,
+  buildYunModuleSummary,
+  generateAllArtifacts,
+} from './manifestArtifacts';

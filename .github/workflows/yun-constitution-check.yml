@@ -1,0 +1,54 @@
+name: YUN Constitution Check
+
+on:
+  push:
+    branches: ["main", "develop", "feature/*", "yun/*"]
+  pull_request:
+
+jobs:
+  validate-yun-manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Run YUN Manifest Validator
+        run: npx tsx src/core/yun/manifestValidator.ts
+
+      - name: Generate YUN artifacts
+        if: success()
+        run: npx tsx -e "
+          const { generateAllArtifacts } = require('./src/core/yun/manifestArtifacts');
+          const fs = require('fs');
+          const path = require('path');
+          const outDir = path.join(process.cwd(), 'docs', 'yun', 'artifacts');
+          fs.mkdirSync(outDir, { recursive: true });
+          const artifacts = generateAllArtifacts();
+          for (const [name, data] of Object.entries(artifacts)) {
+            fs.writeFileSync(
+              path.join(outDir, name + '.json'),
+              JSON.stringify(data, null, 2)
+            );
+          }
+          console.log('YUN artifacts generated in /docs/yun/artifacts');
+          "
+
+      - name: Upload artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yun-manifest-artifacts
+          path: docs/yun/artifacts/
+          retention-days: 30

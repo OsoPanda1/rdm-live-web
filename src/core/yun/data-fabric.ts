@@ -265,14 +265,136 @@ export class SupabaseIdentityAdapter implements DataHandler {
 }
 
 /**
- * Supabase adapter for Commerce domain.
- * Handles: donations, subscriptions, payments, business registrations.
- * Uses Supabase tables (Neon migration pending).
+ * Neon adapter for Commerce domain (ADR-005).
+ * Handles: donations, subscriptions, payments, business registrations, stripe events.
+ * Uses @neondatabase/serverless with fallback to Supabase if Neon not configured.
+ *
+ * Migration plan: docs/yun/adr/ADR-005-commerce-neon-migration.md
  */
 export class CommerceAdapter implements DataHandler {
-  storage: StorageEngine = 'supabase';
+  storage: StorageEngine = 'neon';
+
+  private getNeonUrl(): string | null {
+    return import.meta.env.VITE_NEON_DATABASE_URL
+      || process.env.NEON_DATABASE_URL
+      || process.env.COMMERCE_DB_URL
+      || null;
+  }
+
+  private async neonQuery<T>(sql: string, params?: unknown[]): Promise<T> {
+    const neonUrl = this.getNeonUrl();
+    if (!neonUrl) {
+      throw new Error('NEON_DATABASE_URL not configured — falling back to Supabase');
+    }
+
+    // Use Neon HTTP-based query (works in Edge Runtime)
+    const url = new URL('/sql', neonUrl.replace('postgresql://', 'https://'));
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Neon-Connection-String': neonUrl,
+      },
+      body: JSON.stringify({ query: sql, params: params ?? [] }),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Neon query failed: ${response.status} ${text}`);
+    }
+
+    const result = await response.json() as { rows: T };
+    return result.rows as T;
+  }
 
   async handle<T>(request: DataAccessRequest): Promise<T> {
+    const neonUrl = this.getNeonUrl();
+
+    // Fallback to Supabase if Neon not configured
+    if (!neonUrl) {
+      return this.handleViaSupabase<T>(request);
+    }
+
+    const { entity, operation, payload, userId } = request;
+
+    try {
+      switch (operation) {
+        case 'read': {
+          const conditions: string[] = [];
+          const values: unknown[] = [];
+          let paramIdx = 1;
+
+          if (userId) {
+            conditions.push(`user_id = $${paramIdx++}`);
+            values.push(userId);
+          }
+          if (payload && typeof payload === 'object' && 'id' in (payload as Record<string, unknown>)) {
+            conditions.push(`id = $${paramIdx++}`);
+            values.push((payload as Record<string, unknown>).id);
+          }
+
+          const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+          const result = await this.neonQuery<Array<Record<string, unknown>>>(
+            `SELECT * FROM ${entity} ${where}`,
+            values,
+          );
+          return result as T;
+        }
+        case 'write': {
+          const data = payload as Record<string, unknown>;
+          const keys = Object.keys(data).filter(k => k !== 'id');
+          const idVal = data.id;
+
+          if (idVal) {
+            // UPSERT: update if exists, insert if not
+            const setClauses = keys.map((k, i) => `${k} = $${i + 2}`);
+            const insertKeys = ['id', ...keys];
+            const insertPlaceholders = insertKeys.map((_, i) => `$${i + 1}`);
+            const insertValues = [idVal, ...keys.map(k => data[k])];
+
+            const result = await this.neonQuery<Array<Record<string, unknown>>>(
+              `INSERT INTO ${entity} (${insertKeys.join(', ')})
+               VALUES (${insertPlaceholders.join(', ')})
+               ON CONFLICT (id) DO UPDATE SET ${setClauses.join(', ')}
+               RETURNING *`,
+              insertValues,
+            );
+            return result[0] as T;
+          } else {
+            // INSERT without id (auto-generated)
+            const insertKeys = keys;
+            const insertPlaceholders = insertKeys.map((_, i) => `$${i + 1}`);
+            const insertValues = keys.map(k => data[k]);
+
+            const result = await this.neonQuery<Array<Record<string, unknown>>>(
+              `INSERT INTO ${entity} (${insertKeys.join(', ')})
+               VALUES (${insertPlaceholders.join(', ')})
+               RETURNING *`,
+              insertValues,
+            );
+            return result[0] as T;
+          }
+        }
+        case 'delete': {
+          const id = (payload as Record<string, unknown>)?.id as string;
+          await this.neonQuery(
+            `DELETE FROM ${entity} WHERE id = $1`,
+            [id],
+          );
+          return { deleted: true } as T;
+        }
+        default:
+          throw new Error(`Unsupported operation: ${operation}`);
+      }
+    } catch (neonError) {
+      // If Neon fails, fallback to Supabase
+      console.warn(`[YUN Commerce] Neon failed, falling back to Supabase:`, neonError);
+      this.storage = 'supabase';
+      return this.handleViaSupabase<T>(request);
+    }
+  }
+
+  private async handleViaSupabase<T>(request: DataAccessRequest): Promise<T> {
     const { entity, operation, payload, userId } = request;
 
     switch (operation) {

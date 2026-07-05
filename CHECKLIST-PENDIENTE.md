@@ -15,6 +15,11 @@ Legend:
 - [x] **P0-02** — Create `api/_shared/stripe.ts` for Stripe webhook signature verification
 - [x] **P0-03** — Create `api/cron/stripe-webhook.ts` edge function
 - [AI COMPLETE] **P0-04** — Isabella Voice Engine: TTS queue with correct semantics (clip stays in queue until `onend`)
+- [AI COMPLETE] **P0-05** — Commerce → Neon: ADR-005, NeonCommerceAdapter with Supabase fallback, @neondatabase/serverless installed
+- [AI COMPLETE] **P0-06** — YUN Event Bus Bridge: unified TAMV ↔ YUN ↔ Core event systems
+- [AI COMPLETE] **P0-07** — Federation Dashboard: /federacion route with health monitoring for all 7 federations
+- [AI COMPLETE] **P0-08** — Federation Tables: yun_federation_health, yun_event_log, yun_data_catalog, yun_adrs, isabella_voice_logs
+- [AI COMPLETE] **P0-09** — Real Storage Adapters: all 5 YUN domains have real Supabase-backed implementations (Identity, Commerce, Knowledge, Telemetry, Gameplay)
 
 ## P1 — Alto (funcionalidad core)
 

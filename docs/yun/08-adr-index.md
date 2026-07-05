@@ -49,6 +49,7 @@ Cada ADR sigue este formato:
 | ADR-002 | Arquitectura event-driven | 2026-07-04 | Accepted | [ADR-002-event-driven.md](adr/ADR-002-event-driven.md) |
 | ADR-003 | YUN como base fundacional | 2026-07-04 | Accepted | [ADR-003-yun-architecture.md](adr/ADR-003-yun-architecture.md) |
 | ADR-004 | Modelo heptafederado | 2026-07-04 | Accepted | [ADR-004-heptafederation.md](adr/ADR-004-heptafederation.md) |
+| ADR-005 | Commerce → Neon Postgres | 2026-07-04 | Proposed | [ADR-005-commerce-neon-migration.md](adr/ADR-005-commerce-neon-migration.md) |
 
 ---
 

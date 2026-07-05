@@ -300,7 +300,7 @@ Stack de observabilidad:
 ## Lo que Falta
 
 ### Crítico (P0)
-- [ ] **Neon Postgres** — Migrar Commerce domain a Neon (actualmente todo en Supabase)
+- [x] **Neon Postgres** — ADR-005 + NeonCommerceAdapter with Supabase fallback (SDK installed, adapter implemented, pending Neon project provisioning)
 - [ ] **Turso/libSQL** — Migrar Knowledge domain a Turso
 - [ ] **Cloudflare D1** — Migrar Telemetry domain a D1
 - [ ] **Upstash Redis** — Migrar Gameplay domain a Redis (caché efímero)

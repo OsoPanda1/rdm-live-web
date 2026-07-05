@@ -4,10 +4,12 @@
  * and Principle #4 (Reversible by Default)
  *
  * Provides: saga pattern, circuit breakers for data access, transaction coordination.
+ * Storage adapters route to real backends: Supabase (Identity), Supabase (Knowledge/Telemetry/Gameplay via tables).
  */
 
-import type { YunDomain, StorageEngine, DOMAIN_STORAGE } from './types';
+import type { YunDomain, StorageEngine } from './types';
 import { publish, createEvent } from './event-bus';
+import { supabase } from '@/integrations/supabase/client';
 
 // ============================================================================
 // DATA FABRIC CONFIGURATION
@@ -46,8 +48,6 @@ export interface SagaResult<T> {
 /**
  * Executes a saga — a sequence of steps with compensating transactions.
  * Per YUN Principle #4: Reversible by Default.
- *
- * If any step fails, all completed steps are compensated in reverse order.
  */
 export async function executeSaga<TFinal>(
   steps: SagaStep[],
@@ -95,7 +95,6 @@ export async function executeSaga<TFinal>(
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
 
-    // Compensate in reverse order
     for (let i = completedSteps.length - 1; i >= 0; i--) {
       const step = steps.find((s) => s.name === completedSteps[i]);
       if (step) {
@@ -169,7 +168,6 @@ export async function accessData<T>(
   try {
     const result = await handler.handle<T>(request);
 
-    // Publish observability event
     await publish(
       createEvent('yun.telemetry.data_access.created', 'data-fabric', {
         domain: request.domain,
@@ -221,67 +219,221 @@ export interface DataHandler {
 }
 
 // ============================================================================
-// STORAGE ADAPTERS
+// STORAGE ADAPTERS — Real Supabase-backed implementations
 // ============================================================================
 
 /**
- * Supabase adapter for identity domain.
+ * Supabase adapter for Identity domain.
+ * Handles: users, profiles, roles, badges, auth, gamification_quests, gamification_rewards.
  */
-export class SupabaseAdapter implements DataHandler {
+export class SupabaseIdentityAdapter implements DataHandler {
   storage: StorageEngine = 'supabase';
 
   async handle<T>(request: DataAccessRequest): Promise<T> {
-    // Placeholder — real implementation uses @supabase/supabase-js
-    console.log(`[YUN Supabase] ${request.operation} ${request.entity}`, request.payload);
-    return {} as T;
+    const { entity, operation, payload, userId } = request;
+
+    switch (operation) {
+      case 'read': {
+        let query = supabase.from(entity as never).select('*');
+        if (userId) query = query.eq('user_id', userId);
+        if (payload && typeof payload === 'object' && 'id' in (payload as Record<string, unknown>)) {
+          query = query.eq('id', (payload as Record<string, unknown>).id);
+        }
+        const { data, error } = await query;
+        if (error) throw new Error(`Supabase read error: ${error.message}`);
+        return data as T;
+      }
+      case 'write': {
+        const { data, error } = await supabase
+          .from(entity as never)
+          .upsert(payload as never, { onConflict: 'id' });
+        if (error) throw new Error(`Supabase write error: ${error.message}`);
+        return data as T;
+      }
+      case 'delete': {
+        const { error } = await supabase
+          .from(entity as never)
+          .delete()
+          .eq('id', (payload as Record<string, unknown>)?.id as string);
+        if (error) throw new Error(`Supabase delete error: ${error.message}`);
+        return { deleted: true } as T;
+      }
+      default:
+        throw new Error(`Unsupported operation: ${operation}`);
+    }
   }
 }
 
 /**
- * Neon adapter for commerce domain.
+ * Supabase adapter for Commerce domain.
+ * Handles: donations, subscriptions, payments, business registrations.
+ * Uses Supabase tables (Neon migration pending).
  */
-export class NeonAdapter implements DataHandler {
-  storage: StorageEngine = 'neon';
+export class CommerceAdapter implements DataHandler {
+  storage: StorageEngine = 'supabase';
 
   async handle<T>(request: DataAccessRequest): Promise<T> {
-    console.log(`[YUN Neon] ${request.operation} ${request.entity}`, request.payload);
-    return {} as T;
+    const { entity, operation, payload, userId } = request;
+
+    switch (operation) {
+      case 'read': {
+        let query = supabase.from(entity as never).select('*');
+        if (userId) query = query.eq('user_id', userId);
+        const { data, error } = await query;
+        if (error) throw new Error(`Commerce read error: ${error.message}`);
+        return data as T;
+      }
+      case 'write': {
+        const { data, error } = await supabase
+          .from(entity as never)
+          .upsert(payload as never, { onConflict: 'id' });
+        if (error) throw new Error(`Commerce write error: ${error.message}`);
+        return data as T;
+      }
+      case 'delete': {
+        const { error } = await supabase
+          .from(entity as never)
+          .delete()
+          .eq('id', (payload as Record<string, unknown>)?.id as string);
+        if (error) throw new Error(`Commerce delete error: ${error.message}`);
+        return { deleted: true } as T;
+      }
+      default:
+        throw new Error(`Unsupported operation: ${operation}`);
+    }
   }
 }
 
 /**
- * Turso adapter for knowledge domain.
+ * Supabase adapter for Knowledge domain.
+ * Handles: ontology, chronicles, music cronicles, knowledge entries, archives.
  */
-export class TursoAdapter implements DataHandler {
-  storage: StorageEngine = 'turso';
+export class KnowledgeAdapter implements DataHandler {
+  storage: StorageEngine = 'supabase';
 
   async handle<T>(request: DataAccessRequest): Promise<T> {
-    console.log(`[YUN Turso] ${request.operation} ${request.entity}`, request.payload);
-    return {} as T;
+    const { entity, operation, payload } = request;
+
+    switch (operation) {
+      case 'read': {
+        let query = supabase.from(entity as never).select('*');
+        if (payload && typeof payload === 'object') {
+          const filters = payload as Record<string, unknown>;
+          for (const [key, value] of Object.entries(filters)) {
+            if (key !== 'id' && typeof value === 'string') {
+              query = query.eq(key, value);
+            }
+          }
+        }
+        const { data, error } = await query;
+        if (error) throw new Error(`Knowledge read error: ${error.message}`);
+        return data as T;
+      }
+      case 'write': {
+        const { data, error } = await supabase
+          .from(entity as never)
+          .upsert(payload as never, { onConflict: 'id' });
+        if (error) throw new Error(`Knowledge write error: ${error.message}`);
+        return data as T;
+      }
+      case 'delete': {
+        const { error } = await supabase
+          .from(entity as never)
+          .delete()
+          .eq('id', (payload as Record<string, unknown>)?.id as string);
+        if (error) throw new Error(`Knowledge delete error: ${error.message}`);
+        return { deleted: true } as T;
+      }
+      default:
+        throw new Error(`Unsupported operation: ${operation}`);
+    }
   }
 }
 
 /**
- * D1 adapter for telemetry domain.
+ * Supabase adapter for Telemetry domain.
+ * Handles: audit_log, security_events, system_alerts, federation_health, ai_prompts_log.
  */
-export class D1Adapter implements DataHandler {
-  storage: StorageEngine = 'd1';
+export class TelemetryAdapter implements DataHandler {
+  storage: StorageEngine = 'supabase';
 
   async handle<T>(request: DataAccessRequest): Promise<T> {
-    console.log(`[YUN D1] ${request.operation} ${request.entity}`, request.payload);
-    return {} as T;
+    const { entity, operation, payload } = request;
+
+    switch (operation) {
+      case 'read': {
+        let query = supabase.from(entity as never).select('*');
+        if (payload && typeof payload === 'object') {
+          const filters = payload as Record<string, unknown>;
+          for (const [key, value] of Object.entries(filters)) {
+            if (typeof value === 'string' || typeof value === 'number') {
+              query = query.eq(key, value as never);
+            }
+          }
+        }
+        const { data, error } = await query;
+        if (error) throw new Error(`Telemetry read error: ${error.message}`);
+        return data as T;
+      }
+      case 'write': {
+        const { data, error } = await supabase
+          .from(entity as never)
+          .insert(payload as never);
+        if (error) throw new Error(`Telemetry write error: ${error.message}`);
+        return data as T;
+      }
+      default:
+        throw new Error(`Unsupported operation: ${operation}`);
+    }
   }
 }
 
 /**
- * Redis adapter for gameplay domain.
+ * In-memory adapter for Gameplay domain.
+ * Handles: XP, points, streaks, sessions, quest progress, ephemeral game state.
+ * Uses Supabase for persistence but caches in-memory for speed.
  */
-export class RedisAdapter implements DataHandler {
+export class GameplayAdapter implements DataHandler {
   storage: StorageEngine = 'redis';
+  private cache = new Map<string, { data: unknown; expiresAt: number }>();
 
   async handle<T>(request: DataAccessRequest): Promise<T> {
-    console.log(`[YUN Redis] ${request.operation} ${request.entity}`, request.payload);
-    return {} as T;
+    const { entity, operation, payload, userId } = request;
+    const cacheKey = `${entity}:${userId ?? 'global'}:${JSON.stringify(payload ?? {})}`;
+
+    switch (operation) {
+      case 'read': {
+        const cached = this.cache.get(cacheKey);
+        if (cached && cached.expiresAt > Date.now()) {
+          return cached.data as T;
+        }
+        let query = supabase.from(entity as never).select('*');
+        if (userId) query = query.eq('user_id', userId);
+        const { data, error } = await query;
+        if (error) throw new Error(`Gameplay read error: ${error.message}`);
+        this.cache.set(cacheKey, { data, expiresAt: Date.now() + 30_000 });
+        return data as T;
+      }
+      case 'write': {
+        this.cache.delete(cacheKey);
+        const { data, error } = await supabase
+          .from(entity as never)
+          .upsert(payload as never, { onConflict: 'id' });
+        if (error) throw new Error(`Gameplay write error: ${error.message}`);
+        return data as T;
+      }
+      case 'delete': {
+        this.cache.delete(cacheKey);
+        const { error } = await supabase
+          .from(entity as never)
+          .delete()
+          .eq('id', (payload as Record<string, unknown>)?.id as string);
+        if (error) throw new Error(`Gameplay delete error: ${error.message}`);
+        return { deleted: true } as T;
+      }
+      default:
+        throw new Error(`Unsupported operation: ${operation}`);
+    }
   }
 }
 
@@ -293,12 +445,11 @@ export class YunDataFabric {
   private handlers: Map<YunDomain, DataHandler> = new Map();
 
   constructor() {
-    // Register default adapters
-    this.registerHandler('identity', new SupabaseAdapter());
-    this.registerHandler('commerce', new NeonAdapter());
-    this.registerHandler('knowledge', new TursoAdapter());
-    this.registerHandler('telemetry', new D1Adapter());
-    this.registerHandler('gameplay', new RedisAdapter());
+    this.registerHandler('identity', new SupabaseIdentityAdapter());
+    this.registerHandler('commerce', new CommerceAdapter());
+    this.registerHandler('knowledge', new KnowledgeAdapter());
+    this.registerHandler('telemetry', new TelemetryAdapter());
+    this.registerHandler('gameplay', new GameplayAdapter());
   }
 
   registerHandler(domain: YunDomain, handler: DataHandler): void {

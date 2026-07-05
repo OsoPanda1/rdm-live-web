@@ -82,7 +82,18 @@ export type YunEventType =
   | `yun.system.overload`
   | `yun.federation.degraded`
   | `yun.federation.recovered`
-  | `yun.domain.sync`;
+  | `yun.domain.sync`
+  | `yun.${string}.federation_intent`
+  | `yun.${string}.emotional_insight`
+  | `yun.${string}.territorial_data_ingest`
+  | `yun.${string}.territorial_heartbeat`
+  | `yun.${string}.zone_update`
+  | `yun.${string}.phygital_opportunity`
+  | `yun.${string}.guardian_action`
+  | `yun.${string}.sovereignty_alert`
+  | `yun.${string}.yun_domain_event`
+  | `yun.isabella.voice.speak`
+  | `yun.isabella.voice.log`;
 
 // ============================================================================
 // YUN EVENT ENVELOPE (per 06-event-standard)

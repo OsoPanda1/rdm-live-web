@@ -62,3 +62,11 @@ export {
   YunFederationManager,
   federationManager,
 } from './federation-coordinator';
+
+// Event Bus Bridge (unified TAMV ↔ YUN ↔ Core)
+export {
+  publishUnified,
+  subscribeUnified,
+  getUnifiedFederationHealth,
+  initEventBusBridge,
+} from './event-bus-bridge';

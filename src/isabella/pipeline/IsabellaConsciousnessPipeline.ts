@@ -9,6 +9,7 @@ import { isabellaTerritorialMind } from '@/isabella/territorial/IsabellaTerritor
 import { federationBus } from '@/federaciones/FederationBus';
 import { isabellaGuardian } from '@/core/ai/isabella-guardian';
 import { locateNode } from '@/isabella/ontology';
+import { initEventBusBridge, publishUnified } from '@/core/yun/event-bus-bridge';
 import type { Coordenadas, FederationId } from '@/core/models';
 import type { SystemMetrics } from '@/core/system/modes';
 import type {
@@ -51,6 +52,7 @@ export class IsabellaConsciousnessPipeline {
 
   constructor(config: Partial<PipelineConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
+    initEventBusBridge();
     logger.info('[PIPELINE] Pipeline de Conciencia Hexagonal inicializado', { config: this.config });
   }
 
@@ -292,7 +294,7 @@ export class IsabellaConsciousnessPipeline {
         });
       }
 
-      // Emit all federation actions
+      // Emit all federation actions via both FederationBus and Unified Bus
       for (const action of federationActions) {
         federationBus.emit({
           type: action.eventType,
@@ -300,6 +302,14 @@ export class IsabellaConsciousnessPipeline {
           payload: action.payload,
           traceId: action.traceId,
         });
+
+        // Also publish to YUN unified event bus
+        publishUnified(
+          `yun.isabella.${action.eventType.toLowerCase()}`,
+          `isabella-pipeline:${traceId}`,
+          action.payload,
+          { traceId: action.traceId },
+        ).catch(err => logger.warn('[PIPELINE] Failed to publish to unified bus', { error: err }));
       }
     }
 

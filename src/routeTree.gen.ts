@@ -36,6 +36,7 @@ import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiIsabellaChatRouteImport } from './routes/api/isabella-chat'
+import { Route as AuthenticatedIsabellaRouteImport } from './routes/_authenticated/isabella'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const TransporteRoute = TransporteRouteImport.update({
@@ -172,6 +173,11 @@ const ApiIsabellaChatRoute = ApiIsabellaChatRouteImport.update({
   path: '/api/isabella-chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedIsabellaRoute = AuthenticatedIsabellaRouteImport.update({
+  id: '/isabella',
+  path: '/isabella',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/tomos': typeof TomosRoute
   '/transporte': typeof TransporteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/isabella': typeof AuthenticatedIsabellaRoute
   '/api/isabella-chat': typeof ApiIsabellaChatRoute
 }
 export interface FileRoutesByTo {
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/tomos': typeof TomosRoute
   '/transporte': typeof TransporteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/isabella': typeof AuthenticatedIsabellaRoute
   '/api/isabella-chat': typeof ApiIsabellaChatRoute
 }
 export interface FileRoutesById {
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/tomos': typeof TomosRoute
   '/transporte': typeof TransporteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/isabella': typeof AuthenticatedIsabellaRoute
   '/api/isabella-chat': typeof ApiIsabellaChatRoute
 }
 export interface FileRouteTypes {
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/tomos'
     | '/transporte'
     | '/dashboard'
+    | '/isabella'
     | '/api/isabella-chat'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/tomos'
     | '/transporte'
     | '/dashboard'
+    | '/isabella'
     | '/api/isabella-chat'
   id:
     | '__root__'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/tomos'
     | '/transporte'
     | '/_authenticated/dashboard'
+    | '/_authenticated/isabella'
     | '/api/isabella-chat'
   fileRoutesById: FileRoutesById
 }
@@ -579,6 +591,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiIsabellaChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/isabella': {
+      id: '/_authenticated/isabella'
+      path: '/isabella'
+      fullPath: '/isabella'
+      preLoaderRoute: typeof AuthenticatedIsabellaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -591,10 +610,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedIsabellaRoute: typeof AuthenticatedIsabellaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedIsabellaRoute: AuthenticatedIsabellaRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

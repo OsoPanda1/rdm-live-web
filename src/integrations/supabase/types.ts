@@ -153,261 +153,6 @@ export type Database = {
         }
         Relationships: []
       }
-      gamification_quests: {
-        Row: {
-          code: string
-          created_at: string
-          criteria: Json
-          description: string
-          ends_at: string | null
-          id: string
-          is_active: boolean
-          quest_type: string
-          reward_badge: string | null
-          reward_metadata: Json
-          reward_xp: number
-          season_id: string | null
-          starts_at: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          criteria?: Json
-          description: string
-          ends_at?: string | null
-          id?: string
-          is_active?: boolean
-          quest_type?: string
-          reward_badge?: string | null
-          reward_metadata?: Json
-          reward_xp?: number
-          season_id?: string | null
-          starts_at?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          criteria?: Json
-          description?: string
-          ends_at?: string | null
-          id?: string
-          is_active?: boolean
-          quest_type?: string
-          reward_badge?: string | null
-          reward_metadata?: Json
-          reward_xp?: number
-          season_id?: string | null
-          starts_at?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      gamification_rewards: {
-        Row: {
-          created_at: string
-          delivered_at: string
-          id: string
-          metadata: Json
-          quest_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          delivered_at?: string
-          id?: string
-          metadata?: Json
-          quest_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          delivered_at?: string
-          id?: string
-          metadata?: Json
-          quest_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gamification_rewards_quest_id_fkey"
-            columns: ["quest_id"]
-            isOneToOne: false
-            referencedRelation: "gamification_quests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      music_cronicles: {
-        Row: {
-          cover_url: string | null
-          created_at: string
-          creator_id: string
-          description: string | null
-          duration_seconds: number
-          id: string
-          kind: string
-          like_count: number
-          play_count: number
-          status: Database["public"]["Enums"]["content_status"]
-          tags: string[]
-          title: string
-          track_ids: string[]
-          updated_at: string
-        }
-        Insert: {
-          cover_url?: string | null
-          created_at?: string
-          creator_id: string
-          description?: string | null
-          duration_seconds?: number
-          id?: string
-          kind?: string
-          like_count?: number
-          play_count?: number
-          status?: Database["public"]["Enums"]["content_status"]
-          tags?: string[]
-          title: string
-          track_ids?: string[]
-          updated_at?: string
-        }
-        Update: {
-          cover_url?: string | null
-          created_at?: string
-          creator_id?: string
-          description?: string | null
-          duration_seconds?: number
-          id?: string
-          kind?: string
-          like_count?: number
-          play_count?: number
-          status?: Database["public"]["Enums"]["content_status"]
-          tags?: string[]
-          title?: string
-          track_ids?: string[]
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      music_listening_sessions: {
-        Row: {
-          completed: boolean
-          duration_seconds: number
-          id: string
-          mode: string
-          started_at: string
-          ended_at: string | null
-          track_id: string
-          user_id: string
-        }
-        Insert: {
-          completed?: boolean
-          duration_seconds?: number
-          id?: string
-          mode?: string
-          started_at?: string
-          ended_at?: string | null
-          track_id: string
-          user_id: string
-        }
-        Update: {
-          completed?: boolean
-          duration_seconds?: number
-          id?: string
-          mode?: string
-          started_at?: string
-          ended_at?: string | null
-          track_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "music_listening_sessions_track_id_fkey"
-            columns: ["track_id"]
-            isOneToOne: false
-            referencedRelation: "music_tracks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      music_donations: {
-        Row: {
-          amount_mxn: number
-          created_at: string
-          cronicle_id: string | null
-          id: string
-          message: string | null
-          provider_payment_id: string | null
-          status: string
-          track_id: string | null
-          user_id: string
-        }
-        Insert: {
-          amount_mxn: number
-          created_at?: string
-          cronicle_id?: string | null
-          id?: string
-          message?: string | null
-          provider_payment_id?: string | null
-          status?: string
-          track_id?: string | null
-          user_id: string
-        }
-        Update: {
-          amount_mxn?: number
-          created_at?: string
-          cronicle_id?: string | null
-          id?: string
-          message?: string | null
-          provider_payment_id?: string | null
-          status?: string
-          track_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "music_donations_track_id_fkey"
-            columns: ["track_id"]
-            isOneToOne: false
-            referencedRelation: "music_tracks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      music_mecenas: {
-        Row: {
-          badge: string | null
-          id: string
-          metadata: Json
-          since: string
-          tier: string
-          total_donated_mxn: number
-          user_id: string
-        }
-        Insert: {
-          badge?: string | null
-          id?: string
-          metadata?: Json
-          since?: string
-          tier?: string
-          total_donated_mxn?: number
-          user_id: string
-        }
-        Update: {
-          badge?: string | null
-          id?: string
-          metadata?: Json
-          since?: string
-          tier?: string
-          total_donated_mxn?: number
-          user_id?: string
-        }
-        Relationships: []
-      }
       gamification_events: {
         Row: {
           created_at: string
@@ -461,6 +206,80 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      isabella_conversations: {
+        Row: {
+          archived: boolean
+          created_at: string
+          id: string
+          last_message_at: string
+          summary: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      isabella_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          latency_ms: number | null
+          role: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          role: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          role?: string
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "isabella_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "isabella_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       memberships: {
         Row: {

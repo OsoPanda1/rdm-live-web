@@ -2,10 +2,16 @@ import { createStripe, safeError } from "../_shared/stripe.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { commerceCheckoutSchema } from "../_shared/validation.ts";
 import { checkRateLimit, jsonResponse, corsHeaders } from "../_shared/rate-limit.ts";
+import { getTaxConfig, applyTaxToSession } from "../_shared/tax.ts";
 
 const COMMERCE_TIERS: Record<string, { name: string; desc: string; amount: number }> = {
   "199": { name: "Comercio Federado · Básico", desc: "Catálogo digital, mapa interactivo, analytics básicos", amount: 19900 },
   "299": { name: "Comercio Federado · Premium", desc: "Catálogo premium, nodo de energía para jugadores, métricas avanzadas, prioridad en bolsa de premios", amount: 29900 },
+};
+
+const FEATURES = {
+  CRYPTO_ENABLED: false,
+  CRYPTO_SUBSCRIPTIONS_ENABLED: false,
 };
 
 Deno.serve(async (req) => {
@@ -46,7 +52,12 @@ Deno.serve(async (req) => {
 
     const origin = req.headers.get("origin") || Deno.env.get("PRODUCTION_ORIGIN") || "https://visitarealdelmonte.online";
 
-    const session = await stripe.checkout.sessions.create({
+    const paymentMethodTypes: string[] = ["card", "link"];
+    if (FEATURES.CRYPTO_ENABLED) {
+      paymentMethodTypes.push("crypto");
+    }
+
+    const sessionConfig: Record<string, unknown> = {
       customer: customerId,
       mode: "subscription",
       line_items: [{
@@ -58,13 +69,25 @@ Deno.serve(async (req) => {
         },
         quantity: 1,
       }],
+      payment_method_types: paymentMethodTypes,
       metadata: { user_id: user.id, business_id, tier, kind: "commerce" },
       subscription_data: { metadata: { user_id: user.id, business_id, tier, kind: "commerce" } },
       success_url: `${origin}/comercios?sub=success`,
       cancel_url: `${origin}/comercios?sub=cancel`,
-    });
+    };
 
-    return jsonResponse({ url: session.url });
+    if (FEATURES.CRYPTO_SUBSCRIPTIONS_ENABLED) {
+      sessionConfig["payment_method_configuration"] = {
+        id: "pmc_crypto_subscriptions",
+      };
+    }
+
+    const taxConfig = getTaxConfig();
+    const finalSession = applyTaxToSession(sessionConfig, taxConfig);
+
+    const session = await stripe.checkout.sessions.create(finalSession as Stripe.Checkout.SessionCreateParams);
+
+    return jsonResponse({ url: session.url, crypto_enabled: FEATURES.CRYPTO_ENABLED });
   } catch (e) {
     if (e instanceof Response) return e;
     return safeError(e);

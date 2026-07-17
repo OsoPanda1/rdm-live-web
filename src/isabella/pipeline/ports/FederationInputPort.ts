@@ -1,5 +1,8 @@
 import { logger } from '@/lib/logger';
+<<<<<<< Updated upstream
 import { federationBus } from '@/federaciones/FederationBus';
+=======
+>>>>>>> Stashed changes
 import type { PipelineInput, PipelineResult, InputPort } from '../pipeline.types';
 
 export class FederationInputPort implements InputPort {
@@ -12,6 +15,7 @@ export class FederationInputPort implements InputPort {
   async process(input: PipelineInput): Promise<Partial<PipelineResult>> {
     if (input.type !== 'federation_event') return {};
 
+<<<<<<< Updated upstream
     const { event } = input;
 
     logger.info('[FederationInputPort] Evento de federacion recibido', {
@@ -31,6 +35,14 @@ export class FederationInputPort implements InputPort {
       }
     }
 
+=======
+    logger.info('[FederationInputPort] Evento de federacion recibido', {
+      source: input.event.source,
+      type: input.event.type,
+      traceId: input.event.traceId,
+    });
+
+>>>>>>> Stashed changes
     return {};
   }
 }

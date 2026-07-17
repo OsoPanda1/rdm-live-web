@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ChevronDown, Mountain, MapPin, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { RDM_IMAGES } from "@/data/rdm-images";
 
 const HERO_IMAGES = [
   "/images/hero-realdelmonte.jpg",

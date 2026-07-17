@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/logger';
+<<<<<<< Updated upstream
 import { federationBus } from '@/federaciones/FederationBus';
 import type { FederationEvent } from '@/federaciones/FederationBus';
 import type { FederationId } from '@/core/models';
@@ -8,6 +9,9 @@ import type {
   UnifiedEventType,
   UnifiedEventHandler,
 } from './types';
+=======
+import type { UnifiedEvent, UnifiedEventType, UnifiedEventHandler } from './types';
+>>>>>>> Stashed changes
 
 export class UnifiedEventBus {
   private handlers: Map<UnifiedEventType, Set<UnifiedEventHandler>> = new Map();
@@ -15,6 +19,7 @@ export class UnifiedEventBus {
   private eventLog: UnifiedEvent[] = [];
   private maxLogSize = 1000;
   private eventCounts: Map<UnifiedEventType, number> = new Map();
+<<<<<<< Updated upstream
   private federationUnsubscribe: (() => void) | null = null;
 
   start(): void {
@@ -71,13 +76,40 @@ export class UnifiedEventBus {
       }
     }
 
+=======
+
+  start(): void {
+    logger.info('[UnifiedEventBus] Bridge activo');
+  }
+
+  stop(): void {}
+
+  emit(event: Omit<UnifiedEvent, 'id' | 'timestamp'>): UnifiedEvent {
+    const full: UnifiedEvent = { ...event, id: uuidv4(), timestamp: new Date() };
+    this.eventLog.push(full);
+    if (this.eventLog.length > this.maxLogSize) this.eventLog.shift();
+    this.eventCounts.set(full.type, (this.eventCounts.get(full.type) ?? 0) + 1);
+    const handlers = this.handlers.get(full.type);
+    if (handlers) {
+      for (const handler of handlers) {
+        try { handler(full); } catch (e) { logger.error('[UnifiedEventBus] Error en handler', { type: full.type, error: e }); }
+      }
+    }
+    for (const handler of this.wildcardHandlers) {
+      try { handler(full); } catch (e) { logger.error('[UnifiedEventBus] Error en wildcard', { type: full.type, error: e }); }
+    }
+>>>>>>> Stashed changes
     return full;
   }
 
   on(type: UnifiedEventType, handler: UnifiedEventHandler): () => void {
+<<<<<<< Updated upstream
     if (!this.handlers.has(type)) {
       this.handlers.set(type, new Set());
     }
+=======
+    if (!this.handlers.has(type)) this.handlers.set(type, new Set());
+>>>>>>> Stashed changes
     this.handlers.get(type)!.add(handler);
     return () => this.handlers.get(type)?.delete(handler);
   }
@@ -92,6 +124,7 @@ export class UnifiedEventBus {
     return this.eventLog.length;
   }
 
+<<<<<<< Updated upstream
   getRecentEvents(limit = 50): UnifiedEvent[] {
     return this.eventLog.slice(-limit);
   }
@@ -145,6 +178,16 @@ export class UnifiedEventBus {
     };
     return map[fedType] ?? 'system:tick';
   }
+=======
+  getRecentEvents(limit = 50): UnifiedEvent[] { return this.eventLog.slice(-limit); }
+  getEventsByType(type: UnifiedEventType): UnifiedEvent[] { return this.eventLog.filter(e => e.type === type); }
+  getEventStats(): Record<string, number> {
+    const stats: Record<string, number> = {};
+    for (const [type, count] of this.eventCounts) stats[type] = count;
+    return stats;
+  }
+  clearLog(): void { this.eventLog = []; }
+>>>>>>> Stashed changes
 }
 
 export const unifiedEventBus = new UnifiedEventBus();

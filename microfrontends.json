@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "rdm-digital-hub-ldtocs": {
+      "development": {
+        "fallback": "visitarealdelmonte.online"
+      }
+    }
+  }
+}

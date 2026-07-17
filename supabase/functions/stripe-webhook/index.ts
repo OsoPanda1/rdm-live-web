@@ -42,6 +42,37 @@ async function syncSubscription(admin: ReturnType<typeof createAdmin>, stripe: S
   }
 }
 
+async function handleInvoiceFinalized(admin: ReturnType<typeof createAdmin>, invoice: Stripe.Invoice) {
+  const { data: existing } = await admin.from("invoices").select("id").eq("stripe_invoice_id", invoice.id).maybeSingle();
+  if (existing) return;
+
+  await admin.from("invoices").insert({
+    stripe_invoice_id: invoice.id,
+    customer_id: invoice.customer as string,
+    number: invoice.number,
+    amount_due: invoice.amount_due,
+    amount_paid: invoice.amount_paid,
+    currency: invoice.currency,
+    status: invoice.status,
+    hosted_url: invoice.hosted_invoice_url,
+    pdf_url: invoice.invoice_pdf,
+    due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : null,
+    created_at: new Date(invoice.created * 1000).toISOString(),
+  });
+}
+
+async function handleMppPayment(admin: ReturnType<typeof createAdmin>, intent: Stripe.PaymentIntent) {
+  await admin.from("mpp_transactions").insert({
+    payment_intent_id: intent.id,
+    amount: intent.amount,
+    currency: intent.currency,
+    status: intent.status,
+    resource_id: intent.metadata?.resource_id || null,
+    description: intent.metadata?.description || null,
+    created_at: new Date(intent.created * 1000).toISOString(),
+  });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -74,6 +105,9 @@ Deno.serve(async (req) => {
           }
           await syncSubscription(admin, stripe, sub);
         }
+        if (session.metadata?.source === "agentic_commerce") {
+          console.log("[acs] agentic commerce checkout completed:", session.id);
+        }
         break;
       }
       case "customer.subscription.created":
@@ -90,6 +124,16 @@ Deno.serve(async (req) => {
         }
         break;
       }
+      case "invoice.finalized":
+      case "invoice.sent":
+        await handleInvoiceFinalized(admin, event.data.object as Stripe.Invoice);
+        break;
+      case "payment_intent.succeeded":
+        const intent = event.data.object as Stripe.PaymentIntent;
+        if (intent.metadata?.source === "mpp") {
+          await handleMppPayment(admin, intent);
+        }
+        break;
       default:
         console.log("[stripe-webhook] unhandled event:", event.type);
     }

@@ -1,6 +1,7 @@
 /**
  * RDM Digital - Fachada Isabella GEN-7+
  * API unificada para interactuar con el sistema de inteligencia territorial
+ * Integra orquestador, pipeline de conciencia, seguridad y conectores
  */
 
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +13,7 @@ import type {
   KernelOutput,
 } from '@/core/models';
 import { orchestrator, ExperienceOrchestrator } from '@/core/orchestrator/ExperienceOrchestrator';
+import { consciousnessPipeline } from '@/isabella/pipeline/IsabellaConsciousnessPipeline';
 import { runRealitoKernel, getSystemMetrics, getAllPlaces } from './kernel';
 import { logger } from "@/lib/logger";
 import {
@@ -19,6 +21,9 @@ import {
   getGlobalHealth,
   getTelemetry,
 } from './heptafederation';
+import { shutdownProtocol } from '@/security';
+import { tokenVault } from '@/connect';
+import type { PipelineInput as PipelineInputType } from '@/isabella/pipeline/pipeline.types';
 
 // ============================================================================
 // TIPOS DE LA FACHADA
@@ -73,6 +78,20 @@ export async function evaluarTurista(context: IsabellaContext): Promise<Isabella
   let kernel: KernelOutput | null = null;
   if (context.query) {
     kernel = runRealitoKernel(context.query, decision ?? undefined);
+  }
+
+  // Alimentar pipeline de conciencia si hay query o decision activa
+  if (context.query || decision) {
+    const pipelineInput: PipelineInputType = {
+      type: 'user_query',
+      userId: context.turistaId,
+      query: context.query ?? kernel?.narrative ?? '',
+      coords: context.coords,
+      timestamp: new Date(),
+    };
+    void consciousnessPipeline.processInput(pipelineInput).catch(err =>
+      logger.warn('[Isabella] Error en pipeline de conciencia', err)
+    );
   }
 
   return {
@@ -209,6 +228,41 @@ export function suscribirDecisiones(
  */
 export function actualizarSaturacionZona(zona: string, saturacion: number): void {
   orchestrator.updateZoneSaturation(zona, saturacion);
+}
+
+/**
+ * Procesa una contribucion territorial a traves del pipeline de conciencia
+ */
+export async function procesarContribucionTerritorial(
+  contribution: Omit<PipelineInputType & { type: 'territorial_contribution' }, 'type'>['contribution'],
+  userId: string
+): Promise<void> {
+  const input: PipelineInputType = {
+    type: 'territorial_contribution',
+    userId,
+    contribution,
+    timestamp: new Date(),
+  };
+  await consciousnessPipeline.processInput(input);
+}
+
+/**
+ * Verifica el estado de salud del sistema completo
+ */
+export function getHealthStatus(): {
+  orchestrator: ReturnType<ExperienceOrchestrator['getStats']>;
+  federation: ReturnType<typeof getFederationStats>;
+  metrics: ReturnType<typeof getSystemMetrics>;
+  pipeline: { totalProcessed: number; avgLatencyMs: number };
+  security: { shutdownEngaged: boolean };
+} {
+  return {
+    orchestrator: orchestrator.getStats(),
+    federation: getFederationStats(),
+    metrics: getSystemMetrics(),
+    pipeline: consciousnessPipeline.getStats(),
+    security: { shutdownEngaged: false },
+  };
 }
 
 /**

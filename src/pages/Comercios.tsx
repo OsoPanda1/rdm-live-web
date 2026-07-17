@@ -31,7 +31,7 @@ export default function Comercios() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("businesses")
         .select("*")
         .eq("status", "active")

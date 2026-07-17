@@ -1,7 +1,10 @@
+<<<<<<< Updated upstream
 // api/telemetry.js — Vercel Edge Function
 // Endpoint perimetral de telemetría del Nodo Cero
 // Auth + Rate limiting + CORS unificados
 
+=======
+>>>>>>> Stashed changes
 import { getCorsHeaders, corsPreflightResponse, corsJsonResponse } from "./_shared/cors.js";
 import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
 
@@ -11,16 +14,23 @@ const ORIGIN_ALLOWLIST = [
   "https://rdm-digital-hub.vercel.app",
 ];
 
+<<<<<<< Updated upstream
 /**
  * @param {Request} request
  */
 export default async function handler(request) {
   // CORS preflight
+=======
+export default async function handler(request) {
+>>>>>>> Stashed changes
   if (request.method === "OPTIONS") {
     return corsPreflightResponse(request);
   }
 
+<<<<<<< Updated upstream
   // Rate limit
+=======
+>>>>>>> Stashed changes
   const rateLimit = checkRateLimit(request, RATE_LIMITS.telemetry);
   if (!rateLimit.allowed) {
     return new Response(
@@ -106,7 +116,10 @@ export default async function handler(request) {
       return corsJsonResponse(request, { accepted: true, stored, ...payloadBase });
     }
 
+<<<<<<< Updated upstream
     // GET — health check
+=======
+>>>>>>> Stashed changes
     return corsJsonResponse(request, payloadBase);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown telemetry error";

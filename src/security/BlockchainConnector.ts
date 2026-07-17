@@ -72,9 +72,15 @@ export class BlockchainConnector {
       tx.status = "CONFIRMED";
       tx.confirmations = 12;
       logger.info("[BLOCKCHAIN] Anclaje confirmado", { id: tx.id, chain, hash: tx.hash });
+<<<<<<< Updated upstream
     } catch (error) {
       tx.status = "FAILED";
       logger.error("[BLOCKCHAIN] Error en anclaje", { id: tx.id, error });
+=======
+    } catch {
+      tx.status = "FAILED";
+      logger.error("[BLOCKCHAIN] Error en anclaje", { id: tx.id });
+>>>>>>> Stashed changes
     }
 
     this.transactions.push(tx);
@@ -107,9 +113,15 @@ export class BlockchainConnector {
       tx.status = "CONFIRMED";
       tx.confirmations = 6;
       logger.info("[BLOCKCHAIN] BookPI hash registrado", { bookId, chain, txId: tx.id });
+<<<<<<< Updated upstream
     } catch (error) {
       tx.status = "FAILED";
       logger.error("[BLOCKCHAIN] Error registrando BookPI hash", { bookId, error });
+=======
+    } catch {
+      tx.status = "FAILED";
+      logger.error("[BLOCKCHAIN] Error registrando BookPI hash", { bookId });
+>>>>>>> Stashed changes
     }
 
     this.transactions.push(tx);

@@ -37,7 +37,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       { name: 'F7 - Observabilidad y Seguridad', status: 'operational' },
     ];
 
+<<<<<<< Updated upstream
     // Real Supabase connectivity check
+=======
+>>>>>>> Stashed changes
     if (supabaseUrl && supabaseKey) {
       try {
         const { createClient } = await import("@supabase/supabase-js");
@@ -46,7 +49,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         await supabase.from("profiles").select("id", { count: "exact", head: true });
         const dbLatency = Date.now() - start;
         if (dbLatency > 500) {
+<<<<<<< Updated upstream
           federationStatuses[2].status = 'degraded'; // F3 - Datos
+=======
+          federationStatuses[2].status = 'degraded';
+>>>>>>> Stashed changes
         }
       } catch {
         federationStatuses[2].status = 'critical';

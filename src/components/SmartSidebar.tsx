@@ -125,7 +125,8 @@ export default function SmartSidebar() {
   const { pathname } = useLocation()
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return true
-    return window.localStorage.getItem(STORAGE_KEY) === "1"
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    return stored === null ? true : stored === "1"
   })
   const [openSection, setOpenSection] = useState("")
 

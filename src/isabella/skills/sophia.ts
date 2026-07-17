@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import type { SkillContext, ResearchSynthesis, Reference, Gap, Artifact } from './types';
+=======
+import type { SkillContext, ResearchSynthesis, Reference, Gap } from './types';
+>>>>>>> Stashed changes
 
 interface SophiaResearchInput {
   researchRequest: string;

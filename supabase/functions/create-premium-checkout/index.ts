@@ -2,10 +2,17 @@ import { createStripe, safeError } from "../_shared/stripe.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { premiumCheckoutSchema } from "../_shared/validation.ts";
 import { checkRateLimit, jsonResponse, corsHeaders } from "../_shared/rate-limit.ts";
+import { getTaxConfig, applyTaxToSession } from "../_shared/tax.ts";
 
 const TIERS: Record<string, { name: string; desc: string; amount: number }> = {
   "99":  { name: "Veta Soberana · Básico",  desc: "Acceso a minería digital y bolsa de premios", amount: 9900 },
   "129": { name: "Veta Soberana · Minero",  desc: "Minería remota, multiplicadores x2 y misiones avanzadas", amount: 12900 },
+};
+
+// Feature flags — toggle when Stripe approves access
+const FEATURES = {
+  CRYPTO_ENABLED: false,
+  CRYPTO_SUBSCRIPTIONS_ENABLED: false, // Private preview — requires email request
 };
 
 Deno.serve(async (req) => {
@@ -46,7 +53,12 @@ Deno.serve(async (req) => {
       customerId = c.id;
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const paymentMethodTypes: string[] = ["card", "link"];
+    if (FEATURES.CRYPTO_ENABLED) {
+      paymentMethodTypes.push("crypto");
+    }
+
+    const sessionConfig: Record<string, unknown> = {
       customer: customerId,
       mode: "subscription",
       line_items: [{
@@ -58,13 +70,25 @@ Deno.serve(async (req) => {
         },
         quantity: 1,
       }],
+      payment_method_types: paymentMethodTypes,
       metadata: { user_id: user.id, kind: "premium", tier },
       subscription_data: { metadata: { user_id: user.id, kind: "premium", tier } },
       success_url: `${origin}/game?premium=success`,
       cancel_url: `${origin}/game?premium=cancel`,
-    });
+    };
 
-    return jsonResponse({ url: session.url });
+    if (FEATURES.CRYPTO_SUBSCRIPTIONS_ENABLED) {
+      sessionConfig["payment_method_configuration"] = {
+        id: "pmc_crypto_subscriptions",
+      };
+    }
+
+    const taxConfig = getTaxConfig();
+    const finalSession = applyTaxToSession(sessionConfig, taxConfig);
+
+    const session = await stripe.checkout.sessions.create(finalSession as Stripe.Checkout.SessionCreateParams);
+
+    return jsonResponse({ url: session.url, crypto_enabled: FEATURES.CRYPTO_ENABLED });
   } catch (e) {
     if (e instanceof Response) return e;
     return safeError(e);

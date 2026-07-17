@@ -5,8 +5,11 @@ import { almaYCorazon } from "../emotional/heart";
 import { memoriaEmocional } from "../emotional/memory";
 import { logger } from "@/lib/logger";
 
+<<<<<<< Updated upstream
 // ─── Legacy IsabellaAPI (backward compatible) ──────────────────────────────
 
+=======
+>>>>>>> Stashed changes
 export class IsabellaAPI {
   identidad() {
     return isabellaIdentidad.getIdentidad();
@@ -73,6 +76,7 @@ export class IsabellaAPI {
 }
 
 export const isabellaAPI = new IsabellaAPI();
+<<<<<<< Updated upstream
 
 // ─── ISA-API v.1.0.0-evolved (new sovereign API) ──────────────────────────
 
@@ -111,3 +115,5 @@ export type {
   IntegrationOrchestrationResponse,
   ErrorResponse,
 } from './types';
+=======
+>>>>>>> Stashed changes

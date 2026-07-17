@@ -1,7 +1,10 @@
 import { logger } from "@/lib/logger";
 
+<<<<<<< Updated upstream
 // Web Crypto API (browser-native) — sin dependencia de Node.js crypto
 
+=======
+>>>>>>> Stashed changes
 interface PQCKeyPair {
   publicKey: string;
   secretKey: string;
@@ -105,4 +108,8 @@ export class PostQuantumCrypto {
 
 export function getPQC(): PostQuantumCrypto {
   return new PostQuantumCrypto();
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

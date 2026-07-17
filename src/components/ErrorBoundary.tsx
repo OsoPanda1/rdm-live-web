@@ -7,6 +7,8 @@ import { logger } from "@/lib/logger";
 interface Props {
   children: ReactNode
   fallback?: ReactNode
+  /** Optional identifier for telemetry / debugging. */
+  boundaryId?: string
 }
 
 interface State {

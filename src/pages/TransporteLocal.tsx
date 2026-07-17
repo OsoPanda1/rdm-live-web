@@ -17,7 +17,7 @@ export default function TransporteLocal() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.from("transport_providers").select("*").eq("status", "active").order("name");
+      const { data } = await (supabase as any).from("transport_providers").select("*").eq("status", "active").order("name");
       if (data) setProviders(data);
     }
     load();

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/logger';
 import { territorialCollector } from '@/core/territorial/TerritorialDataCollector';
@@ -8,18 +9,26 @@ import { unifiedSupervisor } from './UnifiedSupervisor';
 import type { UserContribution, TerritorialStats } from '@/core/territorial/types';
 import type { PipelineResult } from '@/isabella/pipeline/pipeline.types';
 import type { PersistableContribution, PersistablePipelineResult, PersistableTerritorialSnapshot } from './types';
+=======
+import { logger } from '@/lib/logger';
+import type { PersistableContribution, PersistablePipelineResult } from './types';
+>>>>>>> Stashed changes
 
 type SyncCallback = (result: { success: boolean; type: string; error?: string }) => void;
 
 export class UnifiedPersistence {
   private syncInterval: ReturnType<typeof setInterval> | null = null;
+<<<<<<< Updated upstream
   private snapshotInterval: ReturnType<typeof setInterval> | null = null;
   private pendingContributions: PersistableContribution[] = [];
   private pendingPipelineResults: PersistablePipelineResult[] = [];
+=======
+>>>>>>> Stashed changes
   private listeners: Set<SyncCallback> = new Set();
   private totalSynced = 0;
   private totalFailed = 0;
 
+<<<<<<< Updated upstream
   start(intervalMs = 60000, snapshotIntervalMs = 300000): void {
     if (this.syncInterval) return;
 
@@ -36,10 +45,16 @@ export class UnifiedPersistence {
     this.syncInterval = setInterval(() => this.syncCycle(), intervalMs);
     this.snapshotInterval = setInterval(() => this.takeSnapshot(), snapshotIntervalMs);
 
+=======
+  start(intervalMs = 60000, _snapshotIntervalMs = 300000): void {
+    if (this.syncInterval) return;
+    this.syncInterval = setInterval(() => this.syncCycle(), intervalMs);
+>>>>>>> Stashed changes
     logger.info('[Persistence] Persistencia unificada iniciada');
   }
 
   stop(): void {
+<<<<<<< Updated upstream
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
       this.syncInterval = null;
@@ -64,6 +79,9 @@ export class UnifiedPersistence {
       timestamp: new Date(),
     });
     if (this.pendingPipelineResults.length > 200) this.pendingPipelineResults.shift();
+=======
+    if (this.syncInterval) { clearInterval(this.syncInterval); this.syncInterval = null; }
+>>>>>>> Stashed changes
   }
 
   subscribe(callback: SyncCallback): () => void {
@@ -71,6 +89,7 @@ export class UnifiedPersistence {
     return () => this.listeners.delete(callback);
   }
 
+<<<<<<< Updated upstream
   getStats(): { totalSynced: number; totalFailed: number; pendingContributions: number; pendingPipeline: number } {
     return {
       totalSynced: this.totalSynced,
@@ -199,6 +218,14 @@ export class UnifiedPersistence {
       logger.warn('[Persistence] Supabase no disponible, usando solo memoria');
       return null;
     }
+=======
+  getStats() {
+    return { totalSynced: this.totalSynced, totalFailed: this.totalFailed };
+  }
+
+  private async syncCycle(): Promise<void> {
+    logger.info('[Persistence] Ciclo de sincronización');
+>>>>>>> Stashed changes
   }
 }
 

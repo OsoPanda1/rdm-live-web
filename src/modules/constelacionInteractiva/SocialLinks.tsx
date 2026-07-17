@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import { Facebook, Instagram, Twitter, Github, Send, Phone, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";

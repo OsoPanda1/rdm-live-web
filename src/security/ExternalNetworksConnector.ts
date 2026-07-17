@@ -56,8 +56,13 @@ export class ExternalNetworksConnector {
       try {
         const success = await this.sendToNetwork(network, message);
         results[network] = success;
+<<<<<<< Updated upstream
       } catch (error) {
         logger.error("[NETWORKS] Error enviando a", { network, error });
+=======
+      } catch {
+        logger.error("[NETWORKS] Error enviando a", { network });
+>>>>>>> Stashed changes
       }
     }
 
@@ -86,10 +91,17 @@ export class ExternalNetworksConnector {
       fullMessage.status = response ? "SENT" : "FAILED";
       this.sentMessages.push(fullMessage);
       return response;
+<<<<<<< Updated upstream
     } catch (error) {
       fullMessage.status = "FAILED";
       this.sentMessages.push(fullMessage);
       logger.error("[NETWORKS] Dispatch error", { network, error });
+=======
+    } catch {
+      fullMessage.status = "FAILED";
+      this.sentMessages.push(fullMessage);
+      logger.error("[NETWORKS] Dispatch error", { network });
+>>>>>>> Stashed changes
       return false;
     }
   }

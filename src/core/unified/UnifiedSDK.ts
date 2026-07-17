@@ -1,4 +1,5 @@
 import { logger } from '@/lib/logger';
+<<<<<<< Updated upstream
 import { federationBus } from '@/federaciones/FederationBus';
 import { territorialFederationBridge } from '@/federaciones/territorial-federation-bridge';
 import { territorialCollector } from '@/core/territorial/TerritorialDataCollector';
@@ -15,6 +16,12 @@ import { unifiedPersistence } from './UnifiedPersistence';
 import type { Coordenadas, FederationId, PointOfInterest } from '@/core/models';
 import type { ContributionType, ContributionPayload, UserContribution, TerritorialStats } from '@/core/territorial/types';
 import type { PipelineResult, PipelineInput } from '@/isabella/pipeline/pipeline.types';
+=======
+import { unifiedEventBus } from './UnifiedEventBus';
+import { unifiedSupervisor } from './UnifiedSupervisor';
+import { unifiedPersistence } from './UnifiedPersistence';
+import type { Coordenadas, FederationId } from '@/core/models';
+>>>>>>> Stashed changes
 import type { ApiResponse, GlobalSystemState, UnifiedConfig, UnifiedEventType } from './types';
 import { DEFAULT_UNIFIED_CONFIG } from './types';
 
@@ -29,6 +36,7 @@ export class UnifiedSDK {
   init(): void {
     if (this.initialized) return;
     this.initialized = true;
+<<<<<<< Updated upstream
 
     if (this.config.enableRealTimeSync) {
       unifiedEventBus.start();
@@ -56,10 +64,25 @@ export class UnifiedSDK {
     unifiedSupervisor.stop();
     unifiedPersistence.stop();
     unifiedEventBus.stop();
+=======
+    if (this.config.enableRealTimeSync) unifiedEventBus.start();
+    logger.info('[UNIFIED-SDK] Sistemas unificados listos', { version: this.config.version, environment: this.config.environment });
+  }
+
+  async startFusionEngine(): Promise<void> {
+    unifiedSupervisor.start(this.config.supervisorIntervalMs);
+    if (this.config.enablePersistence) unifiedPersistence.start(this.config.persistenceIntervalMs);
+    logger.info('[UNIFIED-SDK] Supervisor + Persistence activados');
+  }
+
+  stop(): void {
+    unifiedSupervisor.stop(); unifiedPersistence.stop(); unifiedEventBus.stop();
+>>>>>>> Stashed changes
     this.initialized = false;
     logger.info('[UNIFIED-SDK] Todos los sistemas detenidos');
   }
 
+<<<<<<< Updated upstream
   // ==========================================================================
   // TERRITORIAL OPERATIONS
   // ==========================================================================
@@ -206,6 +229,17 @@ export class UnifiedSDK {
   getPersistenceStats() {
     return unifiedPersistence.getStats();
   }
+=======
+  getSystemState(): ApiResponse<GlobalSystemState> {
+    const start = Date.now();
+    return { success: true, data: unifiedSupervisor.getState(), traceId: crypto.randomUUID(), timestamp: new Date(), durationMs: Date.now() - start };
+  }
+
+  getReadiness() { return unifiedSupervisor.getSystemReadiness(); }
+  getEventStats() { return unifiedEventBus.getEventStats(); }
+  subscribeToEvents(type: UnifiedEventType, handler: (event: unknown) => void) { return unifiedEventBus.on(type, handler); }
+  getPersistenceStats() { return unifiedPersistence.getStats(); }
+>>>>>>> Stashed changes
 }
 
 export const unifiedSDK = new UnifiedSDK();

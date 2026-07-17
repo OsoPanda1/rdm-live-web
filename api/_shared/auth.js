@@ -1,6 +1,9 @@
+<<<<<<< Updated upstream
 // api/_shared/auth.js — Autenticación unificada para Vercel Serverless/Edge Functions
 // Verifica JWT del usuario (Supabase) o CRON_SECRET para cron jobs
 
+=======
+>>>>>>> Stashed changes
 import { createClient } from "@supabase/supabase-js";
 
 export async function verifyAuth(request) {

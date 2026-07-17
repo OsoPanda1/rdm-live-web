@@ -102,11 +102,19 @@ function createHypercube() {
     vertices,
     edges,
     topology: {
+<<<<<<< Updated upstream
       cells_0d: 16, // vertices
       cells_1d: 32, // edges
       cells_2d: 24, // square faces
       cells_3d: 8, // cubic cells
       cells_4d: 1, // the hypercube itself
+=======
+      cells_0d: 16,
+      cells_1d: 32,
+      cells_2d: 24,
+      cells_3d: 8,
+      cells_4d: 1,
+>>>>>>> Stashed changes
     },
   };
 }

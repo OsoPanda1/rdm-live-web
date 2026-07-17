@@ -1,6 +1,9 @@
+<<<<<<< Updated upstream
 // api/_shared/rate-limit.js — Rate limiting para Vercel Serverless/Edge Functions
 // In-memory sliding window rate limiter (funciona sin DB para functions individuales)
 
+=======
+>>>>>>> Stashed changes
 const store = new Map();
 
 const CLEANUP_INTERVAL = 5 * 60 * 1000;

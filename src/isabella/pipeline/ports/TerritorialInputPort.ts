@@ -1,6 +1,9 @@
 import { logger } from '@/lib/logger';
+<<<<<<< Updated upstream
 import { territorialCollector } from '@/core/territorial/TerritorialDataCollector';
 import { territorialGeofencer } from '@/core/territorial/TerritorialGeofencer';
+=======
+>>>>>>> Stashed changes
 import type { PipelineInput, PipelineResult, InputPort } from '../pipeline.types';
 
 export class TerritorialInputPort implements InputPort {
@@ -13,6 +16,7 @@ export class TerritorialInputPort implements InputPort {
   async process(input: PipelineInput): Promise<Partial<PipelineResult>> {
     if (input.type !== 'territorial_contribution') return {};
 
+<<<<<<< Updated upstream
     const { contribution } = input;
 
     // Detect zone entry via geofencer
@@ -26,6 +30,11 @@ export class TerritorialInputPort implements InputPort {
         });
       }
     }
+=======
+    logger.info('[TerritorialInputPort] Contribucion territorial recibida', {
+      type: input.contribution.type,
+    });
+>>>>>>> Stashed changes
 
     return {};
   }

@@ -1,7 +1,10 @@
+<<<<<<< Updated upstream
 // api/cron/health-check.js — Vercel Cron Job
 // Federation Health Check — runs daily at 10:00 UTC
 // Logs health status of all 7 federations to federation_health_log
 
+=======
+>>>>>>> Stashed changes
 const FEDERATIONS = [
   { id: "F1", name: "Gobernanza" },
   { id: "F2", name: "Identidad y Acceso" },
@@ -49,9 +52,12 @@ async function measureSupabaseHealth(supabase, federationId) {
   }
 }
 
+<<<<<<< Updated upstream
 /**
  * @param {Request} request
  */
+=======
+>>>>>>> Stashed changes
 export default async function handler(request) {
   const authHeader = request.headers.get("Authorization");
   const cronSecret = process.env.CRON_SECRET;

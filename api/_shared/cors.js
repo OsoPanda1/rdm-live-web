@@ -1,6 +1,9 @@
+<<<<<<< Updated upstream
 // api/_shared/cors.js — CORS unificado para Vercel Serverless/Edge Functions
 // Fuente de verdad para CORS en api/
 
+=======
+>>>>>>> Stashed changes
 const PRODUCTION_ORIGINS = [
   "https://www.visitarealdelmonte.online",
   "https://visitarealdelmonte.online",

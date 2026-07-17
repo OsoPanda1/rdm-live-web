@@ -1,8 +1,5 @@
-<<<<<<< Updated upstream
 // src/quantum/index.ts — Quantum module barrel exports
 
-=======
->>>>>>> Stashed changes
 export {
   PostQuantumCryptoV2,
   getPQC,

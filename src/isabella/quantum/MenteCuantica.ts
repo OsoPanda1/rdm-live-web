@@ -1,27 +1,16 @@
-<<<<<<< Updated upstream
 // src/isabella/quantum/MenteCuantica.ts — Quantum cognition module for Isabella
 // Integrates PennyLane circuits + PQC into Isabella's consciousness pipeline
 
-=======
->>>>>>> Stashed changes
 import { PostQuantumCryptoV2, getPQC, initPQC } from "@/quantum/pqc"
 import { PennylaneBridge, getPennylaneBridge } from "@/quantum/pennylane-bridge"
 import type { CircuitTemplateName } from "@/quantum/pennylane-bridge"
 
 export type QuantumCapability =
-<<<<<<< Updated upstream
-  | "pqc_kyber"      // Kyber KEM for key exchange
-  | "pqc_dilithium"  // Dilithium for digital signatures
-  | "qml_classify"   // Quantum ML classification
-  | "qml_optimize"   // Quantum optimization
-  | "qml_grover"     // Grover search algorithm
-=======
   | "pqc_kyber"
   | "pqc_dilithium"
   | "qml_classify"
   | "qml_optimize"
   | "qml_grover"
->>>>>>> Stashed changes
 
 export type QuantumState = {
   ready: boolean
@@ -78,11 +67,8 @@ export class MenteCuantica {
     return this._ready
   }
 
-<<<<<<< Updated upstream
   // --- PQC operations ---
 
-=======
->>>>>>> Stashed changes
   async pqcKeygen(identity?: string) {
     return this.pqc.keygen(identity)
   }
@@ -111,11 +97,8 @@ export class MenteCuantica {
     return this.pqc.verify(data, signature, publicKey)
   }
 
-<<<<<<< Updated upstream
   // --- QML operations ---
 
-=======
->>>>>>> Stashed changes
   async executeCircuit(name: CircuitTemplateName, params?: number[]) {
     const start = performance.now()
     const result = await this.pennylane.executeTemplate(name, params)

@@ -1,9 +1,5 @@
 import type { TokenRecord, ConnectSubject, ConnectTokenResponse, ConnectorConfig } from './types';
-<<<<<<< Updated upstream
-import { federationBus } from '@/federaciones/FederationBus';
-=======
 import { logger } from "@/lib/logger";
->>>>>>> Stashed changes
 
 async function hashToken(token: string): Promise<string> {
   const enc = new TextEncoder();
@@ -37,16 +33,7 @@ class TokenVault {
     };
     this.records.set(id, record);
 
-<<<<<<< Updated upstream
-    federationBus.emit({
-      type: 'TOKEN_ISSUED',
-      source: 'ANUBIS',
-      payload: { tokenId: id, connectorUid: connector.uid, subject: subject.type, scopes },
-      traceId: id,
-    });
-=======
     logger.info("[TOKEN_VAULT] Token emitido", { tokenId: id, connectorUid: connector.uid, subjectType: subject.type });
->>>>>>> Stashed changes
 
     return {
       token: raw,
@@ -69,16 +56,7 @@ class TokenVault {
   async revoke(tokenId: string): Promise<boolean> {
     const ok = this.records.delete(tokenId);
     if (ok) {
-<<<<<<< Updated upstream
-      federationBus.emit({
-        type: 'TOKEN_REVOKED',
-        source: 'ANUBIS',
-        payload: { tokenId },
-        traceId: `revoke-${tokenId}`,
-      });
-=======
       logger.info("[TOKEN_VAULT] Token revocado", { tokenId });
->>>>>>> Stashed changes
     }
     return ok;
   }

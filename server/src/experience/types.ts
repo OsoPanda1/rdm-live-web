@@ -87,6 +87,13 @@ export type RealitoIntent =
   | "EVENTS"
   | "CULTURE"
   | "COMMUNITY"
+  | "PHOTOS"
+  | "MUSIC"
+  | "DONATIONS"
+  | "REGISTER"
+  | "GAMIFICATION"
+  | "RULES"
+  | "AWARDS"
   | "HELP";
 
 export interface SuggestedAction {

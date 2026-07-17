@@ -52,7 +52,7 @@ const checkoutSchema = z.object({
 
 const stripe = config.stripeSecretKey
   ? new Stripe(config.stripeSecretKey, {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-02-24.acacia",
     })
   : null;
 

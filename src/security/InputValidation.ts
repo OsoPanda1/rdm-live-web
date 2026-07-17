@@ -7,10 +7,7 @@ export interface ValidationResult {
 const MAX_STRING_LENGTH = 10000;
 
 function stripControlChars(s: string): string {
-<<<<<<< Updated upstream
   // eslint-disable-next-line no-control-regex
-=======
->>>>>>> Stashed changes
   return s.replace(new RegExp("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]", "g"), "");
 }
 

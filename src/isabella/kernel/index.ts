@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-import { federationBus } from '@/federaciones/FederationBus';
-=======
 import { logger } from "@/lib/logger";
->>>>>>> Stashed changes
 
 interface ResonanceState {
   nodeId: string;
@@ -33,11 +29,7 @@ export const kernelResonance = {
     const frictionZones: string[] = [];
 
     for (const node of HEPTAPOD_NODES) {
-<<<<<<< Updated upstream
-      const health = federationBus ? Math.random() * 0.3 + 0.7 : 0.5;
-=======
       const health = Math.random() * 0.3 + 0.7;
->>>>>>> Stashed changes
       states.push({
         nodeId: node,
         federationId: node.split('-')[0].toUpperCase(),

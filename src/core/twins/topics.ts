@@ -14,48 +14,6 @@ export const TOPIC_NAMESPACE = {
   ISABELLA_MNEMOS_RECORDS: "isabella/control/mnemos/records",
 } as const;
 
-<<<<<<< Updated upstream
-export function buildMeshTelemetryTopic(nodeId: string): string {
-  return `ldtocs/mesh/${nodeId}/telemetry`;
-}
-
-export function buildMeshStateTopic(nodeId: string): string {
-  return `ldtocs/mesh/${nodeId}/state`;
-}
-
-export function buildCommerceTelemetryTopic(commerceId: string): string {
-  return `ldtocs/comercio/${commerceId}/telemetry`;
-}
-
-export function buildCommerceStateTopic(commerceId: string): string {
-  return `ldtocs/comercio/${commerceId}/state`;
-}
-
-export function buildSensorTelemetryTopic(sensorId: string): string {
-  return `ldtocs/sensor/${sensorId}/telemetry`;
-}
-
-export function buildSensorStateTopic(sensorId: string): string {
-  return `ldtocs/sensor/${sensorId}/state`;
-}
-
-export function buildTerritorySecurityTopic(): string {
-  return "ldtocs/territory/events/security";
-}
-
-export function buildTerritoryOperationalTopic(): string {
-  return "ldtocs/territory/events/operational";
-}
-
-export function buildLumenDecisionTopic(): string {
-  return "isabella/control/lumen/decisions";
-}
-
-export function buildMnemosRecordTopic(): string {
-  return "isabella/control/mnemos/records";
-}
-
-=======
 export function buildMeshTelemetryTopic(nodeId: string): string { return `ldtocs/mesh/${nodeId}/telemetry`; }
 export function buildMeshStateTopic(nodeId: string): string { return `ldtocs/mesh/${nodeId}/state`; }
 export function buildCommerceTelemetryTopic(commerceId: string): string { return `ldtocs/comercio/${commerceId}/telemetry`; }
@@ -66,5 +24,4 @@ export function buildTerritorySecurityTopic(): string { return "ldtocs/territory
 export function buildTerritoryOperationalTopic(): string { return "ldtocs/territory/events/operational"; }
 export function buildLumenDecisionTopic(): string { return "isabella/control/lumen/decisions"; }
 export function buildMnemosRecordTopic(): string { return "isabella/control/mnemos/records"; }
->>>>>>> Stashed changes
 export type TopicNamespace = keyof typeof TOPIC_NAMESPACE;

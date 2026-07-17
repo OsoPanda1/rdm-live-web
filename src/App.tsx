@@ -159,41 +159,9 @@ const TelemetryDashboard = lazy(() => import('./pages/TelemetryDashboard'))
 const Tenochtitlan = lazy(() => import('./pages/Tenochtitlan'))
 
 // ===== Newly integrated modules (reference hub) =====
-const Admin = lazy(() => import('./pages/Admin'))
-const ArchivoSonoro = lazy(() => import('./pages/ArchivoSonoro'))
-const AuthCallback = lazy(() => import('./pages/AuthCallback'))
-const B2BPortal = lazy(() => import('./pages/B2BPortal'))
-const ComerciosCheckout = lazy(() => import('./pages/ComerciosCheckout'))
-const ComerciosRegistro = lazy(() => import('./pages/ComerciosRegistro'))
-const ControlCenter = lazy(() => import('./pages/ControlCenter'))
-const DemoChecklist = lazy(() => import('./pages/DemoChecklist'))
-const Evolucion = lazy(() => import('./pages/Evolucion'))
-const FAQ = lazy(() => import('./pages/FAQ'))
-const FusionEcosystem = lazy(() => import('./pages/FusionEcosystem'))
-const GamePortal = lazy(() => import('./pages/GamePortal'))
-const Juegos = lazy(() => import('./pages/Juegos'))
-const LTOS = lazy(() => import('./pages/LTOS'))
-const Membresias = lazy(() => import('./pages/Membresias'))
-const Mina = lazy(() => import('./pages/Mina'))
-const Mitos = lazy(() => import('./pages/Mitos'))
 const Music = lazy(() => import('./pages/Music'))
-const MusicDetail = lazy(() => import('./pages/MusicDetail'))
-const Operativo = lazy(() => import('./pages/Operativo'))
-const PremiumPlans = lazy(() => import('./pages/PremiumPlans'))
-const RFCDetail = lazy(() => import('./pages/RFCDetail'))
-const RFCList = lazy(() => import('./pages/RFCList'))
 const RealitoAI = lazy(() => import('./pages/RealitoAI'))
-const Recorridos = lazy(() => import('./pages/Recorridos'))
 const RegistrarComercio = lazy(() => import('./pages/RegistrarComercio'))
-const RutaDelPaste = lazy(() => import('./pages/RutaDelPaste'))
-const TAMVApiExplorer = lazy(() => import('./pages/TAMVApiExplorer'))
-const TAMVHub = lazy(() => import('./pages/TAMVHub'))
-const TAMVStatus = lazy(() => import('./pages/TAMVStatus'))
-const TAMVThesis = lazy(() => import('./pages/TAMVThesis'))
-const TelemetryDashboard = lazy(() => import('./pages/TelemetryDashboard'))
-const Tenochtitlan = lazy(() => import('./pages/Tenochtitlan'))
-const TerritorialDashboard = lazy(() => import('./pages/TerritorialDashboard'))
-const Wiki = lazy(() => import('./pages/Wiki'))
 const InahRealDelMonte = lazy(() => import('./pages/InahRealDelMonte'))
 
 const queryClient = new QueryClient({
@@ -518,21 +486,21 @@ const AppInner = () => {
       fusionEngine.start()
     }).catch((err) => {
       console.error('[FUSION ENGINE]', err)
-      captureException(err, { module: 'TerritorialFusionEngine' })
+      logger.error('TerritorialFusionEngine failed to start', { err })
     })
   }, [])
 
   return (
     <ErrorBoundary>
       <TooltipProvider>
-        <Suspense fallback={<LoadingFallback />}><AmbientLayer /></Suspense>
+        <Suspense fallback={<RouteFallback />}><AmbientLayer /></Suspense>
         {/* Banner global de estado de auth/Supabase */}
         <AuthStatusBanner />
         <Toaster />
         <Sonner />
         <AnimatePresence>
           {showIntro && !introComplete && (
-            <Suspense fallback={<LoadingFallback />}>
+            <Suspense fallback={<RouteFallback />}>
               <CinematicIntroSafe onEnter={handleIntroComplete} />
             </Suspense>
           )}
@@ -540,20 +508,20 @@ const AppInner = () => {
           {(!showIntro || introComplete) && (
             <>
               <AudioPlayerProvider>
-                <Suspense fallback={<LoadingFallback />}><MicroPageIntro /></Suspense>
+                <Suspense fallback={<RouteFallback />}><MicroPageIntro /></Suspense>
                 <AnimatedRoutes />
-                <Suspense fallback={<LoadingFallback />}><GlobalPlayerBar /></Suspense>
-                <Suspense fallback={<LoadingFallback />}><LiveTelemetryBadge /></Suspense>
-                <Suspense fallback={<LoadingFallback />}><SearchOverlay /></Suspense>
+                <Suspense fallback={<RouteFallback />}><GlobalPlayerBar /></Suspense>
+                <Suspense fallback={<RouteFallback />}><LiveTelemetryBadge /></Suspense>
+                <Suspense fallback={<RouteFallback />}><SearchOverlay /></Suspense>
                 {/* CompassNav disabled — RDMNavbar now covers all navigation */}
-                <Suspense fallback={<LoadingFallback />}><SmartSidebar /></Suspense>
+                <Suspense fallback={<RouteFallback />}><SmartSidebar /></Suspense>
               </AudioPlayerProvider>
             </>
           )}
-          <Suspense fallback={<LoadingFallback />}><RealitoChatLauncher /></Suspense>
+          <Suspense fallback={<RouteFallback />}><RealitoChatLauncher /></Suspense>
           {/* SpeedInsights + Analytics: diferidos al primer idle del navegador */}
           {analyticsReady && (
-            <Suspense fallback={<LoadingFallback />}>
+            <Suspense fallback={<RouteFallback />}>
               <SpeedInsights />
               <Analytics debug={import.meta.env.DEV} />
             </Suspense>

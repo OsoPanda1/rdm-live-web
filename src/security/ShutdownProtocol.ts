@@ -1,11 +1,5 @@
 import { logger } from "@/lib/logger";
-<<<<<<< Updated upstream
-import { mdx5 } from "@/kernel/index";
-import { knowledgeEngine } from "@/isabella/knowledge/KnowledgeAbsorptionEngine";
-import { ledger } from "@/kernel/engine/Ledger";
-=======
 import type { FederationBus } from "@/federaciones/FederationBus";
->>>>>>> Stashed changes
 
 export type ShutdownLevel = "GRACEFUL" | "EMERGENCY" | "CRITICAL_FAILURE";
 
@@ -39,12 +33,9 @@ export class ShutdownProtocol {
 
     logger.info("[SHUTDOWN] Iniciando apagado", { level, reason, initiatedBy });
 
-<<<<<<< Updated upstream
     stages.push(await this.stopKernel(level));
     stages.push(await this.stopKnowledgeEngine(level));
     stages.push(await this.verifyLedger(level));
-=======
->>>>>>> Stashed changes
     stages.push(await this.flushPending(level));
     stages.push(await this.closeConnections(level));
 
@@ -73,7 +64,6 @@ export class ShutdownProtocol {
     return this.lastShutdown;
   }
 
-<<<<<<< Updated upstream
   private async stopKernel(level: ShutdownLevel): Promise<ShutdownStage> {
     const start = Date.now();
     try {
@@ -110,28 +100,15 @@ export class ShutdownProtocol {
     }
   }
 
-=======
->>>>>>> Stashed changes
   private async flushPending(level: ShutdownLevel): Promise<ShutdownStage> {
     const start = Date.now();
     try {
       if (level === "GRACEFUL") {
-<<<<<<< Updated upstream
-        const queueSize = mdx5.getQueueSize();
-        if (queueSize > 0) {
-          logger.info("[SHUTDOWN] Esperando drenaje de cola", { queueSize });
-          await new Promise(resolve => setTimeout(resolve, Math.min(queueSize * 10, 3000)));
-        }
-      }
-      return { name: "flushPending", status: "COMPLETED", durationMs: Date.now() - start };
-    } catch (error) {
-=======
         logger.info("[SHUTDOWN] Drenando operaciones pendientes");
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       return { name: "flushPending", status: "COMPLETED", durationMs: Date.now() - start };
     } catch {
->>>>>>> Stashed changes
       return { name: "flushPending", status: "FAILED", durationMs: Date.now() - start };
     }
   }
@@ -143,11 +120,7 @@ export class ShutdownProtocol {
         await new Promise(resolve => setTimeout(resolve, 200));
       }
       return { name: "closeConnections", status: "COMPLETED", durationMs: Date.now() - start };
-<<<<<<< Updated upstream
-    } catch (error) {
-=======
     } catch {
->>>>>>> Stashed changes
       return { name: "closeConnections", status: "FAILED", durationMs: Date.now() - start };
     }
   }

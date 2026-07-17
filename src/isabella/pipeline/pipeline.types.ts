@@ -4,13 +4,10 @@ import type { FederationEvent } from '@/federaciones/FederationBus';
 import type { ZoneEvent } from '@/core/territorial/types';
 import type { IsabellaAction } from '@/core/ai/isabella-guardian';
 
-<<<<<<< Updated upstream
 // ============================================================================
 // INPUT PORTS (South)
 // ============================================================================
 
-=======
->>>>>>> Stashed changes
 export type PipelineInput =
   | { type: 'territorial_contribution'; contribution: UserContribution }
   | { type: 'federation_event'; event: FederationEvent }
@@ -18,13 +15,10 @@ export type PipelineInput =
   | { type: 'zone_event'; event: ZoneEvent }
   | { type: 'system_tick'; timestamp: Date };
 
-<<<<<<< Updated upstream
 // ============================================================================
 // CONSCIOUSNESS PROCESSING
 // ============================================================================
 
-=======
->>>>>>> Stashed changes
 export interface ConsciousnessActivation {
   layerIds: string[];
   layerNames: string[];
@@ -72,13 +66,10 @@ export interface AwakeningSignal {
   territorialActivityLevel: number;
 }
 
-<<<<<<< Updated upstream
 // ============================================================================
 // OUTPUT PORTS (North)
 // ============================================================================
 
-=======
->>>>>>> Stashed changes
 export interface GuardianVerdict {
   action: IsabellaAction;
   severity: 'normal' | 'safe' | 'emergency';
@@ -100,13 +91,10 @@ export interface TerritorialAction {
   timestamp: Date;
 }
 
-<<<<<<< Updated upstream
 // ============================================================================
 // PIPELINE RESULT
 // ============================================================================
 
-=======
->>>>>>> Stashed changes
 export interface PipelineResult {
   input: PipelineInput;
   consciousness: ConsciousnessActivation;
@@ -122,13 +110,10 @@ export interface PipelineResult {
   traceId: string;
 }
 
-<<<<<<< Updated upstream
 // ============================================================================
 // PORTS & ADAPTERS
 // ============================================================================
 
-=======
->>>>>>> Stashed changes
 export interface InputPort {
   name: string;
   accept(input: PipelineInput): boolean;

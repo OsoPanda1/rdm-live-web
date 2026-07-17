@@ -20,3 +20,20 @@ export const limiters = {
 } as const;
 
 export type LimiterName = keyof typeof limiters;
+
+
+export function createRateLimiter(max: number, windowMs: number) {
+  return rateLimit({ ...baseOptions, windowMs, max });
+}
+
+export function createHardenedRateLimiter(options?: { maxRequests?: number; windowMs?: number; keyPrefix?: string }) {
+  if (options?.maxRequests || options?.windowMs) {
+    return rateLimit({
+      ...baseOptions,
+      windowMs: options.windowMs ?? 60_000,
+      max: options.maxRequests ?? 120,
+    });
+  }
+
+  return limiters.serverless;
+}

@@ -1,9 +1,6 @@
-<<<<<<< Updated upstream
 // src/quantum/pennylane-bridge.ts — Hybrid Quantum-Classical ML for Isabella
 // Connects to PennyLane REST API server for quantum circuit execution
 
-=======
->>>>>>> Stashed changes
 type QuantumCircuit = {
   qubits: number
   depth: number
@@ -25,10 +22,7 @@ type PennylaneConfig = {
   device: "default.qubit" | "lightning.qubit" | "qiskit.aer" | "cirq.simulator"
 }
 
-<<<<<<< Updated upstream
 // Circuit templates for Isabella use cases
-=======
->>>>>>> Stashed changes
 const CIRCUIT_TEMPLATES = {
   classification: {
     qubits: 4,
@@ -98,10 +92,7 @@ export class PennylaneBridge {
     this.config.endpoint = url
   }
 
-<<<<<<< Updated upstream
   // Execute a quantum circuit against the PennyLane REST API
-=======
->>>>>>> Stashed changes
   async execute(circuit: QuantumCircuit): Promise<QuantumResult> {
     const cacheKey = JSON.stringify(circuit)
     const cached = this.circuitCache.get(cacheKey)
@@ -143,20 +134,14 @@ export class PennylaneBridge {
     }
   }
 
-<<<<<<< Updated upstream
   // Get a predefined circuit template
-=======
->>>>>>> Stashed changes
   getTemplate(name: CircuitTemplateName): QuantumCircuit {
     const template = CIRCUIT_TEMPLATES[name]
     if (!template) throw new Error(`Unknown circuit template: ${name}`)
     return template
   }
 
-<<<<<<< Updated upstream
   // Execute a template circuit
-=======
->>>>>>> Stashed changes
   async executeTemplate(name: CircuitTemplateName, params?: number[]): Promise<QuantumResult> {
     const circuit = this.getTemplate(name)
     if (params && circuit.gates) {
@@ -168,18 +153,12 @@ export class PennylaneBridge {
     return this.execute(circuit)
   }
 
-<<<<<<< Updated upstream
   // Clear execution cache
-=======
->>>>>>> Stashed changes
   clearCache(): void {
     this.circuitCache.clear()
   }
 
-<<<<<<< Updated upstream
   // Check if the PennyLane REST API is reachable
-=======
->>>>>>> Stashed changes
   async healthCheck(): Promise<boolean> {
     try {
       const baseUrl = this.config.endpoint.replace(/\/quantum.*$/, "")
@@ -193,10 +172,7 @@ export class PennylaneBridge {
   }
 }
 
-<<<<<<< Updated upstream
 // Singleton instance for Isabella
-=======
->>>>>>> Stashed changes
 let bridgeInstance: PennylaneBridge | null = null
 
 export function getPennylaneBridge(config?: Partial<PennylaneConfig>): PennylaneBridge {

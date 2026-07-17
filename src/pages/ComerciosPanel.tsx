@@ -1,11 +1,10 @@
-// @ts-nocheck
-import NavBar from "@/components/Navbar";
+import Navbar from "@/components/Navbar";
 import { FooterSection } from "@/components/FooterSection";
 
 export default function ComerciosPanel() {
   return (
     <div>
-      <NavBar />
+      <Navbar />
       <main className="container mx-auto px-6 pt-28 pb-20 space-y-6">
         <header>
           <h1 className="text-3xl font-bold">Panel de Comerciante</h1>

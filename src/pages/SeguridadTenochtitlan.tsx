@@ -178,10 +178,15 @@ const SeguridadTenochtitlan = () => {
   return (
     <WikiPage
       title="Sistema TENOCHTITLAN"
-      subtitle="Arquitectura Defensiva Avanzada — Seguridad Multicapa Civilizatoria"
-    >
-      {/* Live System Mode */}
-      <SystemModeBadge />
+        subtitle="Arquitectura Defensiva Avanzada — Seguridad Multicapa Civilizatoria"
+      >
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/iglesia.jpg" alt="Iglesia de Real del Monte" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        {/* Live System Mode */}
+        <SystemModeBadge />
 
       <InfoBox type="warning" title="Principio Fundamental">
         "TAMV no se defiende atacando. Se defiende siendo imposible de capturar."

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, HelpCircle, Search, MessageCircle } from "lucide-react";
@@ -103,6 +102,11 @@ export default function FAQ() {
   return (
     <MainLayout>
       <SEOMeta title="Preguntas Frecuentes · RDM Digital" description="Centro de ayuda con artículos por categoría sobre turismo, historia, comunidad, membresías y pagos en Real del Monte, con buscador inteligente." />
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/landscape-fog.jpg" alt="Paisaje de Real del Monte" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
       <section className="pb-20 pt-8">
         <div className="container mx-auto max-w-3xl px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">

@@ -214,7 +214,7 @@ export function AccommodationSection() {
                   <img
                     src={hotel.image}
                     alt={hotel.name}
-                    className="h-full w-full transform object-cover transition-transform duration-900 group-hover:scale-110 group-hover:brightness-105"
+                    loading="lazy" className="h-full w-full transform object-cover transition-transform duration-900 group-hover:scale-110 group-hover:brightness-105"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/5 to-transparent" />
 

@@ -1,0 +1,74 @@
+// scripts/isabella-telemetry.mjs
+// Ping de telemetría y salud del ecosistema RDM Digital / Atlas
+
+import "dotenv/config";
+import fetch from "node-fetch";
+
+const NODE_ID = process.env.NODE_ID || "nodo-cero-web";
+const ENV =
+  process.env.NODE_ENV === "production"
+    ? "prod"
+    : process.env.NODE_ENV === "staging"
+    ? "staging"
+    : "dev";
+
+function log(message, data = {}) {
+  const payload = {
+    ts: new Date().toISOString(),
+    node: NODE_ID,
+    env: ENV,
+    message,
+    data,
+  };
+  // eslint-disable-next-line no-console
+  console.log("[isabella:telemetry]", JSON.stringify(payload));
+}
+
+async function ping(url, label) {
+  const startedAt = Date.now();
+  try {
+    const res = await fetch(url, { method: "GET" });
+    const latency = Date.now() - startedAt;
+    log(`Ping ${label}`, { status: res.status, latencyMs: latency });
+    return { ok: res.ok, status: res.status, latency };
+  } catch (err) {
+    log(`Ping ${label} error`, { error: err.message || String(err) });
+    return { ok: false, status: 0, latency: Date.now() - startedAt };
+  }
+}
+
+async function main() {
+  const BASE_URL =
+    process.env.RDMX_BASE_URL ||
+    process.env.VERCEL_URL ||
+    "http://localhost:4173";
+
+  const healthUrl = `${BASE_URL}/api/health`;
+  const federationHealthUrl = `${BASE_URL}/api/federation-health`;
+  const metricsUrl = `${BASE_URL}/api/metrics`;
+
+  log("Starting Isabella telemetry", {
+    BASE_URL,
+    healthUrl,
+    federationHealthUrl,
+    metricsUrl,
+  });
+
+  const health = await ping(healthUrl, "health");
+  const federation = await ping(federationHealthUrl, "federation-health");
+  const metrics = await ping(metricsUrl, "metrics");
+
+  const summary = { health, federation, metrics };
+  const allOk = health.ok && federation.ok && metrics.ok;
+
+  log("Telemetry summary", { summary, allOk });
+
+  if (!allOk) {
+    throw new Error("Uno o más canales de salud/metrics no responden OK");
+  }
+}
+
+main().catch((err) => {
+  log("Isabella telemetry fatal error", { error: err.message || String(err) });
+  process.exit(1);
+});

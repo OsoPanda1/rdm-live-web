@@ -268,8 +268,6 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
 
-  if (!videos || videos.length === 0) return null
-
   const move = useCallback(
     (dir: "left" | "right") => {
       setCenterIndex((prev) => {
@@ -320,6 +318,8 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   const handleVideoSelect = (video: VideoItem) => {
     onVideoSelect?.(video)
   }
+
+  if (!videos || videos.length === 0) return null
 
   return (
     <section

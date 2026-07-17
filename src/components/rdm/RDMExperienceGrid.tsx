@@ -31,7 +31,7 @@ export function RDMExperienceGrid() {
         {EXPERIENCES.map((exp, i) => (
           <motion.div key={exp.id} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.1, duration: 0.6 }} className={exp.span}>
             <Link to={exp.to} className="block relative rounded-2xl overflow-hidden group cursor-pointer h-full" style={{ background: "linear-gradient(135deg, hsl(218 24% 15%), hsl(215 30% 22%), hsl(24 30% 20%))" }}>
-              {exp.image && <img src={exp.image} alt={exp.title} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity" />}
+              {exp.image && <img src={exp.image} alt={exp.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity" />}
               <div className={`absolute inset-0 bg-gradient-to-t ${exp.gradient} to-transparent`} />
               <div className="absolute inset-0 bg-[hsl(var(--rdm-amber)/0)] group-hover:bg-[hsl(var(--rdm-amber)/0.1)] transition-colors duration-500" />
               <div className="absolute bottom-0 left-0 right-0 p-5 z-10">

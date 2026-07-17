@@ -94,3 +94,60 @@ export {
 } from './orchestrator/ExperienceOrchestrator';
 
 export type { Clock } from './orchestrator/ExperienceOrchestrator';
+
+// ============================================================================
+// GUARDIAN AI
+// ============================================================================
+
+export { GuardianLearningLoop, guardianLearningLoop } from './ai/GuardianLearningLoop';
+
+// ============================================================================
+// SISTEMA TERRITORIAL
+// ============================================================================
+
+export {
+  territorialCollector,
+  TerritorialDataCollector,
+  territorialGeofencer,
+  TerritorialGeofencer,
+  initializeRDMZones,
+  fusionEngine,
+  TerritorialFusionEngine,
+} from './territorial';
+
+export type {
+  UserContribution,
+  ContributionPayload,
+  ContributionType,
+  ContributionStatus,
+  TerritorialStats,
+  UserTerritorialProfile,
+  TerritorialHeatPoint,
+  TerritorialZone,
+  ZoneEvent,
+  ZoneAlert,
+} from './territorial/types';
+
+// ============================================================================
+// SISTEMA UNIFICADO (GEN-8.0)
+// ============================================================================
+
+export {
+  unifiedEventBus,
+  UnifiedEventBus,
+  unifiedSupervisor,
+  UnifiedSupervisor,
+  unifiedPersistence,
+  UnifiedPersistence,
+  unifiedSDK,
+  UnifiedSDK,
+} from './unified';
+
+export type {
+  GlobalSystemState,
+  ModuleHealth,
+  UnifiedEvent,
+  UnifiedEventType,
+  ApiResponse,
+  UnifiedConfig,
+} from './unified';

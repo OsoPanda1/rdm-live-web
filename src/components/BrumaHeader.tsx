@@ -52,7 +52,7 @@ const BrumaHeader = () => {
         }`}
       >
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logoImg} alt="RDM" className="w-8 h-8 object-contain"
+          <img src={logoImg} alt="RDM" loading="lazy" className="w-8 h-8 object-contain"
             style={{ filter: "drop-shadow(0 0 8px hsla(43, 80%, 55%, 0.3))" }} />
           <div>
             <span className="font-display text-base text-foreground tracking-wide group-hover:text-gradient-gold transition-all">

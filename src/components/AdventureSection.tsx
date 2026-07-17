@@ -78,7 +78,7 @@ export function AdventureSection() {
               viewport={{ once: true }}
               className="rounded-2xl overflow-hidden h-[240px]"
             >
-              <img src={waterfallForest} alt="Cascada" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              <img src={waterfallForest} alt="Cascada" loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
             </motion.div>
             <motion.div
               initial={{ opacity: 0 }}
@@ -87,7 +87,7 @@ export function AdventureSection() {
               transition={{ delay: 0.1 }}
               className="rounded-2xl overflow-hidden h-[240px]"
             >
-              <img src={mistyMountains} alt="Montañas" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              <img src={mistyMountains} alt="Montañas" loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
             </motion.div>
           </div>
 

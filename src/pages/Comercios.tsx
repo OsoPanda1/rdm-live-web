@@ -1,5 +1,4 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
-// @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, Store } from "lucide-react";
@@ -9,6 +8,7 @@ import { ElegantPagination } from "@/components/ElegantPagination";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import type { Business } from "@/types/supabase";
 
 const CATEGORIES = [
   { value: "all", label: "Todos" },
@@ -23,7 +23,7 @@ const CATEGORIES = [
 const PAGE_SIZE = 9;
 
 export default function Comercios() {
-  const [businesses, setBusinesses] = useState<any[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [page, setPage] = useState(0);

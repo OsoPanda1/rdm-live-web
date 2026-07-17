@@ -97,6 +97,9 @@ export interface PointOfInterest {
   name: string;
   category: POICategory;
   coords: Coordenadas;
+  /** Coordenadas planas derivadas para compatibilidad con componentes de mapa. */
+  lat?: number;
+  lng?: number;
   rating: number;
   description: string;
   federacion?: string;
@@ -130,19 +133,56 @@ export interface ExitPoint {
 // SISTEMA HEPTAFEDERADO
 // ============================================================================
 
+// ============================================================================
+// FEDERACIONES CANONICAS TAMV (F1-F7)
+// ============================================================================
+
 export type FederationId =
-  | 'DEKATEOTL'
-  | 'ANUBIS'
-  | 'BOOKPI_DATAGIT'
-  | 'PHOENIX'
-  | 'MDD_TAMV'
-  | 'KAOS_HYPERRENDER'
-  | 'CHRONOS';
+  | 'DEKATEOTL'     // F1: DATA - Vault / PostGIS / TimeSeries
+  | 'ANUBIS'        // F2: INTEL - Cognitive & Agentic AI
+  | 'BOOKPI_DATAGIT'// F3: SEC - PQC / Zero-Trust / Q-Cells
+  | 'PHOENIX'       // F4: GOV - Executable Governance
+  | 'MDD_TAMV'      // F5: ECON - Economía local / phygital
+  | 'KAOS_HYPERRENDER' // F6: VIS - GeoEngine 2D/3D
+  | 'CHRONOS';      // F7: TERRITORY - Edge / IoT / Human mesh
+
+export type FederationNumber = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7';
+
+export const FEDERATION_MAP: Record<FederationNumber, FederationId> = {
+  F1: 'DEKATEOTL',
+  F2: 'ANUBIS',
+  F3: 'BOOKPI_DATAGIT',
+  F4: 'PHOENIX',
+  F5: 'MDD_TAMV',
+  F6: 'KAOS_HYPERRENDER',
+  F7: 'CHRONOS',
+};
+
+export const FEDERATION_DOMAIN: Record<FederationId, string> = {
+  DEKATEOTL: 'data.rdm.tamv',
+  ANUBIS: 'intel.rdm.tamv',
+  BOOKPI_DATAGIT: 'sec.rdm.tamv',
+  PHOENIX: 'gov.rdm.tamv',
+  MDD_TAMV: 'econ.rdm.tamv',
+  KAOS_HYPERRENDER: 'vis.rdm.tamv',
+  CHRONOS: 'territory.rdm.tamv',
+};
+
+export const FEDERATION_NAMES: Record<FederationId, string> = {
+  DEKATEOTL: 'Federación de Datos (DATA)',
+  ANUBIS: 'Federación de Inteligencia (INTEL)',
+  BOOKPI_DATAGIT: 'Federación de Seguridad (SEC)',
+  PHOENIX: 'Federación de Gobernanza (GOV)',
+  MDD_TAMV: 'Federación Económica (ECON)',
+  KAOS_HYPERRENDER: 'Federación Visual (VIS)',
+  CHRONOS: 'Federación Territorial (TERRITORY)',
+};
 
 export type FederationStatus = 'ACTIVE' | 'IDLE' | 'DEGRADED' | 'OFFLINE';
 
 export interface FederationModule {
   id: FederationId;
+  federationNumber: FederationNumber;
   name: string;
   specialty: string;
   stack: string[];
@@ -151,6 +191,60 @@ export interface FederationModule {
   health: number;
   operationalScore: number;
   lastHeartbeat?: Date;
+}
+
+// ============================================================================
+// TIPOS DEL CICLO MD-X5
+// ============================================================================
+
+export type MDX5Phase = 'RECEIVE' | 'EVALUATE' | 'PLAN' | 'EXECUTE' | 'COMMIT' | 'RECONCILE';
+
+export interface MDX5Intent {
+  id: string;
+  type: string;
+  payload: unknown;
+  source: string;
+  federation?: FederationId;
+  priority: 'low' | 'normal' | 'high' | 'critical';
+  timestamp: Date;
+  traceId: string;
+}
+
+export interface MDX5Decision {
+  intentId: string;
+  phase: MDX5Phase;
+  approved: boolean;
+  timeupVerdict?: TimeUpVerdict;
+  reason?: string;
+  timestamp: Date;
+  traceId: string;
+}
+
+// ============================================================================
+// TIME UP - GOBERNANZA ÉTICA
+// ============================================================================
+
+export type TimeUpVerdict = 'APPROVED' | 'REJECTED' | 'PENDING_HUMAN' | 'PENDING_ISABELLA';
+
+export interface TimeUpPolicy {
+  id: string;
+  name: string;
+  description: string;
+  federation: FederationId;
+  rule: string;
+  severity: 'INFO' | 'ALERTA' | 'CRITICO';
+}
+
+export interface LedgerEntry {
+  id: string;
+  action: string;
+  intentId: string;
+  federation: FederationId;
+  decision: MDX5Decision;
+  timestamp: Date;
+  traceId: string;
+  hash: string;
+  prevHash: string;
 }
 
 // ============================================================================

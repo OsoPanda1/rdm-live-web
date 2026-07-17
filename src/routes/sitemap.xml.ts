@@ -3,9 +3,13 @@
 // - Poblar entries desde el router o la BD (rutas dinámicas, slugs).
 // - Mantener lastmod en formato ISO (YYYY-MM-DD o completo con TZ).
 
-import type { APIContext } from "./_types";
+interface APIContext {
+  request: Request;
+  params: Record<string, string>;
+  locals: Record<string, unknown>;
+}
 
-const BASE_URL = "https://realdelmonte.example";
+const BASE_URL = "https://www.visitarealdelmonte.online";
 
 type Changefreq =
   | "always"
@@ -84,13 +88,101 @@ export async function GET(_ctx: APIContext): Promise<Response> {
   const now = new Date().toISOString();
 
   const entries: SitemapEntry[] = [
-    { path: "/", lastmod: now, changefreq: "weekly", priority: "1.0" },
+    // Mother Repo — prioridad máxima
+    { path: "/", lastmod: now, changefreq: "daily", priority: "1.0" },
+    { path: "/mapa", lastmod: now, changefreq: "daily", priority: "0.9" },
+    { path: "/lugares", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/directorio", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/eventos", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/comunidad", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/historia", lastmod: now, changefreq: "monthly", priority: "0.7" },
     { path: "/cultura", lastmod: now, changefreq: "weekly", priority: "0.8" },
-    { path: "/economia", lastmod: now, changefreq: "weekly", priority: "0.8" },
-    { path: "/gemelo", lastmod: now, changefreq: "monthly", priority: "0.6" },
-    { path: "/contacto", lastmod: now, changefreq: "monthly", priority: "0.5" },
-    // Ejemplo: entradas dinámicas poblando desde BD/router:
-    // ...dynamicEntriesFromDB
+    { path: "/relatos", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/ecoturismo", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/gastronomia", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/arte", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/rutas", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/musica", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/dichos", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/catalogo", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/negocios", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/apoya", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/reglamento", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/auth", lastmod: now, changefreq: "monthly", priority: "0.3" },
+
+    // Smart City OS
+    { path: "/dashboard", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/comercios", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/paquetes", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/transporte-local", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/shuttle-cdmx-rdm", lastmod: now, changefreq: "weekly", priority: "0.6" },
+
+    // RDM Digital-X
+    { path: "/quienes-somos", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/donar", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/gracias-donativo", lastmod: now, changefreq: "monthly", priority: "0.3" },
+    { path: "/comercios/panel", lastmod: now, changefreq: "weekly", priority: "0.5" },
+
+    // Elevated
+    { path: "/registro-comercio", lastmod: now, changefreq: "monthly", priority: "0.5" },
+
+    // Citemesh / Wiki
+    { path: "/introduccion", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/filosofia", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/arquitectura", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/ia-agentes", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/timeline", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/documentacion", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/gobernanza", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/sistemas-avanzados", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/manuales", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/despliegue", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/biografia-ceo", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/casos-de-uso", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/kit-apis", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/estrategia", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/red-social", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/seguridad-tenochtitlan", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/blockchain-msr", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/xr-tecnologia", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/economia-federada", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/quantum-computing", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/enciclopedia", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/isabella-ai", lastmod: now, changefreq: "weekly", priority: "0.8" },
+    { path: "/impacto-civilizatorio", lastmod: now, changefreq: "monthly", priority: "0.4" },
+
+    // Genesis / TAMV
+    { path: "/metaverse", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/register", lastmod: now, changefreq: "monthly", priority: "0.3" },
+    { path: "/login", lastmod: now, changefreq: "monthly", priority: "0.3" },
+
+    // Civilizational Core
+    { path: "/guardian", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/atlas", lastmod: now, changefreq: "weekly", priority: "0.7" },
+    { path: "/devhub", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/feed", lastmod: now, changefreq: "weekly", priority: "0.5" },
+    { path: "/territorial-dashboard", lastmod: now, changefreq: "weekly", priority: "0.7" },
+
+    // Turismo
+    { path: "/estacionamientos", lastmod: now, changefreq: "weekly", priority: "0.6" },
+    { path: "/patrimonio-cultural", lastmod: now, changefreq: "weekly", priority: "0.7" },
+
+    // Atlas Territorial
+    { path: "/capitulos", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/capitulos/minas", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/capitulos/pastes", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/capitulos/cementerio", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/capitulos/calles", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/capitulos/leyendas", lastmod: now, changefreq: "monthly", priority: "0.6" },
+    { path: "/atlas-maximus", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/corpus", lastmod: now, changefreq: "monthly", priority: "0.4" },
+    { path: "/ecosistema-ltos", lastmod: now, changefreq: "monthly", priority: "0.5" },
+    { path: "/repos", lastmod: now, changefreq: "monthly", priority: "0.4" },
+
+    // Social
+    { path: "/perfil", lastmod: now, changefreq: "weekly", priority: "0.5" },
+    { path: "/leaderboard", lastmod: now, changefreq: "weekly", priority: "0.5" },
+    { path: "/ranking", lastmod: now, changefreq: "weekly", priority: "0.4" },
   ];
 
   const xml = buildSitemapXml(entries);

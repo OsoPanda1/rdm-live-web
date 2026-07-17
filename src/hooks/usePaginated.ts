@@ -32,6 +32,8 @@ export function usePaginated<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const extraParamsKey = JSON.stringify(extraParams);
+
   const fetchPage = useCallback(
     async (targetPage: number) => {
       setLoading(true);
@@ -86,7 +88,7 @@ export function usePaginated<T>(
         setLoading(false);
       }
     },
-    [basePath, pageSize, JSON.stringify(extraParams)],
+    [basePath, pageSize, extraParamsKey], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {

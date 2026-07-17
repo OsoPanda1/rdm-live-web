@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useDashboardMetrics } from "@/modules/dashboard/hooks/useDashboardMetrics";
 import { KpiTile } from "@/modules/dashboard/components/KpiTile";
 import { motion } from "framer-motion";

@@ -1,5 +1,4 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
-// @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Compass, Clock, Zap } from "lucide-react";
@@ -8,6 +7,7 @@ import { PackageCard } from "@/components/packages/PackageCard";
 import { ElegantPagination } from "@/components/ElegantPagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import type { TourPackage } from "@/types/supabase";
 
 const TYPES = [
   { value: "all", label: "Todos" },
@@ -21,7 +21,7 @@ const TYPES = [
 const PAGE_SIZE = 6;
 
 export default function Paquetes() {
-  const [packages, setPackages] = useState<any[]>([]);
+  const [packages, setPackages] = useState<TourPackage[]>([]);
   const [type, setType] = useState("all");
   const [page, setPage] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
@@ -77,7 +77,7 @@ export default function Paquetes() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paged.map(p => <PackageCard key={p.id} pkg={p} />)}
+              {paged.map(p => <PackageCard key={p.id} pkg={{ ...p, slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), duration_hours: null, intensity: null, price_from: p.price, hero_image: p.image_url }} />)}
             </div>
           )}
 

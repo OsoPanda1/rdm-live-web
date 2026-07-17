@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Ghost, Moon, Skull, Flame, BookOpen, Mountain } from "lucide-react";
 

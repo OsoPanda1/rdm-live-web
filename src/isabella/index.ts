@@ -1,0 +1,17 @@
+export { IdentidadIsabella, isabellaIdentidad } from "./core/identity";
+export { JuramentoIsabella, juramentoIsabella } from "./core/oath";
+export { MotorConciencia, motorConciencia } from "./core/consciousness";
+export { AlmaYCorazon, almaYCorazon } from "./emotional/heart";
+export { MemoriaEmocional, memoriaEmocional } from "./emotional/memory";
+export { IsabellaAPI, isabellaAPI } from "./api/index";
+export { KnowledgeAbsorptionEngine, knowledgeEngine } from "./knowledge/KnowledgeAbsorptionEngine";
+export { IsabellaAwakeningProtocol, awakeningProtocol } from "./protocols/IsabellaAwakeningProtocol";
+export { IsabellaTerritorialMind, isabellaTerritorialMind } from "./territorial/IsabellaTerritorialMind";
+export type { TerritorialInsight, IsabellaTerritorialState } from "./territorial/IsabellaTerritorialMind";
+export { IsabellaConsciousnessPipeline, consciousnessPipeline } from "./pipeline/IsabellaConsciousnessPipeline";
+export type { PipelineInput, PipelineResult, PipelineConfig, ConsciousnessActivation, EmotionalState, MemoryContext, KnowledgeContext, AwakeningSignal, GuardianVerdict, FederationAction, TerritorialAction, InputPort, OutputPort } from "./pipeline/pipeline.types";
+export { orion, sophia, argus, mnemos, lumen, getAllSkillMetadata, SKILL_REGISTRY } from "./skills";
+export type { SkillContext, Artifact, Relation, Gap, Reference, SimulationResult, RiskProfile, CanonicalEntry, Evidence, PolicyViolation, LumenDecision, ResearchSynthesis, KnowledgeGraph } from "./skills";
+export { kernelResonance, kernelCronoAnamnesis, kernelEmpatiaAntifragil, kernelTransduccionEstetica, kernelOmnipresenciaMesh } from "./kernel";
+export { MenteCuantica, menteCuantica } from "./quantum";
+export type { QuantumCapability, QuantumState } from "./quantum";

@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, X, Send, Loader2 } from "lucide-react";
+import { Brain, X, Send, Loader2, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsabellaVoice } from "@/hooks/useIsabellaVoice";
 import { logger } from "@/lib/logger";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/isabella-chat`;
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/isabella-ai`;
 
 export function IsabellaChat() {
+  const voice = useIsabellaVoice();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     { role: "assistant", content: "¡Hola! Soy **Isabella Villaseñor AI**, la IA contextual del ecosistema TAMV MD‑X4™. ¿En qué puedo ayudarte?" },
@@ -32,11 +34,14 @@ export function IsabellaChat() {
     const allMessages = [...messages, userMsg];
 
     try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token ?? import.meta.env.VITE_SUPABASE_ANON_KEY;
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ messages: allMessages }),
       });
@@ -132,9 +137,22 @@ export function IsabellaChat() {
                   <p className="text-[10px] text-muted-foreground">IA Contextual TAMV MD‑X4™</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    if (voice.isSpeaking) { voice.cancelAll(); return; }
+                    const last = messages.filter((m) => m.role === "assistant").pop();
+                    if (last) voice.speak(last.content);
+                  }}
+                  className="text-muted-foreground hover:text-foreground p-1"
+                  title="Leer última respuesta"
+                >
+                  {voice.isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                </button>
+                <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* Messages */}

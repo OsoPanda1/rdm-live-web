@@ -70,7 +70,7 @@ const GroupsColumn: React.FC<{ groups: GroupItem[] }> = ({ groups }) => (
         <img 
           src={group.avatar} 
           alt={group.name} 
-          className="w-10 h-10 rounded-full ring-2 ring-cyan-400/30"
+          loading="lazy" className="w-10 h-10 rounded-full ring-2 ring-cyan-400/30"
         />
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm truncate">{group.name}</p>
@@ -195,7 +195,7 @@ const ConcertsColumn: React.FC<{ concerts: ConcertItem[] }> = ({ concerts }) => 
         <img 
           src={concert.thumbnail} 
           alt={concert.title}
-          className="w-full h-24 object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy" className="w-full h-24 object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         <div className="absolute bottom-2 left-2 right-2">
@@ -243,9 +243,9 @@ const CategoryColumns: React.FC = () => {
   ];
 
   const concerts: ConcertItem[] = [
-    { id: '1', title: 'Sinfonía Cuántica', artist: 'DJ Nebula', thumbnail: 'https://picsum.photos/seed/concert1/400/200', isLive: true, viewers: 15420 },
-    { id: '2', title: 'Ecos del Metaverso', artist: 'Isabella Orchestra', thumbnail: 'https://picsum.photos/seed/concert2/400/200', isLive: false },
-    { id: '3', title: 'Noche de Creadores', artist: 'Various Artists', thumbnail: 'https://picsum.photos/seed/concert3/400/200', isLive: false },
+    { id: '1', title: 'Sinfonía Cuántica', artist: 'DJ Nebula', thumbnail: '/images/dia-muertos.jpg', isLive: true, viewers: 15420 },
+    { id: '2', title: 'Ecos del Metaverso', artist: 'Isabella Orchestra', thumbnail: '/images/penas-cargadas.jpg', isLive: false },
+    { id: '3', title: 'Noche de Creadores', artist: 'Various Artists', thumbnail: '/images/plaza-noche.jpg', isLive: false },
   ];
 
   return (

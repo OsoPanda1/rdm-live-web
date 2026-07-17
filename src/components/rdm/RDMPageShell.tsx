@@ -8,11 +8,11 @@ interface RDMPageShellProps {
   eyebrow: string;
   title: string;
   description: string;
-  bullets: string[];
+  bullets?: string[];
   children?: ReactNode;
 }
 
-export function RDMPageShell({ eyebrow, title, description, bullets, children }: RDMPageShellProps) {
+export function RDMPageShell({ eyebrow, title, description, bullets = [], children }: RDMPageShellProps) {
   return (
     <RDMLayout>
       <main className="pt-24 pb-8">

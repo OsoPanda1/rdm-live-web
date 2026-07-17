@@ -6,9 +6,14 @@ import { BookOpen, Users, Shield, Code, Rocket, HelpCircle, Crown, Building } fr
 const Manuales = () => (
   <WikiPage
     title="Manuales de Usuario"
-    subtitle="Guías completas para reducir la curva de aprendizaje del ecosistema TAMV"
-  >
-    <Tabs defaultValue="inicio" className="w-full">
+      subtitle="Guías completas para reducir la curva de aprendizaje del ecosistema TAMV"
+    >
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/mine-tunnel.jpg" alt="Túnel de la mina histórica" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
+      <Tabs defaultValue="inicio" className="w-full">
       <TabsList className="w-full flex-wrap h-auto gap-1 bg-muted/30 p-1">
         <TabsTrigger value="inicio" className="text-xs">Inicio rápido</TabsTrigger>
         <TabsTrigger value="roles" className="text-xs">Por rol</TabsTrigger>

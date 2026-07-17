@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { logger } from '@/lib/logger';
 import { territorialCollector } from './TerritorialDataCollector';
 import { territorialFederationBridge } from '@/federaciones/territorial-federation-bridge';

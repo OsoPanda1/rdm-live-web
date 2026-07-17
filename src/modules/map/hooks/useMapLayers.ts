@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Capas dinámicas del Gemelo Digital.
  * Lee `dt_layers` y permite togglear capas en memoria.

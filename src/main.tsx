@@ -2,12 +2,7 @@
 
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App'
 import './index.css'
-import { initSentry } from '@/integrations/observability/sentry'
-
-// Fire-and-forget; init is a no-op until VITE_SENTRY_DSN is set.
-void initSentry()
 
 const container = document.getElementById('root')
 
@@ -18,32 +13,61 @@ if (!container) {
 
 const root = createRoot(container)
 
-const renderFatalFallback = (error?: unknown) => {
-  const message = error instanceof Error ? error.message : 'Error de arranque desconocido'
-  container.innerHTML = `
-    <main style="min-height:100vh;display:grid;place-items:center;background:#0B0B0C;color:#E5E5E5;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:24px;">
-      <section style="max-width:720px;border:1px solid rgba(229,229,229,.18);background:rgba(10,17,40,.82);padding:28px;border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.35);">
-        <p style="margin:0 0 8px;color:#D4B26A;font-size:12px;letter-spacing:.24em;text-transform:uppercase;">RDM Digital LTOS</p>
-        <h1 style="margin:0 0 12px;font-size:clamp(28px,5vw,48px);line-height:1.02;">Plataforma en modo seguro</h1>
-        <p style="margin:0;color:rgba(229,229,229,.78);line-height:1.6;">La interfaz principal no pudo iniciar correctamente. Recarga la página; si persiste, el registro técnico ya dejó una señal visible para evitar pantalla negra.</p>
-        <pre style="white-space:pre-wrap;margin:18px 0 0;color:rgba(229,229,229,.58);font-size:12px;">${message.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c] ?? c))}</pre>
-      </section>
-    </main>
-  `
-}
+const BootstrapFallback = ({
+  error,
+}: {
+  error?: unknown
+}) => (
+  <div className="min-h-screen w-full flex items-center justify-center bg-background p-6 text-foreground">
+    <div className="max-w-lg rounded-2xl border border-destructive/30 bg-card p-6 text-center shadow-xl">
+      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-destructive">
+        Error de arranque
+      </p>
+      <h1 className="mt-3 font-serif text-2xl font-bold">
+        No pudimos cargar la aplicación
+      </h1>
+      <p className="mt-3 text-sm text-muted-foreground">
+        El paquete principal no se inicializó correctamente. Recarga la página para intentar de
+        nuevo.
+      </p>
+      {error instanceof Error && (
+        <pre className="mt-4 max-h-40 overflow-auto rounded-lg bg-muted p-3 text-left text-xs text-muted-foreground">
+          {error.message}
+        </pre>
+      )}
+      <button
+        onClick={() => window.location.reload()}
+        className="btn-hero-primary mt-6 inline-flex items-center justify-center"
+      >
+        Recargar aplicación
+      </button>
+    </div>
+  </div>
+)
 
-window.setTimeout(() => {
-  if (!container.textContent?.trim()) {
-    renderFatalFallback('El contenedor raíz quedó vacío después del arranque.')
+async function bootstrap() {
+  try {
+    const [{ default: App }, { initSentry }] = await Promise.all([
+      import('./App'),
+      import('@/integrations/observability/sentry'),
+    ])
+
+    // Fire-and-forget; init is a no-op until VITE_SENTRY_DSN is set.
+    void initSentry()
+
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+    )
+  } catch (error) {
+    console.error('[bootstrap] Failed to initialize application:', error)
+    root.render(
+      <React.StrictMode>
+        <BootstrapFallback error={error} />
+      </React.StrictMode>,
+    )
   }
-}, 4500)
-
-try {
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  )
-} catch (error) {
-  renderFatalFallback(error)
 }
+
+void bootstrap()

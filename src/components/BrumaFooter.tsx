@@ -36,7 +36,7 @@ const BrumaFooter = () => {
           <div className="md:col-span-2">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1 }}>
               <div className="flex items-center gap-3 mb-4">
-                <img src={logoImg} alt="RDM Digital" className="w-14 h-14 object-contain" style={{ filter: "drop-shadow(0 0 10px hsla(210,100%,55%,0.3))" }} />
+                <img src={logoImg} alt="RDM Digital" loading="lazy" className="w-14 h-14 object-contain" style={{ filter: "drop-shadow(0 0 10px hsla(210,100%,55%,0.3))" }} />
                 <div>
                   <span className="font-display text-xl font-bold text-foreground">RDM Digital</span>
                   <div className="flex items-center gap-1 text-[10px] tracking-wider text-gold/60">

@@ -1,10 +1,3 @@
-// @ts-nocheck
-/**
- * Tourism Search Index — unifica POIs canónicos + capítulos + minas + pastes +
- * leyendas + rutas en un solo dataset consultable para el SearchOverlay
- * y para el mapa territorial inmersivo. Cada entrada apunta a un POI real
- * (lat/lng) cuando aplica, y a una ruta navegable.
- */
 import {
   RDM_TERRITORY_POIS,
   chapters,
@@ -28,14 +21,12 @@ export interface SearchHit {
   subtitle: string;
   narrative: string;
   href: string;
-  /** Federación/categoría para colorear la tarjeta */
   facet: string;
   lat?: number;
   lng?: number;
   poiId?: string;
 }
 
-/** Heurística simple: relaciona narrativas con su POI físico más probable. */
 function poiAnchor(keyword: string): TerritoryPOI | undefined {
   const k = keyword.toLowerCase();
   return RDM_TERRITORY_POIS.find(

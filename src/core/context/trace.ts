@@ -1,8 +1,11 @@
 export function createTraceId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
+  if (typeof crypto !== "undefined") {
+    if ("randomUUID" in crypto) return crypto.randomUUID();
+    if ("getRandomValues" in crypto) {
+      const buf = new Uint8Array(16);
+      (crypto as Crypto).getRandomValues(buf);
+      return Array.from(buf).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
   }
-
-  const fallback = Math.random().toString(16).slice(2);
-  return `trace-${Date.now()}-${fallback}`;
+  return `trace-${Date.now()}-${performance.now()}`;
 }

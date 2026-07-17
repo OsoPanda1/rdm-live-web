@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -86,8 +85,13 @@ export default function Mina() {
 
   return (
     <MainLayout>
-      <SEOMeta title="Mina RDM · Subsuelo Digital de Real del Monte" description="Mina oro, plata, cuarzo y carbón digitales y canjea tus puntos por productos reales de Real del Monte." />
-      <section className="container mx-auto px-4 pt-28 pb-20 max-w-5xl">
+        <SEOMeta title="Mina RDM · Subsuelo Digital de Real del Monte" description="Mina oro, plata, cuarzo y carbón digitales y canjea tus puntos por productos reales de Real del Monte." />
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/historia-mina.jpg" alt="Historia de la mina de Real del Monte" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <section className="container mx-auto px-4 pt-28 pb-20 max-w-5xl">
         <div className="flex items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="font-display text-4xl md:text-5xl text-gradient-gold">Subsuelo Digital RDM</h1>

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";

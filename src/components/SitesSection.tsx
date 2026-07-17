@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import pasteImg from "@/assets/paste-rdm.jpg";
-import museoImg from "@/assets/museo-mina.jpg";
-import callesImg from "@/assets/calles-rdm.jpg";
+import pasteImg from "@/assets/imported/paste.webp";
+import museoImg from "@/assets/imported/mina-acosta.webp";
+import callesImg from "@/assets/imported/calles-colonial.webp";
 
 const sites = [
   {

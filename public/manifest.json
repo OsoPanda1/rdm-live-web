@@ -1,0 +1,25 @@
+{
+  "name": "Real del Monte Digital — Gemelo Digital Soberano",
+  "short_name": "RDM Digital",
+  "description": "Gemelo digital soberano de Real del Monte, Hidalgo. Pipeline Hexagonal de Conciencia, Heptafederación TAMV e Isabella Villaseñor AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf8f0",
+  "theme_color": "#8B6914",
+  "orientation": "any",
+  "categories": ["travel", "culture", "education", "local"],
+  "lang": "es-MX",
+  "scope": "/",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" },
+    { "src": "/images/rdm-hero.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/rdm-hero.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    { "name": "Mapa Territorial", "short_name": "Mapa", "url": "/mapa", "icons": [] },
+    { "name": "Isabella AI", "short_name": "Isabella", "url": "/isabella", "icons": [] },
+    { "name": "Lugares", "short_name": "Lugares", "url": "/lugares", "icons": [] },
+    { "name": "Eventos", "short_name": "Eventos", "url": "/eventos", "icons": [] }
+  ]
+}

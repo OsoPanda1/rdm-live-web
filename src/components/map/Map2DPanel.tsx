@@ -132,7 +132,7 @@ function ClusterLayer({ markers, onSelect }: { markers: MapMarkerData[]; onSelec
     const bbox = getBounds(map);
     const zoom = Math.floor(map.getZoom());
     return index.getClusters(bbox, zoom) as ClusterItem[];
-  }, [index, map, version]);
+  }, [index, map, version]); // eslint-disable-line react-hooks/exhaustive-deps -- version forces recalc on pan/zoom
 
   useEffect(() => {
     const refresh = () => setVersion((v) => v + 1);

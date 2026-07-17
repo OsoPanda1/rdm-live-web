@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Suspense } from "react";
 import platforms from "@/data/imported/ltos-platforms.json";
 import repos from "@/data/imported/osopanda-repos.json";

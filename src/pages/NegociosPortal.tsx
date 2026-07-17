@@ -1,11 +1,12 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { authApi, businessesApi, paymentsApi } from "@/lib/api";
+import { supabase } from "@/integrations/supabase/client";
 
 type PlanType = "monthly" | "yearly";
 
@@ -30,6 +31,7 @@ const defaultBusiness = {
 
 export default function NegociosPortal() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [businessId, setBusinessId] = useState("");
 
@@ -43,10 +45,10 @@ export default function NegociosPortal() {
     event.preventDefault();
     setLoading(true);
     try {
-      const response = await authApi.login(login);
-      localStorage.setItem("rdm_token", response.data.token);
-      localStorage.setItem("rdm_user", JSON.stringify(response.data.user));
+      const { error } = await supabase.auth.signInWithPassword({ email: login.email, password: login.password });
+      if (error) throw error;
       toast({ title: "Sesión iniciada", description: "Acceso de comercio habilitado." });
+      navigate("/admin/dashboard");
     } catch (error) {
       toast({ title: "Error", description: error instanceof Error ? error.message : "No se pudo iniciar sesión", variant: "destructive" });
     } finally {
@@ -64,32 +66,28 @@ export default function NegociosPortal() {
 
     setLoading(true);
     try {
-      let token = localStorage.getItem("rdm_token");
-      const existingUser = localStorage.getItem("rdm_user");
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: signup.email,
+        password: signup.password,
+        options: { data: { display_name: signup.name, role: "business_owner" } },
+      });
+      if (authError) throw authError;
+      if (!authData.user) throw new Error("No se pudo crear el usuario");
 
-      if (!token || !existingUser) {
-        const signupResponse = await authApi.signup({
-          name: signup.name,
-          email: signup.email,
-          password: signup.password,
-          role: "business_owner",
-        });
-
-        token = signupResponse.data.token;
-        localStorage.setItem("rdm_token", token);
-        localStorage.setItem("rdm_user", JSON.stringify(signupResponse.data.user));
-      }
-
-      const createResponse = await businessesApi.create({
+      const { data: bizData, error: bizError } = await supabase.from("businesses").insert({
+        owner_id: authData.user.id,
         name: business.name,
         category: business.category,
         description: business.description,
-        phone: business.phone || undefined,
-        address: business.address || undefined,
-      });
+        phone: business.phone || null,
+        address: business.address || null,
+        is_active: false,
+        is_verified: false,
+      }).select("id").single();
+      if (bizError) throw bizError;
 
-      setBusinessId(createResponse.data.id);
-      toast({ title: "¡Registro completado!", description: "Tu negocio fue creado. Ya puedes activar el plan mensual." });
+      setBusinessId(bizData.id);
+      toast({ title: "¡Registro completado!", description: "Tu negocio fue creado. Revisa tu email para confirmar la cuenta." });
     } catch (error) {
       toast({
         title: "Error al crear negocio",
@@ -109,10 +107,16 @@ export default function NegociosPortal() {
 
     setLoading(true);
     try {
-      const response = await paymentsApi.createBusinessPremium({ businessId, plan, currency: "mxn" });
-      window.location.href = response.data.url;
+      const { error } = await supabase.from("businesses").update({
+        is_premium: true,
+        premium_expires_at: plan === "yearly"
+          ? new Date(Date.now() + 365 * 86400000).toISOString()
+          : new Date(Date.now() + 30 * 86400000).toISOString(),
+      }).eq("id", businessId);
+      if (error) throw error;
+      toast({ title: "Plan activado", description: `Plan ${plan === "yearly" ? "anual" : "mensual"} activado. Stripe pendiente de integrar.` });
     } catch (error) {
-      toast({ title: "No fue posible iniciar el pago", description: error instanceof Error ? error.message : "Error de checkout", variant: "destructive" });
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Error al activar plan", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -203,7 +207,6 @@ export default function NegociosPortal() {
 
               <TabsContent value="payments" className="mt-4 space-y-3">
                 <p className="text-sm text-silver-500">El pago mensual activa tu negocio como destacado en el catálogo de RDM Digital.</p>
-                {!localStorage.getItem("rdm_token") && <p className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">Debes iniciar sesión con tu cuenta de comercio antes de pagar.</p>}
 
                 <div>
                   <Label>ID de negocio</Label>

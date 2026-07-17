@@ -5,9 +5,14 @@ import { Monitor, Cpu, Sparkles, Atom, Headphones, BookOpen } from "lucide-react
 const XRTecnologia = () => (
   <WikiPage
     title="Tecnología XR/VR/3D/4D"
-    subtitle="Motor de Render Hiperrealista — Espacios Inmersivos con Física Cuántica"
-  >
-    <InfoBox type="info" title="Motor de Render 4D">
+      subtitle="Motor de Render Hiperrealista — Espacios Inmersivos con Física Cuántica"
+    >
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/waterfall-forest.jpg" alt="Cascada en el bosque de Real del Monte" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
+      <InfoBox type="info" title="Motor de Render 4D">
       El motor TAMV4DRenderer combina Ray Tracing en tiempo real, física cuántica simulada,
       IA generativa de texturas y haptic feedback en un único pipeline de renderizado inmersivo.
     </InfoBox>

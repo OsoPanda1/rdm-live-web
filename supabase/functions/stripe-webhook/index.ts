@@ -1,20 +1,10 @@
-import Stripe from "https://esm.sh/stripe@17.7.0?target=deno";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createStripe, createAdmin, verifyStripeEvent, alreadyProcessed, markProcessed, safeError } from "../_shared/stripe.ts";
+import type Stripe from "https://esm.sh/stripe@17.7.0?target=deno";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
-
-const stripeKey = Deno.env.get("STRIPE_SECRET_KEY")!;
-const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
-const stripe = new Stripe(stripeKey, { apiVersion: "2024-12-18.acacia" });
-
-const admin = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  { auth: { persistSession: false } }
-);
 
 function mapStatus(s: string): "activa" | "pendiente" | "cancelada" | "vencida" {
   if (s === "active" || s === "trialing") return "activa";
@@ -23,20 +13,7 @@ function mapStatus(s: string): "activa" | "pendiente" | "cancelada" | "vencida" 
   return "pendiente";
 }
 
-async function isEventProcessed(eventId: string): Promise<boolean> {
-  const { data } = await admin.from("stripe_events").select("id, processed_at").eq("event_id", eventId).single();
-  return !!data?.processed_at;
-}
-
-async function markEventProcessed(eventId: string, type: string) {
-  await admin.from("stripe_events").upsert({
-    event_id: eventId,
-    type,
-    processed_at: new Date().toISOString(),
-  }, { onConflict: "event_id" });
-}
-
-async function syncSubscription(sub: Stripe.Subscription) {
+async function syncSubscription(admin: ReturnType<typeof createAdmin>, stripe: Stripe, sub: Stripe.Subscription) {
   const md = sub.metadata || {};
   const kind = md.kind;
   const userId = md.user_id;
@@ -68,25 +45,23 @@ async function syncSubscription(sub: Stripe.Subscription) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const signature = req.headers.get("stripe-signature");
-  if (!signature) return new Response(JSON.stringify({ error: "Missing signature" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-
-  const body = await req.text();
   let event: Stripe.Event;
   try {
-    event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+    event = await verifyStripeEvent(req);
   } catch (err) {
-    console.error("Webhook verification failed:", err instanceof Error ? err.message : String(err));
-    return new Response(JSON.stringify({ error: "Webhook processing error" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (err instanceof Response) return err;
+    return safeError(err);
   }
 
   try {
-    // Idempotency check
-    if (await isEventProcessed(event.id)) {
+    if (await alreadyProcessed(event.id)) {
       return new Response(JSON.stringify({ received: true, idempotent: true }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const admin = createAdmin();
+    const stripe = createStripe();
 
     switch (event.type) {
       case "checkout.session.completed": {
@@ -97,37 +72,34 @@ Deno.serve(async (req) => {
             await stripe.subscriptions.update(sub.id, { metadata: session.metadata });
             sub.metadata = session.metadata;
           }
-          await syncSubscription(sub);
+          await syncSubscription(admin, stripe, sub);
         }
         break;
       }
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
-        await syncSubscription(event.data.object as Stripe.Subscription);
+        await syncSubscription(admin, stripe, event.data.object as Stripe.Subscription);
         break;
       case "invoice.payment_succeeded":
       case "invoice.payment_failed": {
         const inv = event.data.object as Stripe.Invoice;
         if (inv.subscription) {
           const sub = await stripe.subscriptions.retrieve(inv.subscription as string);
-          await syncSubscription(sub);
+          await syncSubscription(admin, stripe, sub);
         }
         break;
       }
       default:
-        console.log("Unhandled event:", event.type);
+        console.log("[stripe-webhook] unhandled event:", event.type);
     }
 
-    await markEventProcessed(event.id, event.type);
+    await markProcessed(event.id, event.type);
 
     return new Response(JSON.stringify({ received: true }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error("Handler error:", e instanceof Error ? e.message : String(e));
-    return new Response(JSON.stringify({ error: "Webhook processing error" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return safeError(e);
   }
 });

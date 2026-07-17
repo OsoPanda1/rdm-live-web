@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import { Store, Check, ArrowRight, Crown, Building2, Sparkles } from "lucide-react";
 import { b2bPlans } from "@/data/mockData";

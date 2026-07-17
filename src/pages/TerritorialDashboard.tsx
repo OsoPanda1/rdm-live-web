@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RDMLayout } from '@/components/rdm/RDMLayout';

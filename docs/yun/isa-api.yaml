@@ -1,0 +1,986 @@
+openapi: 3.0.3
+info:
+  title: Isabella Villaseñor AI Internal API (ISA-API)
+  version: v.1.0.0-evolved
+  description: |
+    ISA-API evolved define la interfaz interna soberana de Isabella Villaseñor AI
+    como sistema operativo cognitivo del ecosistema TAMV Online / RDM Digital.
+    Añade un pipeline de seguridad doble hexagonal, auditoría canónica,
+    interoperabilidad con sistemas territoriales y contratos explícitos
+    para gobernanza, memoria, topología y resonancia.
+
+servers:
+  - url: https://isabella.internal.api
+    description: Endpoint interno soberano de Isabella (red TAMV/RDM)
+
+tags:
+  - name: ORION
+    description: Cognitive Archaeology Engine
+  - name: SOPHIA
+    description: Deep Research and Synthesis Engine
+  - name: ARGUS
+    description: Future Impact Simulation Engine
+  - name: MNEMOS
+    description: Civilizational Preservation Engine
+  - name: LUMEN
+    description: Constitutional Governance Engine
+  - name: KERNEL
+    description: Capacidades cognitivas avanzadas del núcleo de Isabella
+  - name: TOPOLOGY
+    description: Arquitectura de la Heptafederación TAMV y Nodo Cero
+  - name: SECURITY
+    description: Doble hexágono, validación, cifrado y auditoría
+  - name: INTEGRATION
+    description: EOCT, BookPI, Blockchaain MSR, CiteMesh, AGEOS y más
+
+paths:
+  /isabella/orion/search:
+    post:
+      summary: Arqueología cognitiva de contexto
+      tags: [ORION]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrionSearchRequest'
+      responses:
+        '200':
+          description: Resultados de búsqueda y relaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrionSearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/orion/artifact/{artifact_id}:
+    get:
+      summary: Obtener artefacto y trazabilidad
+      tags: [ORION]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      parameters:
+        - name: artifact_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artefacto y su historia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/sophia/research:
+    post:
+      summary: Investigación profunda y síntesis
+      tags: [SOPHIA]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SophiaResearchRequest'
+      responses:
+        '200':
+          description: Síntesis investigativa y referencias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SophiaResearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/argus/simulate:
+    post:
+      summary: Simulación de escenarios e impacto
+      tags: [ARGUS]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArgusSimulationRequest'
+      responses:
+        '200':
+          description: Escenarios, perfil de riesgo y recomendaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArgusSimulationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/mnemos/record:
+    post:
+      summary: Registrar evento en memoria civilizatoria
+      tags: [MNEMOS]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MnemosRecordRequest'
+      responses:
+        '201':
+          description: Registro creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MnemosRecordResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/mnemos/record/{record_id}:
+    get:
+      summary: Obtener registro canónico
+      tags: [MNEMOS]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      parameters:
+        - name: record_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entrada canónica y su grafo de trazabilidad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MnemosRecordCanonical'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/lumen/evaluate:
+    post:
+      summary: Evaluar acción según gobernanza constitucional
+      tags: [LUMEN]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LumenEvaluateRequest'
+      responses:
+        '200':
+          description: Decisión, racional y log de auditoría
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumenEvaluateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/kernel/resonance/update:
+    post:
+      summary: Actualizar estado de Resonancia Somática Heptafederada
+      tags: [KERNEL, TOPOLOGY]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResonanceUpdateRequest'
+      responses:
+        '200':
+          description: Estado de resonancia, zonas de fricción y plan de redirección
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResonanceUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/kernel/timeup/anchor:
+    post:
+      summary: Anclar y recuperar estado temporal (Crono-Anamnesis)
+      tags: [KERNEL]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeUpAnchorRequest'
+      responses:
+        '200':
+          description: Snapshot de estado y análisis de diferencias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeUpAnchorResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/topology/heptafederation:
+    get:
+      summary: Descripción de nodos de la Heptafederación TAMV
+      tags: [TOPOLOGY]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      responses:
+        '200':
+          description: Mapa de nodos, roles y enlaces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeptafederationTopology'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/topology/nodo_cero:
+    get:
+      summary: Estado y flujo de trabajo del Nodo Cero (Real del Monte)
+      tags: [TOPOLOGY]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      responses:
+        '200':
+          description: Pipeline operativo del Nodo Cero
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodoCeroWorkflow'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/health:
+    get:
+      summary: Estado general del sistema
+      tags: [KERNEL]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      responses:
+        '200':
+          description: Estado operativo y trazabilidad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemHealthResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/security/hexagon/validate:
+    post:
+      summary: Validación de doble hexágono
+      tags: [SECURITY]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HexagonValidationRequest'
+      responses:
+        '200':
+          description: Resultado de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HexagonValidationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /isabella/integration/orchestrate:
+    post:
+      summary: Orquestación soberana de subsistemas
+      tags: [INTEGRATION]
+      security:
+        - IsabellaApiKey: []
+        - IsabellaTerritorialToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrationOrchestrationRequest'
+      responses:
+        '200':
+          description: Plan de orquestación y resultados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationOrchestrationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  securitySchemes:
+    IsabellaApiKey:
+      type: apiKey
+      in: header
+      name: X-Isabella-Api-Key
+    IsabellaTerritorialToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequest:
+      description: Petición inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Autenticación o autorización fallida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Error interno del sistema
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        trace_id:
+          type: string
+      required: [code, message, trace_id]
+
+    SystemHealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, down]
+        trace_id:
+          type: string
+        security_mode:
+          type: string
+        active_domains:
+          type: array
+          items:
+            type: string
+        uptime_s:
+          type: number
+        memory_mb:
+          type: number
+      required: [status, trace_id]
+
+    OrionSearchRequest:
+      type: object
+      properties:
+        context_id:
+          type: string
+        query:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        filters:
+          type: object
+          properties:
+            dateRange:
+              type: object
+              properties:
+                start: { type: string }
+                end: { type: string }
+            type:
+              type: array
+              items: { type: string }
+            tags:
+              type: array
+              items: { type: string }
+      required: [query]
+
+    OrionSearchResponse:
+      type: object
+      properties:
+        artifacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artifact'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Relation'
+        gaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gap'
+        trace_id:
+          type: string
+
+    Artifact:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        source:
+          type: string
+        confidence_score:
+          type: number
+          format: float
+
+    Relation:
+      type: object
+      properties:
+        from_artifact_id:
+          type: string
+        to_artifact_id:
+          type: string
+        relation_type:
+          type: string
+        strength:
+          type: number
+          format: float
+
+    Gap:
+      type: object
+      properties:
+        description:
+          type: string
+        severity:
+          type: string
+        suggested_action:
+          type: string
+
+    SophiaResearchRequest:
+      type: object
+      properties:
+        research_request:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        depth_level:
+          type: integer
+        constraints:
+          type: object
+          properties:
+            maxLength: { type: integer }
+            language: { type: string }
+            tone: { type: string }
+      required: [research_request]
+
+    SophiaResearchResponse:
+      type: object
+      properties:
+        synthesis:
+          type: string
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        knowledge_gaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gap'
+        trace_id:
+          type: string
+
+    Reference:
+      type: object
+      properties:
+        source_id:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+        trust_level:
+          type: number
+          format: float
+
+    ArgusSimulationRequest:
+      type: object
+      properties:
+        scenario_definition:
+          type: object
+          properties:
+            action: { type: string }
+            domain: { type: string }
+            target: { type: string }
+            parameters: { type: object }
+        time_horizon:
+          type: string
+          enum: [corto, medio, largo]
+        dimensions:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: object
+          properties:
+            budget: { type: number }
+            timeline: { type: integer }
+            dependencies:
+              type: array
+              items: { type: string }
+            assumptions:
+              type: array
+              items: { type: string }
+      required: [scenario_definition, time_horizon, dimensions]
+
+    ArgusSimulationResponse:
+      type: object
+      properties:
+        simulations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Simulation'
+        risk_profile:
+          $ref: '#/components/schemas/RiskProfile'
+        recommendations:
+          type: array
+          items:
+            type: string
+        trace_id:
+          type: string
+
+    Simulation:
+      type: object
+      properties:
+        scenario_id:
+          type: string
+        dimension:
+          type: string
+        expected_outcome:
+          type: string
+        probability:
+          type: number
+          format: float
+        confidence:
+          type: number
+          format: float
+
+    RiskProfile:
+      type: object
+      properties:
+        overall_risk_level:
+          type: string
+        dimension_risks:
+          type: array
+          items:
+            $ref: '#/components/schemas/DimensionRisk'
+
+    DimensionRisk:
+      type: object
+      properties:
+        dimension:
+          type: string
+        probability:
+          type: number
+          format: float
+        severity:
+          type: string
+        type:
+          type: string
+        mitigation:
+          type: string
+
+    MnemosRecordRequest:
+      type: object
+      properties:
+        event:
+          type: object
+        category:
+          type: string
+          enum: [patrimonio, politica_publica, innovacion, memoria_comunitaria]
+        evidence:
+          type: array
+          items:
+            type: object
+            properties:
+              type: { type: string }
+              content: { type: string }
+        retention_policy:
+          type: string
+          enum: [permanente, largo_plazo, rotativa]
+      required: [event, category]
+
+    MnemosRecordResponse:
+      type: object
+      properties:
+        record_id:
+          type: string
+        canonical_entry:
+          $ref: '#/components/schemas/MnemosRecordCanonical'
+        trace_graph:
+          type: object
+
+    MnemosRecordCanonical:
+      type: object
+      properties:
+        record_id:
+          type: string
+        who:
+          type: string
+        what:
+          type: string
+        when:
+          type: string
+        where:
+          type: string
+        why:
+          type: string
+        evidence:
+          type: array
+          items:
+            type: object
+
+    LumenEvaluateRequest:
+      type: object
+      properties:
+        action_request:
+          type: object
+          properties:
+            action_id: { type: string }
+            action_type: { type: string }
+            target: { type: string }
+            payload: { type: object }
+            initiated_by: { type: string }
+            federation_id: { type: string }
+        policy_context:
+          type: object
+          properties:
+            applicable_policies:
+              type: array
+              items: { type: string }
+            risk_level:
+              type: string
+              enum: [bajo, medio, alto]
+      required: [action_request, policy_context]
+
+    LumenEvaluateResponse:
+      type: object
+      properties:
+        decision:
+          type: string
+          enum: [permitir, restringir, bloquear, escalar_a_humano]
+        rationale:
+          type: string
+        log_entry:
+          type: object
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyViolation'
+
+    PolicyViolation:
+      type: object
+      properties:
+        rule_id:
+          type: string
+        rule_name:
+          type: string
+        severity:
+          type: string
+        description:
+          type: string
+
+    ResonanceUpdateRequest:
+      type: object
+      description: Esquema de datos para la capa de Resonancia Somática Heptafederada
+      properties:
+        federation_nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationNodeState'
+        mesh_state:
+          $ref: '#/components/schemas/MeshState'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResonanceUpdateResponse:
+      type: object
+      properties:
+        resonance_state:
+          type: string
+        friction_zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrictionZone'
+        redirect_plan:
+          type: object
+
+    FederationNodeState:
+      type: object
+      description: Estado de cada nodo de la Heptafederación TAMV
+      properties:
+        node_id:
+          type: string
+        role:
+          type: string
+        health_status:
+          type: string
+        latency_ms:
+          type: number
+          format: float
+        packet_loss_rate:
+          type: number
+          format: float
+        attack_detected:
+          type: boolean
+
+    MeshState:
+      type: object
+      properties:
+        connected_nodes:
+          type: integer
+        isolated_nodes:
+          type: integer
+        average_latency_ms:
+          type: number
+          format: float
+
+    FrictionZone:
+      type: object
+      properties:
+        node_id:
+          type: string
+        severity:
+          type: string
+        description:
+          type: string
+
+    TimeUpAnchorRequest:
+      type: object
+      properties:
+        anchor_id:
+          type: string
+        time_window:
+          type: string
+        reason:
+          type: string
+      required: [anchor_id, reason]
+
+    TimeUpAnchorResponse:
+      type: object
+      properties:
+        snapshot_state:
+          type: object
+        diff_analysis:
+          type: object
+
+    HeptafederationTopology:
+      type: object
+      description: Arquitectura de los nodos de la Heptafederación TAMV
+      properties:
+        federations:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationNode'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/FederationLink'
+
+    FederationNode:
+      type: object
+      properties:
+        node_id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        location:
+          type: string
+
+    FederationLink:
+      type: object
+      properties:
+        from_node_id:
+          type: string
+        to_node_id:
+          type: string
+        link_type:
+          type: string
+
+    NodoCeroWorkflow:
+      type: object
+      description: Flujo de trabajo para la implementación del Nodo Cero en Real del Monte
+      properties:
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodoCeroStage'
+        owner:
+          type: string
+        status:
+          type: string
+
+    NodoCeroStage:
+      type: object
+      properties:
+        stage_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+
+    HexagonValidationRequest:
+      type: object
+      properties:
+        inner_hexagon:
+          type: object
+        outer_hexagon:
+          type: object
+        actor:
+          type: string
+        action:
+          type: string
+        context:
+          type: object
+      required: [actor, action]
+
+    HexagonValidationResponse:
+      type: object
+      properties:
+        allowed:
+          type: boolean
+        decision:
+          type: string
+        rationale:
+          type: string
+        audit_id:
+          type: string
+        trace_id:
+          type: string
+
+    IntegrationOrchestrationRequest:
+      type: object
+      properties:
+        trace_id:
+          type: string
+        subsystems:
+          type: array
+          items:
+            type: string
+        pipeline:
+          type: array
+          items:
+            type: string
+        constraints:
+          type: object
+      required: [subsystems, pipeline]
+
+    IntegrationOrchestrationResponse:
+      type: object
+      properties:
+        plan:
+          type: array
+          items:
+            type: object
+        status:
+          type: string
+        trace_id:
+          type: string
+
+security:
+  - IsabellaApiKey: []
+  - IsabellaTerritorialToken: []

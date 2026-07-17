@@ -87,7 +87,7 @@ const PhotoGallery = () => {
             className="relative max-w-5xl max-h-[85vh]"
           >
             <img src={photos[selectedIdx].src} alt={photos[selectedIdx].alt}
-              className="max-w-full max-h-[80vh] object-contain rounded-lg" />
+              loading="lazy" className="max-w-full max-h-[80vh] object-contain rounded-lg" />
             <p className="text-center font-display text-lg text-platinum/60 italic mt-6">{photos[selectedIdx].caption}</p>
           </motion.div>
 

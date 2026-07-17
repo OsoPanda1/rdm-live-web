@@ -4,7 +4,7 @@ import { clientEnv, isProd, isDev } from "@/lib/env";
 describe("env", () => {
   it("exposes a parsed clientEnv with safe defaults", () => {
     expect(clientEnv).toBeTypeOf("object");
-    expect(["development", "preview", "production"]).toContain(clientEnv.VITE_APP_ENV);
+    expect(["development", "preview", "production", "test"]).toContain(clientEnv.VITE_APP_ENV);
   });
 
   it("isProd / isDev are mutually consistent with VITE_APP_ENV", () => {

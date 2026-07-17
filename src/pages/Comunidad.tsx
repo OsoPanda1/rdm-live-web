@@ -1,15 +1,17 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import SEOMeta from "@/components/SEOMeta";
 import GradientSeparator from "@/components/GradientSeparator";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
+import { useRDMAuth } from "@/contexts/RDMAuthContext";
 import { 
   Heart, MessageCircle, MapPin, Send, Plus, X, User,
   Camera, Film, Utensils, Mountain, Clock, Palette, Sparkles,
-  ChevronDown, ThumbsUp, Share2, BookOpen
+  ChevronDown, ThumbsUp, Share2, BookOpen, LogIn
 } from "lucide-react";
 
 import pasteImg from "@/assets/paste.webp";
@@ -41,6 +43,7 @@ const placeholderImages: Record<string, string> = {
 
 interface ForumPost {
   id: string;
+  author_id: string | null;
   author_name: string;
   author_avatar: string | null;
   title: string;
@@ -56,12 +59,14 @@ interface ForumPost {
 interface ForumComment {
   id: string;
   post_id: string;
+  author_id: string | null;
   author_name: string;
   content: string;
   created_at: string;
 }
 
 const Comunidad = () => {
+  const { user, profile, loading: authLoading } = useRDMAuth();
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [comments, setComments] = useState<Record<string, ForumComment[]>>({});
   const [loading, setLoading] = useState(true);
@@ -70,7 +75,7 @@ const Comunidad = () => {
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
   const [newPost, setNewPost] = useState({ 
-    author_name: "", title: "", content: "", place_name: "", category: "general" 
+    title: "", content: "", place_name: "", category: "general" 
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -88,7 +93,7 @@ const Comunidad = () => {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentional: subscribe once, use ref for expandedPost // eslint-disable-line react-hooks/exhaustive-deps -- realtime subscription: mount-only by design
 
   const fetchPosts = async () => {
     const { data, error } = await supabase
@@ -111,19 +116,28 @@ const Comunidad = () => {
   };
 
   const handleSubmitPost = async () => {
-    if (!newPost.title.trim() || !newPost.content.trim() || !newPost.author_name.trim()) return;
+    if (!newPost.title.trim() || !newPost.content.trim()) return;
+    if (!user) return;
     setSubmitting(true);
     
-    await supabase.from('forum_posts').insert({
-      author_name: newPost.author_name,
-      author_avatar: newPost.author_name.charAt(0).toUpperCase(),
+    const displayName = profile?.display_name || user.email?.split('@')[0] || "Usuario";
+    
+    const { error } = await supabase.from('forum_posts').insert({
+      author_id: user.id,
+      author_name: displayName,
+      author_avatar: displayName.charAt(0).toUpperCase(),
       title: newPost.title,
       content: newPost.content,
       place_name: newPost.place_name || null,
       category: newPost.category,
     });
 
-    setNewPost({ author_name: "", title: "", content: "", place_name: "", category: "general" });
+    if (error) {
+      setSubmitting(false);
+      return;
+    }
+
+    setNewPost({ title: "", content: "", place_name: "", category: "general" });
     setShowNewPost(false);
     setSubmitting(false);
     fetchPosts();
@@ -131,12 +145,20 @@ const Comunidad = () => {
 
   const handleSubmitComment = async (postId: string) => {
     if (!newComment.trim()) return;
+    if (!user) return;
     
-    await supabase.from('forum_comments').insert({
+    const displayName = profile?.display_name || user.email?.split('@')[0] || "Usuario";
+    
+    const { error } = await supabase.from('forum_comments').insert({
       post_id: postId,
-      author_name: "Visitante",
+      author_id: user.id,
+      author_name: displayName,
       content: newComment,
     });
+
+    if (error) {
+      return;
+    }
 
     setNewComment("");
     fetchComments(postId);
@@ -194,12 +216,20 @@ const Comunidad = () => {
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
                 Comparte tus experiencias, fotos y recuerdos de Real del Monte con otros viajeros
               </p>
-              <Button 
-                onClick={() => setShowNewPost(true)}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 rounded-xl text-lg"
-              >
-                <Plus className="w-5 h-5 mr-2" /> Compartir mi experiencia
-              </Button>
+              {user ? (
+                <Button 
+                  onClick={() => setShowNewPost(true)}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 rounded-xl text-lg"
+                >
+                  <Plus className="w-5 h-5 mr-2" /> Compartir mi experiencia
+                </Button>
+              ) : (
+                <Link to="/auth">
+                  <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-3 rounded-xl text-lg">
+                    <LogIn className="w-5 h-5 mr-2" /> Inicia sesión para publicar
+                  </Button>
+                </Link>
+              )}
             </motion.div>
           </div>
         </div>
@@ -275,7 +305,12 @@ const Comunidad = () => {
                             {post.author_avatar || post.author_name.charAt(0)}
                           </div>
                           <div>
-                            <p className="font-medium text-foreground text-sm">{post.author_name}</p>
+                            <p className="font-medium text-foreground text-sm">
+                              {post.author_name}
+                              {post.author_id && (
+                                <span className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 uppercase tracking-wider">Verificado</span>
+                              )}
+                            </p>
                             <p className="text-xs text-muted-foreground">{timeAgo(post.created_at)}</p>
                           </div>
                         </div>
@@ -387,13 +422,15 @@ const Comunidad = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <input
-                      type="text"
-                      value={newPost.author_name}
-                      onChange={e => setNewPost(p => ({ ...p, author_name: e.target.value }))}
-                      placeholder="Tu nombre *"
-                      className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
-                    />
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/30 border border-border">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-xs">
+                        {(profile?.display_name || user?.email || "U").charAt(0).toUpperCase()}
+                      </div>
+                      <span className="text-sm text-foreground font-medium">
+                        {profile?.display_name || user?.email?.split('@')[0] || "Usuario"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground ml-auto">Verificado</span>
+                    </div>
                     <input
                       type="text"
                       value={newPost.title}
@@ -438,7 +475,7 @@ const Comunidad = () => {
                     </Button>
                     <Button
                       onClick={handleSubmitPost}
-                      disabled={submitting || !newPost.title.trim() || !newPost.content.trim() || !newPost.author_name.trim()}
+                      disabled={submitting || !newPost.title.trim() || !newPost.content.trim()}
                       className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl"
                     >
                       {submitting ? "Publicando..." : "Publicar"}

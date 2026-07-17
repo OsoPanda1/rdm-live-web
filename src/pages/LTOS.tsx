@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import { Shield, Database, Cpu, Network, Brain, Radio, Boxes } from "lucide-react";
 import { Link } from "react-router-dom";

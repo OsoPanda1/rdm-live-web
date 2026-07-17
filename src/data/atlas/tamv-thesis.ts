@@ -1,4 +1,3 @@
-// @ts-nocheck
 // ============================================================================
 // TAMV ONLINE NETWORK™ — Tesis Soberana / Documento Maestro
 // Espejo local del corpus expuesto en /api/tamv/thesis

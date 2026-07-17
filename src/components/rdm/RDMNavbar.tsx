@@ -32,6 +32,7 @@ import {
   Coffee,
   Star,
   Car,
+  Crown,
 } from "lucide-react";
 import { useRDMAuth } from "@/contexts/RDMAuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -118,6 +119,7 @@ const MEGA_CATEGORIES: MegaCategory[] = [
       { path: "/negocios",          label: "Portal Negocios",     icon: Store,      desc: "Panel de comercios" },
       { path: "/donar",             label: "Donar",               icon: Heart,      desc: "Apoya la plataforma" },
       { path: "/quienes-somos",     label: "Quiénes somos",       icon: Users,      desc: "El equipo RDM Digital" },
+      { path: "/premium",           label: "Planes Premium",      icon: Crown,      desc: "$99/mes — canjea puntos por premios reales" },
     ],
   },
 ];

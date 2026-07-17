@@ -6,8 +6,10 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type WheelEvent,
+  type MouseEvent,
 } from "react"
-import { motion } from "framer-motion"
+import { motion, useTransform, useSpring } from "framer-motion"
 import { Link } from "react-router-dom"
 import {
   RDM_TERRITORY_POIS,
@@ -34,37 +36,43 @@ type FederationId =
 
 const FACET_TONES: Record<
   FederationId,
-  { ring: string; glow: string; tag: string }
+  { ring: string; glow: string; tag: string; color: string }
 > = {
   gubernamental: {
     ring: "hsl(210,100%,55%)",
     glow: "hsla(210,100%,55%,0.45)",
     tag: "Gubernamental",
+    color: "hsl(210,100%,55%)",
   },
   cultural: {
     ring: "hsl(43,80%,55%)",
     glow: "hsla(43,80%,55%,0.45)",
     tag: "Cultural",
+    color: "hsl(43,80%,55%)",
   },
   economica: {
     ring: "hsl(145,55%,45%)",
     glow: "hsla(145,55%,45%,0.4)",
     tag: "Económica",
+    color: "hsl(145,55%,45%)",
   },
   tecnologica: {
     ring: "hsl(280,70%,60%)",
     glow: "hsla(280,70%,60%,0.45)",
     tag: "Tecnológica",
+    color: "hsl(280,70%,60%)",
   },
   educativa: {
     ring: "hsl(195,80%,55%)",
     glow: "hsla(195,80%,55%,0.4)",
     tag: "Educativa",
+    color: "hsl(195,80%,55%)",
   },
   salud: {
     ring: "hsl(160,55%,45%)",
     glow: "hsla(160,55%,45%,0.4)",
     tag: "Salud",
+    color: "hsl(160,55%,45%)",
   },
 }
 
@@ -76,6 +84,22 @@ const getFacetTone = (poi: TerritoryPOI) => {
 }
 
 const PAD = 0.012
+
+// ─── Zoom/Pan State ────────────────────────────────────────────────────────
+interface ViewportState {
+  scale: number
+  translateX: number
+  translateY: number
+}
+
+const INITIAL_VIEWPORT: ViewportState = {
+  scale: 1,
+  translateX: 0,
+  translateY: 0,
+}
+
+const MIN_SCALE = 0.5
+const MAX_SCALE = 8
 
 function useProjection(pois: TerritoryPOI[]) {
   return useMemo(() => {
@@ -98,9 +122,17 @@ function useProjection(pois: TerritoryPOI[]) {
     const latSpan = maxLat - minLat || 1e-6
     const lngSpan = maxLng - minLng || 1e-6
 
+    // Spread points more aggressively for better visibility
+    const spreadFactor = 1.5
+    const centerLat = (minLat + maxLat) / 2
+    const centerLng = (minLng + maxLng) / 2
+
     const project = (lat: number, lng: number) => {
-      const x = ((lng - minLng) / lngSpan) * W
-      const y = H - ((lat - minLat) / latSpan) * H
+      // Normalize to -1..1 range then spread
+      const nx = ((lng - centerLng) / (lngSpan / 2)) * spreadFactor
+      const ny = ((lat - centerLat) / (latSpan / 2)) * spreadFactor
+      const x = W / 2 + nx * (W / 2)
+      const y = H / 2 - ny * (H / 2)
       return { x, y }
     }
 
@@ -108,6 +140,7 @@ function useProjection(pois: TerritoryPOI[]) {
   }, [pois])
 }
 
+// ─── Marker Component with Magical Effects ──────────────────────────────────
 interface MarkerProps {
   poi: TerritoryPOI
   x: number

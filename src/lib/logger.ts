@@ -1,7 +1,7 @@
 /**
  * Centralized structured logger.
  *
- * - JSON output in production (machine-parseable, Cloudflare/Sentry friendly).
+ * - JSON output in production (machine-parseable, Sentry friendly).
  * - Pretty output in dev.
  * - Forwards errors to Sentry if available on window/globalThis.
  *
@@ -35,10 +35,16 @@ function normalizeCtx(input?: LogInput, extra?: LogInput): LogContext | undefine
 
 const LEVEL_ORDER: Record<Level, number> = { debug: 10, info: 20, warn: 30, error: 40 };
 
-const MIN_LEVEL: Level = clientEnv.VITE_APP_ENV === "production" ? "info" : "debug";
+function getMinLevel(): Level {
+  try {
+    return clientEnv?.VITE_APP_ENV === "production" ? "info" : "debug";
+  } catch {
+    return "debug";
+  }
+}
 
 function shouldEmit(level: Level): boolean {
-  return LEVEL_ORDER[level] >= LEVEL_ORDER[MIN_LEVEL];
+  return LEVEL_ORDER[level] >= LEVEL_ORDER[getMinLevel()];
 }
 
 interface SentryLike {
@@ -66,7 +72,6 @@ function emit(level: Level, message: string, ctxInput?: LogInput, extra?: LogInp
   const isProd = clientEnv.VITE_APP_ENV === "production";
   const payload = isProd ? JSON.stringify(entry) : entry;
 
-  // eslint-disable-next-line no-console
   const sink = level === "error" ? console.error : level === "warn" ? console.warn : console.log;
   sink(payload);
 

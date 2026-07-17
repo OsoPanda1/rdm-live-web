@@ -1,9 +1,8 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { MapPin, Mail, Phone, Send, Loader2, CheckCircle, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoRdm from "@/assets/logo-rdm-digital.png";
-import logoTamv from "@/assets/logo-tamv.jpg";
+import logoTamv from "@/assets/logotamv.jpg";
 import { newsletterApi } from "../lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
@@ -58,7 +57,7 @@ const Footer = () => {
               <img 
                 src={logoRdm} 
                 alt="RDM Digital" 
-                className="w-14 h-14 object-contain"
+                loading="lazy" className="w-14 h-14 object-contain"
                 style={{ filter: "drop-shadow(0 0 10px hsla(210,100%,55%,0.3))" }}
               />
               <div>

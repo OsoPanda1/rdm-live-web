@@ -20,7 +20,7 @@ export function PostCard({ post }: { post: Post }) {
       <Card className="rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
         {firstImg && (
           <div className="h-52 overflow-hidden">
-            <img src={firstImg} alt="" className="w-full h-full object-cover" />
+            <img src={firstImg} alt="" loading="lazy" className="w-full h-full object-cover" />
           </div>
         )}
         <CardContent className="p-5 space-y-3">

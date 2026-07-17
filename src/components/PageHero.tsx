@@ -12,7 +12,7 @@ interface PageHeroProps {
 const PageHero = ({ image, tag, title, highlight, description, highlightClass = "text-gradient-cyan" }: PageHeroProps) => (
   <section className="relative min-h-[60vh] flex items-end overflow-hidden">
     <div className="absolute inset-0">
-      <img src={image} alt={title} className="w-full h-full object-cover" />
+      <img src={image} alt={title} loading="lazy" className="w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/30" />
     </div>
     <div className="relative z-10 container mx-auto px-6 pb-16 pt-32">

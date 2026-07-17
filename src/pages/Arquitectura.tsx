@@ -72,9 +72,14 @@ const FEDERACIONES = [
 const Arquitectura = () => (
   <WikiPage
     title="Arquitectura Heptafederada"
-    subtitle="Núcleo de Inteligencia Territorial — Soberanía Digital de Clase Mundial"
-  >
-    <Section title="Visión general">
+        subtitle="Núcleo de Inteligencia Territorial — Soberanía Digital de Clase Mundial"
+      >
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/church-asuncion.jpg" alt="Iglesia de la Asunción en Real del Monte" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <Section title="Visión general">
       <p className="text-muted-foreground leading-relaxed mb-4">
         El <strong className="text-foreground">RDM Smart City OS</strong> se fundamenta en siete núcleos autónomos
         que conforman la <strong className="text-foreground">Inteligencia Heptafederada</strong>. Cada federación

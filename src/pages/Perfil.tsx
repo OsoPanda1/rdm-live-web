@@ -1,9 +1,9 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { z } from "zod";
-import { Award, Loader2, LogOut, Save, Sparkles, Trophy, Zap } from "lucide-react";
+import { Award, Loader2, LogOut, Save, Sparkles, Trophy, Upload, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +40,8 @@ export default function Perfil() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({ display_name: "", bio: "", location: "", avatar_url: "" });
   const [allBadges, setAllBadges] = useState<BadgeRow[]>([]);
   const [earned, setEarned] = useState<UserBadgeRow[]>([]);
@@ -73,6 +75,29 @@ export default function Perfil() {
       setHistory((tx.data ?? []) as TxRow[]);
     })();
   }, [user, profile?.total_points]);
+
+  const handleUploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `${user.id}/avatar.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("media").upload(filePath, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from("media").getPublicUrl(filePath);
+      const avatar_url = urlData.publicUrl;
+      const { error: updateError } = await supabase.from("profiles").update({ avatar_url }).eq("id", user.id);
+      if (updateError) throw updateError;
+      setForm(prev => ({ ...prev, avatar_url }));
+      await refreshProfile();
+      toast({ title: "Avatar actualizado" });
+    } catch (error) {
+      toast({ title: "Error", description: error instanceof Error ? error.message : "No se pudo subir el avatar", variant: "destructive" });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   if (loading || !profile) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
@@ -110,12 +135,23 @@ export default function Perfil() {
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             className="rdm-glass rounded-2xl p-6 md:p-8 mb-6 flex flex-col md:flex-row items-center gap-6">
-            <Avatar className="h-24 w-24 ring-4 ring-[hsl(var(--rdm-amber))]">
-              <AvatarImage src={profile.avatar_url ?? undefined} />
-              <AvatarFallback className="text-2xl bg-[hsl(var(--rdm-amber))] text-white">
-                {profile.display_name.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative group">
+              <Avatar className="h-24 w-24 ring-4 ring-[hsl(var(--rdm-amber))]">
+                <AvatarImage src={profile.avatar_url ?? undefined} />
+                <AvatarFallback className="text-2xl bg-[hsl(var(--rdm-amber))] text-white">
+                  {profile.display_name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={uploadingAvatar}
+                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                {uploadingAvatar ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : <Upload className="h-6 w-6 text-white" />}
+              </button>
+              <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleUploadAvatar} />
+            </div>
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl font-bold">{profile.display_name}</h1>
               <p className="text-sm text-muted-foreground">{user!.email}</p>
@@ -166,7 +202,8 @@ export default function Perfil() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Avatar URL</Label>
+                <Label>Avatar</Label>
+                <p className="text-xs text-muted-foreground">Haz clic en tu avatar para subir una imagen, o ingresa una URL:</p>
                 <Input type="url" placeholder="https://..." value={form.avatar_url} onChange={(e) => setForm({ ...form, avatar_url: e.target.value })} />
               </div>
               <div className="space-y-2">

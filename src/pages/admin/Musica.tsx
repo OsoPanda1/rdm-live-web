@@ -52,7 +52,7 @@ export default function MusicaAdmin() {
 
   useEffect(() => {
     if (isAdmin) loadSongs();
-  }, [isAdmin]);
+  }, [isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps -- intentional: fetch on auth state
 
   if (authLoading) {
     return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
@@ -104,8 +104,8 @@ export default function MusicaAdmin() {
       const input = document.getElementById("song-file") as HTMLInputElement | null;
       if (input) input.value = "";
       loadSongs();
-    } catch (e: any) {
-      toast({ title: "Error al subir", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      toast({ title: "Error al subir", description: e instanceof Error ? e.message : "Error desconocido", variant: "destructive" });
     } finally {
       setUploading(false);
     }

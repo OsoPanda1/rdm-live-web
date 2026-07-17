@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useMemo, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -27,12 +26,6 @@ export default function TriviaGame() {
 
   useEffect(() => { setIdx(0); setPicked(null); setScore(0); setDone(false); setPointsAwarded(false); pointsAwardedRef.current = false; }, [shuffled.length]);
 
-  useEffect(() => {
-    if (!done || pointsAwardedRef.current) return;
-    pointsAwardedRef.current = true;
-    awardPoints();
-  }, [done]);
-
   const awardPoints = async () => {
     const total = shuffled.length;
     const pct = total > 0 ? score / total : 0;
@@ -52,6 +45,12 @@ export default function TriviaGame() {
       // Silently fail
     }
   };
+
+  useEffect(() => {
+    if (!done || pointsAwardedRef.current) return;
+    pointsAwardedRef.current = true;
+    awardPoints();
+  }, [done]); // eslint-disable-line react-hooks/exhaustive-deps -- awardPoints captures current score/total
 
   if (isLoading) return <div className="glass-card rounded-2xl p-6 border border-border/20 text-center text-muted-foreground text-sm">Cargando trivia…</div>;
   if (shuffled.length === 0) return <div className="glass-card rounded-2xl p-6 border border-border/20 text-center text-muted-foreground text-sm">No hay preguntas disponibles.</div>;

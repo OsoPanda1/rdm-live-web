@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useCallback, createContext, useContext, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -39,7 +38,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addNotification = useCallback((notification: Omit<Notification, "id">) => {
-    const id = Math.random().toString(36).substring(2, 9);
+    const id = crypto.randomUUID().slice(0, 8);
     const newNotification = { ...notification, id };
     
     setNotifications((prev) => [newNotification, ...prev].slice(0, 5));

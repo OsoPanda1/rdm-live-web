@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mountain, MapPin, Mail, Phone } from "lucide-react";
+import { Mountain, MapPin, Mail, Phone, Heart } from "lucide-react";
 import mistyMountains from "@/assets/misty-mountains.jpg";
 
 export function FooterSection() {
@@ -7,7 +7,7 @@ export function FooterSection() {
     <footer className="relative">
       {/* CTA Section */}
       <div className="relative h-[50vh] overflow-hidden flex items-center justify-center">
-        <img src={mistyMountains} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+        <img src={mistyMountains} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
 
         <motion.div
@@ -74,6 +74,12 @@ export function FooterSection() {
                   {item}
                 </a>
               ))}
+              <a
+                href="/donar"
+                className="flex items-center gap-1 text-sm text-rose-400 font-body hover:text-rose-300 transition-colors"
+              >
+                <Heart className="w-3.5 h-3.5" /> Apoyar
+              </a>
             </div>
           </div>
         </div>

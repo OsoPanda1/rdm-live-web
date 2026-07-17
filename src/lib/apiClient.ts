@@ -15,7 +15,7 @@ export const queryClient = new QueryClient({
 export { QueryClientProvider };
 
 // API Client with base configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 // Request timeout
 const TIMEOUT_MS = 30000;
@@ -23,7 +23,7 @@ const TIMEOUT_MS = 30000;
 export interface ApiError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
 }
 
 export interface ApiResponse<T> {
@@ -88,9 +88,9 @@ async function apiRequest<T>(
     }
 
     return response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
+    if (error instanceof DOMException && error.name === 'AbortError') {
       throw { code: 'TIMEOUT', message: 'Request timed out' } as ApiError;
     }
     throw error;
@@ -99,20 +99,20 @@ async function apiRequest<T>(
 
 // Typed API methods
 export const apiClient = {
-  get: <T>(endpoint: string, params?: Record<string, any>) => {
+  get: <T>(endpoint: string, params?: Record<string, string>) => {
     const searchParams = params 
-      ? '?' + new URLSearchParams(params as any).toString() 
+      ? '?' + new URLSearchParams(params).toString() 
       : '';
     return apiRequest<T>(`${endpoint}${searchParams}`);
   },
   
-  post: <T>(endpoint: string, data?: any) => 
+  post: <T>(endpoint: string, data?: unknown) => 
     apiRequest<T>(endpoint, { method: 'POST', body: JSON.stringify(data) }),
   
-  put: <T>(endpoint: string, data?: any) => 
+  put: <T>(endpoint: string, data?: unknown) => 
     apiRequest<T>(endpoint, { method: 'PUT', body: JSON.stringify(data) }),
   
-  patch: <T>(endpoint: string, data?: any) => 
+  patch: <T>(endpoint: string, data?: unknown) => 
     apiRequest<T>(endpoint, { method: 'PATCH', body: JSON.stringify(data) }),
   
   delete: <T>(endpoint: string) => 
@@ -127,14 +127,14 @@ export const queryKeys = {
   places: {
     all: ['places'] as const,
     lists: () => [...places.all, 'list'] as const,
-    list: (filters: Record<string, any>) => [...places.lists(), filters] as const,
+    list: (filters: Record<string, string>) => [...places.lists(), filters] as const,
     details: () => [...places.all, 'detail'] as const,
     detail: (id: string) => [...places.details(), id] as const,
   },
   businesses: {
     all: ['businesses'] as const,
     lists: () => [...businesses.all, 'list'] as const,
-    list: (filters: Record<string, any>) => [...businesses.lists(), filters] as const,
+    list: (filters: Record<string, string>) => [...businesses.lists(), filters] as const,
     detail: (id: string) => [...businesses.all, 'detail', id] as const,
     categories: () => [...businesses.all, 'categories'] as const,
     featured: () => [...businesses.all, 'featured'] as const,
@@ -142,7 +142,7 @@ export const queryKeys = {
   events: {
     all: ['events'] as const,
     lists: () => [...events.all, 'list'] as const,
-    list: (filters: Record<string, any>) => [...events.lists(), filters] as const,
+    list: (filters: Record<string, string>) => [...events.lists(), filters] as const,
     detail: (id: string) => [...events.all, 'detail', id] as const,
     featured: () => [...events.all, 'featured'] as const,
     upcoming: () => [...events.all, 'upcoming'] as const,
@@ -155,14 +155,14 @@ export const queryKeys = {
   posts: {
     all: ['posts'] as const,
     lists: () => [...posts.all, 'list'] as const,
-    list: (filters: Record<string, any>) => [...posts.lists(), filters] as const,
+    list: (filters: Record<string, string>) => [...posts.lists(), filters] as const,
     detail: (id: string) => [...posts.all, 'detail', id] as const,
     featured: () => [...posts.all, 'featured'] as const,
   },
   dichos: {
     all: ['dichos'] as const,
     lists: () => [...dichos.all, 'list'] as const,
-    list: (filters: Record<string, any>) => [...dichos.lists(), filters] as const,
+    list: (filters: Record<string, string>) => [...dichos.lists(), filters] as const,
     detail: (id: string) => [...dichos.all, 'detail', id] as const,
   },
   newsletter: {

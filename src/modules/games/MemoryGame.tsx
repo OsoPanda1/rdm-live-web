@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw, Trophy, Timer, Sparkles } from "lucide-react";
@@ -47,13 +46,6 @@ export default function MemoryGame() {
     }
   }, [flipped, deck]);
 
-  useEffect(() => {
-    if (deck.every((c) => c.matched) && !pointsAwarded) {
-      setDone(true);
-      awardPoints();
-    }
-  }, [deck, pointsAwarded]);
-
   const awardPoints = async () => {
     try {
       const { error } = await supabase.functions.invoke("award-points", {
@@ -67,6 +59,13 @@ export default function MemoryGame() {
       // Silently fail — points are a bonus
     }
   };
+
+  useEffect(() => {
+    if (deck.every((c) => c.matched) && !pointsAwarded) {
+      setDone(true);
+      awardPoints();
+    }
+  }, [deck, pointsAwarded]); // eslint-disable-line react-hooks/exhaustive-deps -- awardPoints captures current score/moves/seconds
 
   const click = (i: number) => {
     if (flipped.length >= 2 || deck[i].flipped || deck[i].matched) return;

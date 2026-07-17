@@ -1,223 +1,229 @@
-import { supabase as supabaseAdmin } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from "uuid";
 import { logger } from "@/lib/logger";
+import type {
+  FederationId,
+  FederationModule,
+  FederationNumber,
+  FederationStatus,
+  MDX5Intent,
+} from "@/core/models";
+import { FEDERATION_MAP, FEDERATION_NAMES } from "@/core/models";
 
-export enum Federacion {
-  HOSPEDAJE = "FED_HOSPEDAJE",
-  GASTRONOMIA = "FED_GASTRONOMIA",
-  MINERIA_PLATERIA = "FED_PLATERIA",
-  TURISMO_ACTIVO = "FED_TURISMO",
-  MOVILIDAD = "FED_MOVILIDAD",
-  COMERCIO_LOCAL = "FED_COMERCIO",
-  GOBIERNO_DIGITAL = "FED_GOBIERNO",
+export interface FederationEvent {
+  id: string;
+  type: string;
+  source: FederationId;
+  payload: unknown;
+  timestamp: Date;
+  traceId: string;
 }
 
-/** Eventos de CHECKIN para hospedaje. */
-export interface CheckInPayload {
-  turistaId: string;
-  hotelId: string;
-  noches: number;
-}
+export type EventHandler = (event: FederationEvent) => void;
 
-/** Tipos de eventos “soberanía” para el dominio. */
-export type SovereigntyEventType =
-  | "ANOMALIA_DATOS"
-  | "INTENTO_INTRUSION"
-  | "POLICY_VIOLATION"
-  | "OBSERVABILIDAD_SIGNAL";
+class FederationBus {
+  private federations: Map<FederationId, FederationModule> = new Map();
+  private handlers: Map<string, Set<EventHandler>> = new Map();
+  private federationQueues: Map<FederationId, FederationEvent[]> = new Map();
 
-export type BusChannel =
-  | "CHECKIN_HOSPEDAJE"
-  | "LSM_REALTIME_STREAM"
-  | "SOVEREIGNTY_ALERTS"
-  | "REALITO_TRIGGER";
-
-export type MessageHandler = (channel: BusChannel, message: string) => void;
-
-export interface PubSubClient {
-  subscribe: (...channels: BusChannel[]) => Promise<void>;
-  onMessage: (handler: MessageHandler) => void;
-  publish: (channel: BusChannel, payload: string) => Promise<void>;
-}
-
-/**
- * Implementación in-memory para pruebas / local dev.
- * No persiste nada, pero respeta la interfaz PubSubClient.
- */
-class InMemoryPubSubClient implements PubSubClient {
-  private handlers: MessageHandler[] = [];
-
-  async subscribe(..._channels: BusChannel[]): Promise<void> {
-    return;
+  constructor() {
+    this.initFederations();
   }
 
-  onMessage(handler: MessageHandler) {
-    this.handlers.push(handler);
-  }
-
-  async publish(channel: BusChannel, payload: string): Promise<void> {
-    for (const handler of this.handlers) {
-      handler(channel, payload);
-    }
-  }
-}
-
-/** Tipos de eventos internos de FederationBus. */
-type FederationEvent =
-  | { type: "CHECKIN_HOSPEDAJE"; payload: CheckInPayload }
-  | { type: "LSM_STREAM"; payload: unknown }
-  | { type: "SOVEREIGNTY"; payload: unknown };
-
-/**
- * FederationBus · Kernel federado para eventos transversales.
- *
- * Responsabilidades:
- * - Escuchar canales relevantes (check-in, LSM, soberanía).
- * - Transformar mensajes crudos (JSON string) en eventos tipados.
- * - Encadenar protocolos (retención, alerts, Realito).
- */
-export class FederationBus {
-  private readonly subscriber: PubSubClient;
-  private readonly publisher: PubSubClient;
-
-  constructor(pubSubClient?: PubSubClient) {
-    const client = pubSubClient ?? new InMemoryPubSubClient();
-    this.subscriber = client;
-    this.publisher = client;
-    void this.initListeners();
-  }
-
-  private async initListeners() {
-    const channels: BusChannel[] = [
-      "CHECKIN_HOSPEDAJE",
-      "LSM_REALTIME_STREAM",
-      "SOVEREIGNTY_ALERTS",
+  private initFederations(): void {
+    const specs: Array<{
+      id: FederationId;
+      number: FederationNumber;
+      specialty: string;
+      stack: string[];
+      role: string;
+    }> = [
+      {
+        id: "DEKATEOTL",
+        number: "F1",
+        specialty: "DATA - Vault / PostGIS / TimeSeries",
+        stack: ["PostgreSQL", "PostGIS", "Tile38", "InfluxDB"],
+        role: "Custodio de datos territoriales y memoria civilizatoria",
+      },
+      {
+        id: "ANUBIS",
+        number: "F2",
+        specialty: "INTEL - Cognitive & Agentic AI",
+        stack: ["Isabella AI", "LangChain", "VectorDB", "ONNX"],
+        role: "Inteligencia cognitiva y procesamiento emocional",
+      },
+      {
+        id: "BOOKPI_DATAGIT",
+        number: "F3",
+        specialty: "SEC - PQC / Zero-Trust / Q-Cells",
+        stack: ["OpenFHE", "OPA/Rego", "OIDC", "Kyber/SPHINCS+"],
+        role: "Seguridad post-cuántica y gobierno de identidad",
+      },
+      {
+        id: "PHOENIX",
+        number: "F4",
+        specialty: "GOV - Executable Governance",
+        stack: ["OPA", "Cel", "Rego", "DID:key"],
+        role: "Gobernanza ejecutable y políticas TIME UP",
+      },
+      {
+        id: "MDD_TAMV",
+        number: "F5",
+        specialty: "ECON - Economía local / phygital",
+        stack: ["Stripe", "CATTLEYA", "TNX", "LedgerDB"],
+        role: "Motor económico local y moneda interna",
+      },
+      {
+        id: "KAOS_HYPERRENDER",
+        number: "F6",
+        specialty: "VIS - GeoEngine 2D/3D",
+        stack: ["Three.js", "Mapbox", "D5 Render", "WebGL"],
+        role: "Renderizado geoespacial y visualización inmersiva",
+      },
+      {
+        id: "CHRONOS",
+        number: "F7",
+        specialty: "TERRITORY - Edge / IoT / Human mesh",
+        stack: ["Meshtastic", "LoRa", "EdgeDB", "MQTT"],
+        role: "Sensing territorial y malla humana",
+      },
     ];
 
-    try {
-      await this.subscriber.subscribe(...channels);
-    } catch (err) {
-      logger.error("[FED-BUS] CRITICAL: Error inicializando kernel de federación", err);
+    for (const spec of specs) {
+      this.federations.set(spec.id, {
+        id: spec.id,
+        federationNumber: spec.number,
+        name: FEDERATION_NAMES[spec.id],
+        specialty: spec.specialty,
+        stack: spec.stack,
+        role: spec.role,
+        status: "ACTIVE",
+        health: 1.0,
+        operationalScore: 1.0,
+        lastHeartbeat: new Date(),
+      });
+      this.federationQueues.set(spec.id, []);
     }
 
-    this.subscriber.onMessage(async (channel, message) => {
-      try {
-        const event = this.parseEvent(channel, message);
-        if (!event) return;
+    logger.info("[FED-BUS] 7 federaciones inicializadas", {
+      federaciones: Array.from(this.federations.keys()),
+    });
+  }
 
-        switch (event.type) {
-          case "CHECKIN_HOSPEDAJE":
-            await this.handleCheckIn(event.payload);
-            break;
-          case "LSM_STREAM":
-            this.handleLsmStream(event.payload);
-            break;
-          case "SOVEREIGNTY":
-            this.handleSovereigntyEvent(event.payload);
-            break;
+  getFederation(id: FederationId): FederationModule | undefined {
+    return this.federations.get(id);
+  }
+
+  getAllFederations(): FederationModule[] {
+    return Array.from(this.federations.values());
+  }
+
+  updateHealth(id: FederationId, health: number): void {
+    const fed = this.federations.get(id);
+    if (fed) {
+      fed.health = Math.max(0, Math.min(1, health));
+      fed.status = health > 0.8 ? "ACTIVE" : health > 0.5 ? "DEGRADED" : "IDLE";
+      fed.lastHeartbeat = new Date();
+    }
+  }
+
+  emit(event: Omit<FederationEvent, "id" | "timestamp">): void {
+    const fullEvent: FederationEvent = {
+      ...event,
+      id: uuidv4(),
+      timestamp: new Date(),
+    };
+
+    const queue = this.federationQueues.get(event.source);
+    if (queue) {
+      queue.push(fullEvent);
+      if (queue.length > 100) queue.shift();
+    }
+
+    const handlers = this.handlers.get(event.type);
+    if (handlers) {
+      for (const handler of handlers) {
+        try {
+          handler(fullEvent);
+        } catch (error) {
+          logger.error("[FED-BUS] Error en handler", { type: event.type, error });
         }
-      } catch (error) {
-        logger.error(`[FED-BUS] Error procesando canal ${channel}:`, error);
       }
-    });
-  }
-
-  /** Intenta parsear el mensaje y mapearlo a un evento interno. */
-  private parseEvent(channel: BusChannel, message: string): FederationEvent | null {
-    let data: unknown;
-
-    try {
-      data = JSON.parse(message);
-    } catch (error) {
-      logger.warn("[FED-BUS] Mensaje no JSON en canal", channel, { message });
-      return null;
     }
 
-    switch (channel) {
-      case "CHECKIN_HOSPEDAJE": {
-        const payload = data as Partial<CheckInPayload>;
-        if (!payload.turistaId || !payload.hotelId || typeof payload.noches !== "number") {
-          logger.warn("[FED-BUS] Payload CHECKIN_HOSPEDAJE inválido", payload);
-          return null;
-        }
-        return {
-          type: "CHECKIN_HOSPEDAJE",
-          payload: payload as CheckInPayload,
-        };
-      }
-      case "LSM_REALTIME_STREAM":
-        return { type: "LSM_STREAM", payload: data };
-      case "SOVEREIGNTY_ALERTS":
-        return { type: "SOVEREIGNTY", payload: data };
-      default:
-        return null;
+    logger.info("[FED-BUS] Evento emitido", {
+      type: event.type,
+      source: event.source,
+      id: fullEvent.id,
+    });
+  }
+
+  on(eventType: string, handler: EventHandler): () => void {
+    if (!this.handlers.has(eventType)) {
+      this.handlers.set(eventType, new Set());
     }
-  }
+    this.handlers.get(eventType)!.add(handler);
 
-  private async handleCheckIn(payload: CheckInPayload) {
-    logger.info("[FEDERACION] Protocolo de Retención :: Turista", {
-      turistaId: payload.turistaId,
-      hotelId: payload.hotelId,
-    });
-
-    // En una versión futura, esto podría consultar Supabase / PG para ofertas contextuales.
-    const oferta = await this.generarOfertaGastronomica(payload.hotelId);
-
-    // Ledger aún en memoria, pero listo para persistir a supabaseAdmin.
-    logger.info("[LEDGER] cross_sell_automatico", {
-      turistaId: payload.turistaId,
-      origen_federacion: Federacion.HOSPEDAJE,
-      destino_federacion: Federacion.GASTRONOMIA,
-      valor_estimado_mxn: payload.noches * 250,
-      hotelId: payload.hotelId,
-      oferta,
-      protocol: "EOCT-KERNEL-B",
-    });
-
-    await this.publisher.publish(
-      "REALITO_TRIGGER",
-      JSON.stringify({
-        turistaId: payload.turistaId,
-        triggerType: "BIENVENIDA_CON_OFERTA",
-        timestamp: new Date().toISOString(),
-        ofertaData: oferta,
-        visualStyle: "CRYSTAL_GLOW",
-      }),
-    );
-  }
-
-  private handleLsmStream(_payload: unknown) {
-    // LSM: Layered Sensing Matrix (telemetría, mapa interactivo).
-    // Aquí podrías enrutar datos hacia Supabase, Influx, etc.
-    logger.info("[LSM] Stream de telemetría procesado");
-  }
-
-  private handleSovereigntyEvent(payload: unknown) {
-    // Hook para alertas de soberanía digital / policy engine.
-    logger.info("[SOVEREIGNTY] Evento recibido", payload);
-  }
-
-  /** Genera oferta gastronómica base; fácilmente sustituible por consulta a Supabase. */
-  private async generarOfertaGastronomica(hotelId: string) {
-    // Stub: más adelante usar supabaseAdmin para extraer partners cercanos.
-    // const { data } = await supabaseAdmin.from("restaurantes").select("*").match({ hotelId });
-    return {
-      origenHotel: hotelId,
-      restaurante: "Paste_Minero_Reserva",
-      descuento: "15%",
-      vence_en_mins: 120,
-      premium: true,
+    return () => {
+      this.handlers.get(eventType)?.delete(handler);
     };
   }
 
-  /** Emite un evento de soberanía a través del bus. */
-  public async emitSovereigntyEvent(type: SovereigntyEventType, details: unknown) {
-    await this.publisher.publish(
-      "SOVEREIGNTY_ALERTS",
-      JSON.stringify({
-        type,
-        details,
-        timestamp: new Date().toISOString(),
-      }),
-    );
+  async ruteToFederation(intent: MDX5Intent, target: FederationId): Promise<void> {
+    const federation = this.federations.get(target);
+    if (!federation) {
+      logger.error("[FED-BUS] Federación no encontrada", { target });
+      return;
+    }
+
+    this.emit({
+      type: "FEDERATION_INTENT",
+      source: target,
+      payload: intent,
+      traceId: intent.traceId,
+    });
+
+    logger.info("[FED-BUS] Intent enrutado", {
+      intent: intent.id,
+      target: federation.name,
+      type: intent.type,
+    });
+  }
+
+  async emitSovereigntyEvent(type: string, details: unknown): Promise<void> {
+    this.emit({
+      type: "SOVEREIGNTY_ALERT",
+      source: "PHOENIX",
+      payload: { eventType: type, details },
+      traceId: uuidv4(),
+    });
+  }
+
+  async broadcastToAll(eventType: string, payload: unknown, traceId: string): Promise<void> {
+    for (const [fedId] of this.federations) {
+      this.emit({
+        type: eventType,
+        source: fedId,
+        payload,
+        traceId,
+      });
+    }
+  }
+
+  getQueueLength(federation: FederationId): number {
+    return this.federationQueues.get(federation)?.length ?? 0;
+  }
+
+  getHealth(): { totalEvents: number; listenersByType: Record<string, number> } {
+    const listenersByType: Record<string, number> = {};
+    for (const [type, handlers] of this.handlers) {
+      listenersByType[type] = handlers.size;
+    }
+    return {
+      totalEvents: Array.from(this.federationQueues.values()).reduce((sum, q) => sum + q.length, 0),
+      listenersByType,
+    };
   }
 }
+
+export const federationBus = new FederationBus();
+export type { FederationBus };

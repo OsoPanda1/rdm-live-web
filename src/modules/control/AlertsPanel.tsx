@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useState } from "react";
 import { AlertTriangle, AlertCircle, Info, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";

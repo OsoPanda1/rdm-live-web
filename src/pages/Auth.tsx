@@ -65,10 +65,26 @@ export default function Auth() {
     const { error } = await signUpEmail(parsed.data.email, parsed.data.password, parsed.data.displayName);
     setLoading(false);
     if (error) {
-      toast({ title: "Error al registrarse", description: error, variant: "destructive" });
+      // Detectar si es error de confirmación de email
+      const isEmailConfirmationError = error.includes('email') || 
+        error.includes('confirm') || 
+        error.includes('verify') ||
+        error.includes('already registered') ||
+        error.includes('already exists');
+      
+      if (isEmailConfirmationError) {
+        toast({ 
+          title: "Cuenta creada", 
+          description: "Revisa tu correo para confirmar la cuenta. Si no llega, verifica spam.", 
+          variant: "default" 
+        });
+      } else {
+        toast({ title: "Error al registrarse", description: error, variant: "destructive" });
+      }
       return;
     }
-    toast({ title: "¡Cuenta creada!", description: "Revisa tu correo para confirmar." });
+    toast({ title: "¡Cuenta creada!", description: "Bienvenido a RDM Digital." });
+    navigate("/perfil");
   };
 
   const handleGoogle = async () => {
@@ -171,6 +187,13 @@ export default function Auth() {
 
           <CardFooter className="flex-col gap-2 text-xs text-muted-foreground text-center">
             <Link to="/" className="hover:text-foreground">Explorar sin cuenta →</Link>
+            <p className="text-[10px] text-muted-foreground/60">
+              Al registrarte aceptas nuestro{" "}
+              <Link to="/reglamento" className="text-primary hover:underline">Reglamento de la Comunidad</Link>
+              {" y "}
+              <a href="/PRIVACY.md" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+              Nos proclamamos en contra del odio, racismo, clasismo, explotación y actividades criminales.
+            </p>
           </CardFooter>
         </Card>
       </div>

@@ -1,11 +1,10 @@
-// @ts-nocheck
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Search, Bell, Wallet, Globe, User, Settings, CreditCard, 
   ShoppingBag, Shield, Home, Users, Music, Sparkles, 
-  GraduationCap, Image, Gavel, Bot, PawPrint, Store,
-  TrendingUp, Award, Ticket, Zap, MessageCircle, Video
+  GraduationCap, Image, Gavel, Bot,
+  TrendingUp, Award, Ticket, MessageCircle, Video
 } from "lucide-react";
 import Matrix3DEffect from "@/components/metaverse/Matrix3DEffect";
 import RetractableToolbar from "@/components/metaverse/RetractableToolbar";
@@ -53,19 +52,30 @@ const MetaverseHome: React.FC = () => {
   ];
 
   // Mock data
+  const rdmThumbs = [
+    '/images/dia-muertos.jpg', '/images/penas-cargadas.jpg', '/images/plaza-noche.jpg',
+    '/images/mine-entrance.jpg', '/images/calles-coloridas.jpg', '/images/waterfall-forest.jpg',
+    '/images/panteon-ingles.jpg', '/images/iglesia.jpg', '/images/artesanias.jpg',
+    '/images/mirador-sunset.jpg', '/images/landscape-fog.jpg',
+  ];
+  const rdmAvatars = [
+    '/images/ceo-tamv.jpg', '/images/pueblo.jpg', '/images/centro.jpg',
+    '/images/niebla.jpg', '/images/ecoturismo.jpg',
+  ];
+
   const mockStories = Array.from({ length: 12 }, (_, i) => ({
     id: `story-${i}`,
     username: `creator_${i + 1}`,
-    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`,
+    avatar: rdmAvatars[i % rdmAvatars.length],
     hasNew: i < 5,
   }));
 
   const mockVideos = Array.from({ length: 11 }, (_, i) => ({
     id: `video-${i}`,
-    thumbnail: `https://picsum.photos/seed/${i + 100}/640/360`,
+    thumbnail: rdmThumbs[i % rdmThumbs.length],
     title: `Contenido Exclusivo #${i + 1} - Experiencia Inmersiva`,
     creator: `Creator ${i + 1}`,
-    creatorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 50}`,
+    creatorAvatar: rdmAvatars[i % rdmAvatars.length],
     views: Math.floor(Math.random() * 100000),
     likes: Math.floor(Math.random() * 10000),
     duration: `${Math.floor(Math.random() * 20) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
@@ -78,11 +88,11 @@ const MetaverseHome: React.FC = () => {
       id: `user-${i}`,
       name: `Creador ${i + 1}`,
       username: `creator${i + 1}`,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 200}`,
+      avatar: rdmAvatars[i % rdmAvatars.length],
       verified: i < 3,
     },
     content: "Explorando las infinitas posibilidades del metaverso TAMV. ¡El futuro de las redes sociales está aquí! 🚀✨",
-    media: i % 2 === 0 ? [{ type: "image" as const, url: `https://picsum.photos/seed/${i + 300}/800/600` }] : undefined,
+    media: i % 2 === 0 ? [{ type: "image" as const, url: rdmThumbs[i % rdmThumbs.length] }] : undefined,
     likes: Math.floor(Math.random() * 5000),
     comments: Math.floor(Math.random() * 500),
     shares: Math.floor(Math.random() * 200),
@@ -94,7 +104,7 @@ const MetaverseHome: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* Matrix 3D Background */}
-      <Matrix3DEffect showHero={false} />
+      <Matrix3DEffect />
 
       {/* 4 Retractable Toolbars */}
       <RetractableToolbar position="top" items={topBarItems} notificationType={activeNotification as any} />

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Coordenadas verificadas para anclar cada sub-plataforma LTOS al territorio
  * de Real del Monte, Hidalgo. Centro canónico: 20.1437, -98.6692.

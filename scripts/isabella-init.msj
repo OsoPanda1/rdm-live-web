@@ -1,0 +1,105 @@
+// scripts/isabella-init.mjs
+// Bootstrap inicial de Isabella · RDM Digital / Atlas Trascendence
+
+import "dotenv/config";
+import { createClient } from "@supabase/supabase-js";
+
+const NODE_ID = process.env.NODE_ID || "nodo-cero-web";
+const ENV =
+  process.env.NODE_ENV === "production"
+    ? "prod"
+    : process.env.NODE_ENV === "staging"
+    ? "staging"
+    : "dev";
+
+function log(message, data = {}) {
+  const payload = {
+    ts: new Date().toISOString(),
+    node: NODE_ID,
+    env: ENV,
+    message,
+    data,
+  };
+  // eslint-disable-next-line no-console
+  console.log("[isabella:init]", JSON.stringify(payload));
+}
+
+async function main() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    log("Supabase service role config missing", { url: !!url, key: !!key });
+    throw new Error(
+      "SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY no están definidos",
+    );
+  }
+
+  const supabase = createClient(url, key);
+
+  // Tablas clave ya definidas en tus migraciones SQL
+  const tablesToCheck = [
+    "ai_prompts_log",
+    "isabella_ontology",
+    "audit_log",
+    "pipeline_results_unified",
+    "territorial_data_collection",
+    "metrics_aggregates",
+  ];
+
+  log("Starting Isabella init", { tablesToCheck });
+
+  const { data: tableInfo, error: tableError } = await supabase
+    .from("information_schema.tables")
+    .select("table_name")
+    .in("table_name", tablesToCheck);
+
+  if (tableError) {
+    log("Error checking tables", { error: tableError.message });
+    throw new Error(`Error al comprobar tablas: ${tableError.message}`);
+  }
+
+  const existingTables = (tableInfo || []).map((t) => t.table_name);
+  const missingTables = tablesToCheck.filter(
+    (t) => !existingTables.includes(t),
+  );
+
+  log("Table check result", { existingTables, missingTables });
+
+  if (missingTables.length > 0) {
+    log("Missing critical tables for Isabella", { missingTables });
+    // No creamos tablas aquí porque las controlas con migraciones SQL.
+  }
+
+  // Registrar evento de bootstrap en ai_prompts_log
+  const bootstrapEvent = {
+    node_id: NODE_ID,
+    env: ENV,
+    source: "isabella-init",
+    model: "bootstrap",
+    prompt: "ISABELLA_INIT",
+    response: JSON.stringify({
+      existingTables,
+      missingTables,
+    }),
+    trace_id: `bootstrap-${Date.now()}`,
+  };
+
+  const { error: insertError } = await supabase
+    .from("ai_prompts_log")
+    .insert(bootstrapEvent);
+
+  if (insertError) {
+    log("Error inserting bootstrap event", { error: insertError.message });
+    throw new Error(
+      `Error al registrar evento de bootstrap: ${insertError.message}`,
+    );
+  }
+
+  log("Isabella init completed", { bootstrapEventId: "ai_prompts_log" });
+}
+
+main().catch((err) => {
+  log("Isabella init fatal error", { error: err.message || String(err) });
+  process.exit(1);
+});

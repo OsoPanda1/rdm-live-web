@@ -30,12 +30,10 @@ const ROUTE_LABELS: Record<string, string> = {
   "/biografia-ceo": "Biografía del Fundador",
   "/arquitectura": "Arquitectura del Sistema",
   "/seguridad-tenochtitlan": "Seguridad TENOCHTITLAN",
-  "/mapa-vivo": "Mapa Territorial Vivo",
   "/paquetes": "Paquetes Turísticos",
   "/transporte-local": "Transporte Local",
   "/shuttle-cdmx-rdm": "Shuttle CDMX ↔ RDM",
   "/donar": "Dona al Proyecto",
-  "/comunidad-social": "Muro Social",
   "/experiencias": "Experiencias",
 };
 

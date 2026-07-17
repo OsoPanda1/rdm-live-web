@@ -95,15 +95,10 @@ const Membership = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
       {/* Dynamic Background Effect with parallax */}
-      <div className="fixed inset-0 bg-black z-0">
-        {/* Cosmic Tree Layer */}
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/46b80c50-4191-4268-9b90-920da55ae5e6.png')] bg-cover bg-center opacity-30 mix-blend-screen" />
-        
-        {/* Mystical Tree Layer */}
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/7f7da0f7-8fa6-4df7-a139-2668062c0b01.png')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-        
-        {/* Digital Earth Layer */}
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/81cc94d5-e823-4cb3-8227-f751a0c02485.png')] bg-cover bg-center opacity-10 mix-blend-overlay" />
+      <div className="fixed inset-0 bg-gradient-to-b from-black via-indigo-950/40 to-black z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/40 via-indigo-900/30 to-transparent opacity-30 mix-blend-screen" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-violet-950/30 via-transparent to-blue-900/20 opacity-20 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-950/20 to-transparent opacity-10 mix-blend-overlay" />
       </div>
       
       <Header />

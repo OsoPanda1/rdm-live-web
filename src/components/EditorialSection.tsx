@@ -40,7 +40,7 @@ const EditorialSection = ({
       transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
     >
       <div className="img-zoom aspect-[3/4] md:aspect-auto md:h-full">
-        <img src={image} alt={imageAlt} className="w-full h-full object-cover" />
+        <img src={image} alt={imageAlt} loading="lazy" className="w-full h-full object-cover" />
       </div>
       {/* Glass overlay */}
       <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-background/80 to-transparent" />

@@ -5,9 +5,14 @@ import { Users, Code, Building, Globe } from "lucide-react";
 const Introduccion = () => (
   <WikiPage
     title="Introducción"
-    subtitle="¿Qué es TAMV y por qué existe?"
-  >
-    <Section title="¿Qué es TAMV?">
+        subtitle="¿Qué es TAMV y por qué existe?"
+      >
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/heroprincipal.png" alt="Hero principal de TAMV" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <Section title="¿Qué es TAMV?">
       <p className="text-muted-foreground leading-relaxed">
         <strong className="text-foreground">TAMV MD‑X4</strong> es un ecosistema civilizatorio digital nacido en México
         que integra identidad soberana, educación inmersiva, metaverso, economía ética y seguridad avanzada en una sola

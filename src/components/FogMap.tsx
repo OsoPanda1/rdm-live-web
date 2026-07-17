@@ -125,7 +125,7 @@ const FogMap = () => {
           onMouseMove={handleMouseMove}
           onTouchMove={handleTouchMove}
         >
-          <img src={aerialImage} alt="Mapa aéreo de Real del Monte" className="w-full h-full object-cover" />
+          <img src={aerialImage} alt="Mapa aéreo de Real del Monte" loading="lazy" className="w-full h-full object-cover" />
 
           <canvas
             ref={canvasRef}

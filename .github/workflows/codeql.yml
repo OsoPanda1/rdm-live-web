@@ -1,0 +1,90 @@
+name: "CodeQL Advanced – RDM Digital Hub / TAMV Nodo Cero"
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+  schedule:
+    # Escaneo completo semanal (domingo 19:21 UTC)
+    - cron: "21 19 * * 0"
+  workflow_dispatch:
+
+permissions:
+  # Permisos mínimos a nivel de workflow (principio de menor privilegio)
+  actions: read
+  contents: read
+  packages: read
+  security-events: write
+
+env:
+  # Categoría base para identificar escaneos de este nodo
+  CODEQL_CATEGORY_PREFIX: "/rdm-digital-hub"
+
+jobs:
+  # 1) Job para detectar automáticamente los lenguajes soportados por CodeQL
+  detect-languages:
+    name: Detect CodeQL languages (auto)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Set CodeQL languages matrix (auto-detect)
+        id: set-matrix
+        uses: advanced-security/set-codeql-languages@v1
+        with:
+          excluded-languages: ""
+
+  # 2) Job principal de análisis CodeQL usando la matriz dinámica
+  analyze:
+    name: Analyze – CodeQL (${{ matrix.language }})
+    needs: detect-languages
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.detect-languages.outputs.matrix) }}
+
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # fetch-depth: 0 recomendado para CodeQL (historial completo)
+          fetch-depth: 0
+
+      # Setup específico para JS/TS (si aplica)
+      - name: Setup Node.js
+        if: matrix.language == 'javascript-typescript'
+        uses: actions/setup-node@v6
+        with:
+          # Usa la versión fijada en package.json, o ajusta según necesidad
+          node-version-file: "package.json"
+          cache: "npm"
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          # Si en el futuro necesitas build para lenguajes compilados,
+          # sustituye 'none' por 'autobuild' o configuración manual
+          build-mode: ${{ matrix.build-mode || 'none' }}
+          queries: "+security-extended,security-and-quality"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "${{ env.CODEQL_CATEGORY_PREFIX }}/language:${{ matrix.language }}"
+          upload: true

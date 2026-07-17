@@ -6,9 +6,14 @@ import { Server, Cloud, Shield, CheckCircle, Globe, Wrench, Box, ListChecks } fr
 const Despliegue = () => (
   <WikiPage
     title="Manual de Despliegue Universal"
-    subtitle="Guía paso a paso para replicar el ecosistema TAMV en cualquier infraestructura"
-  >
-    <Tabs defaultValue="prerequisitos" className="w-full">
+        subtitle="Guía paso a paso para replicar el ecosistema TAMV en cualquier infraestructura"
+      >
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/sierra-adventure.jpg" alt="Aventura en la sierra de Real del Monte" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <Tabs defaultValue="prerequisitos" className="w-full">
       <TabsList className="w-full flex-wrap h-auto gap-1 bg-muted/30 p-1">
         <TabsTrigger value="prerequisitos" className="text-xs">Prerequisitos</TabsTrigger>
         <TabsTrigger value="local" className="text-xs">Entorno Local</TabsTrigger>

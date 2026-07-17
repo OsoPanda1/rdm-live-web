@@ -1,0 +1,14 @@
+[Unit]
+Description=RDM Digital API Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/rdmx
+ExecStart=/usr/bin/node /opt/rdmx/server/dist/index.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

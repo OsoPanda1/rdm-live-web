@@ -4,9 +4,14 @@ import { Section } from "@/components/WikiElements";
 const Filosofia = () => (
   <WikiPage
     title="Filosofía y Códice Maestro"
-    subtitle="Los principios que rigen el ecosistema TAMV"
-  >
-    <Section title="El Códice Kórima">
+        subtitle="Los principios que rigen el ecosistema TAMV"
+      >
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/rooftops-sunrise.jpg" alt="Azoteas al amanecer en Real del Monte" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <Section title="El Códice Kórima">
       <p className="text-muted-foreground leading-relaxed">
         La arquitectura TAMV se rige por el <strong className="text-primary">Códice Kórima</strong>, inspirado
         en la filosofía Rarámuri de reciprocidad. Este códice establece que toda tecnología dentro del ecosistema

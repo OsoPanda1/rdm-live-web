@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Circle, Printer, ClipboardCheck } from "lucide-react";

@@ -1,4 +1,3 @@
-// @ts-nocheck
 // src/data/geo.ts
 // POIs georreferenciados del Nodo Cero — fuente de verdad para mapas,
 // recomendador y futuros gemelos digitales.

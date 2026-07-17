@@ -107,7 +107,7 @@ export function GastronomySection() {
             <img
               src={marketArtesanias}
               alt="Mercado de artesanías"
-              className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+              loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             />
           </motion.div>
         </div>

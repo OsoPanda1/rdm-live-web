@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { useEffect, useState } from "react";
 import { useIsabellaSSE } from "@/hooks/useIsabellaSSE";
+import { logger } from "@/lib/logger";
 
 export function ReviewPrompt() {
   const { decision } = useIsabellaSSE();
@@ -19,16 +19,21 @@ export function ReviewPrompt() {
 
   const submit = async (consentValue: boolean) => {
     setConsent(consentValue);
-    await fetch("/api/isabella/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        territory: decision?.territory ?? "RDM",
-        consent: consentValue,
-        rating,
-        comment,
-      }),
-    });
+    try {
+      await fetch("/api/isabella/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          territory: decision?.territory ?? "RDM",
+          consent: consentValue,
+          rating,
+          comment,
+        }),
+      });
+    } catch (error) {
+      logger.error("ReviewPrompt feedback submit failed", { error });
+      setShown(false);
+    }
 
     if (!consentValue) {
       setShown(false);

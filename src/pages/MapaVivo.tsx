@@ -84,11 +84,15 @@ const MapaVivo = () => {
 
   useEffect(() => { if (!fogCleared) drawFog(); }, [fogCleared, drawFog]);
 
+  const clearFog = useCallback(() => {
+    setFogCleared(true);
+  }, []);
+
   const handleMove = (clientX: number, clientY: number) => {
     if (fogCleared || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    revealPoints.current.push({ x: clientX - rect.left, y: clientY - rect.top, r: 80 });
-    if (revealPoints.current.length > 60) setFogCleared(true);
+    revealPoints.current.push({ x: clientX - rect.left, y: clientY - rect.top, r: 160 });
+    if (revealPoints.current.length > 15) setFogCleared(true);
     drawFog();
   };
 
@@ -217,6 +221,12 @@ const MapaVivo = () => {
                   Desliza para limpiar la niebla<br />
                   <span className="text-sm text-platinum/30 not-italic font-body">y descubrir los secretos del pueblo</span>
                 </motion.p>
+                <button
+                  onClick={clearFog}
+                  className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-auto rounded-full border border-gold/30 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-gold/70 backdrop-blur-md hover:border-gold/60 hover:text-gold transition-all"
+                >
+                  Saltar niebla
+                </button>
               </div>
             )}
           </div>

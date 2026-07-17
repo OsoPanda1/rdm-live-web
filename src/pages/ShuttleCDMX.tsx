@@ -1,5 +1,4 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
-// @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Bus, Search, Calendar, Users } from "lucide-react";
@@ -9,12 +8,13 @@ import { ElegantPagination } from "@/components/ElegantPagination";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import type { ShuttleRoute } from "@/types/supabase";
 
 const PAGE_SIZE = 6;
 
 export default function ShuttleCDMX() {
   const { toast } = useToast();
-  const [routes, setRoutes] = useState<any[]>([]);
+  const [routes, setRoutes] = useState<ShuttleRoute[]>([]);
   const [page, setPage] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
 
@@ -27,7 +27,7 @@ export default function ShuttleCDMX() {
         .order("departure_time");
       if (data) setRoutes(data.map(r => ({
         ...r,
-        company_name: (r.shuttle_companies as any)?.name,
+        company_name: r.shuttle_companies?.name ?? null,
         days_of_week: Array.isArray(r.days_of_week) ? r.days_of_week : [],
       })));
     }

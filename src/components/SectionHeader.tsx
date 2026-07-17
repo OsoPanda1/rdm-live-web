@@ -1,37 +1,38 @@
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 interface SectionHeaderProps {
+  label: string;
   title: string;
   subtitle?: string;
-  linkTo?: string;
-  linkText?: string;
+  accent?: "gold" | "electric" | "copper";
+  align?: "center" | "left";
 }
 
-const SectionHeader = ({ title, subtitle, linkTo, linkText = "Ver todo" }: SectionHeaderProps) => {
+const SectionHeader = ({ label, title, subtitle, accent = "gold", align = "center" }: SectionHeaderProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  const gradientClass = accent === "electric" ? "text-gradient-electric" : "text-gradient-gold";
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="flex items-end justify-between mb-8"
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 1 }}
+      className={`mb-16 ${align === "center" ? "text-center" : "text-left"}`}
     >
-      <div>
-        <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">{title}</h2>
-        {subtitle && (
-          <p className="text-muted-foreground mt-2 max-w-lg">{subtitle}</p>
-        )}
-      </div>
-      {linkTo && (
-        <Link
-          to={linkTo}
-          className="hidden md:flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors shrink-0"
-        >
-          {linkText}
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+      <span className="font-body text-[10px] tracking-[0.4em] uppercase text-[hsl(var(--gold))]/60 block mb-3">
+        {label}
+      </span>
+      <h2 className={`font-display text-4xl md:text-6xl tracking-tight ${gradientClass}`}>
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="font-display text-lg text-[hsl(var(--platinum))]/50 italic mt-4 max-w-lg mx-auto">
+          {subtitle}
+        </p>
       )}
     </motion.div>
   );

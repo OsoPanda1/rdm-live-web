@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Send, Sparkles, X } from "lucide-react";
-import { ISABELLA_TAMV_PROFILE, TAMV_CAPABILITIES_SUMMARY } from "@/features/ai/isabellaTamvBase";
 import { logger } from "@/lib/logger";
 
 // Use public image path for REALITO avatar
@@ -18,9 +17,7 @@ interface RealitoChatProps {
 }
 
 const MAX_INPUT_LENGTH = 1000;
-const STREAM_DELAY_MS = 14;
-const SYSTEM_INSTRUCTION =
-  "Mantener un tono institucional de RDM Digital, destacar liderazgo del proyecto de Edwin Oswaldo Castillo Trejo y priorizar orientacion turistica util, verificable y respetuosa.";
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/realito-chat`;
 
 const suggestions = [
   "¿Qué hacer con 2 horas libres?",
@@ -29,7 +26,7 @@ const suggestions = [
   "¿Qué eventos hay hoy?",
 ];
 
-const localReply = (msg: string): string => {
+const localFallbackReply = (msg: string): string => {
   const text = msg.toLowerCase();
 
   if (text.includes("paste") || text.includes("comer")) {
@@ -44,10 +41,7 @@ const localReply = (msg: string): string => {
     return "Ruta histórica sugerida: Plaza Principal → Parroquia de la Asunción → callejones coloniales → Museo del Paste → Mina de Acosta.";
   }
 
-  if (text.includes("isabella") || text.includes("tamv") || text.includes("nucleo")) {
-    return `REALITO opera con la base ${ISABELLA_TAMV_PROFILE.productName} ${ISABELLA_TAMV_PROFILE.version}: ${TAMV_CAPABILITIES_SUMMARY.join(", ")}.`;
-  }
-  return "¡Hola! Soy REALITO 🤖. Te ayudo con rutas, gastronomía, historia y recomendaciones para explorar Real del Monte.";
+  return "Actualmente estoy en modo offline. Pronto estaré disponible con respuestas potenciadas por IA. Mientras tanto, explora el mapa interactivo o la guía de lugares para descubrir Real del Monte.";
 };
 
 export default function RealitoChat({ initialOpen = false }: RealitoChatProps) {
@@ -61,17 +55,6 @@ export default function RealitoChat({ initialOpen = false }: RealitoChatProps) {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const streamAssistantReply = useCallback(async (content: string) => {
-    const id = `${Date.now()}-a`;
-    setMessages((prev) => [...prev, { id, role: "assistant", content: "" }]);
-
-    for (let i = 1; i <= content.length; i += 1) {
-      const slice = content.slice(0, i);
-      setMessages((prev) => [...prev.slice(0, -1), { ...prev[prev.length - 1], content: slice }]);
-      await new Promise((resolve) => setTimeout(resolve, STREAM_DELAY_MS));
-    }
-  }, []);
-
   const sendMessage = useCallback(
     async (text: string) => {
       const content = text.trim();
@@ -81,24 +64,72 @@ export default function RealitoChat({ initialOpen = false }: RealitoChatProps) {
       setInput("");
       setIsTyping(true);
 
+      const assistantId = `${Date.now()}-a`;
+      let assistantContent = "";
+
       try {
-        const response = localReply(content);
-        await streamAssistantReply(response);
+        const resp = await fetch(CHAT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            messages: [
+              ...messages.map((m) => ({ role: m.role, content: m.content })),
+              { role: "user", content },
+            ],
+          }),
+        });
+
+        if (!resp.ok || !resp.body) {
+          throw new Error("Error de conexión");
+        }
+
+        setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: "" }]);
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          let newlineIdx: number;
+          while ((newlineIdx = buffer.indexOf("\n")) !== -1) {
+            let line = buffer.slice(0, newlineIdx);
+            buffer = buffer.slice(newlineIdx + 1);
+            if (line.endsWith("\r")) line = line.slice(0, -1);
+            if (!line.startsWith("data: ")) continue;
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") break;
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) {
+                assistantContent += delta;
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantId ? { ...m, content: assistantContent } : m)),
+                );
+              }
+            } catch {
+              buffer = line + "\n" + buffer;
+              break;
+            }
+          }
+        }
       } catch (error) {
         logger.error("RealitoChat error", error);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `${Date.now()}-a-error`,
-            role: "assistant",
-            content: "Tuvimos un problema al procesar tu mensaje. Intenta de nuevo en unos momentos.",
-          },
-        ]);
+        const fallback = localFallbackReply(content);
+        assistantContent = fallback;
+        setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: fallback }]);
       } finally {
         setIsTyping(false);
       }
     },
-    [isTyping, streamAssistantReply],
+    [isTyping, messages],
   );
 
   return (
@@ -121,10 +152,10 @@ export default function RealitoChat({ initialOpen = false }: RealitoChatProps) {
             className="fixed bottom-24 right-6 z-50 flex h-[520px] w-[360px] max-w-[calc(100vw-48px)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-night-900/95 shadow-2xl"
           >
             <div className="flex items-center gap-3 border-b border-white/10 bg-night-800 px-4 py-3">
-              <img src={logoRdm} alt="REALITO" className="h-8 w-8 rounded-full" />
+              <img src={logoRdm} alt="REALITO" loading="lazy" className="h-8 w-8 rounded-full" />
               <div className="flex-1">
                 <p className="text-sm font-semibold text-silver-300">REALITO</p>
-                <p className="text-xs text-silver-500">Asistente digital · Núcleo ISABELLA TAMV</p>
+                <p className="text-xs text-silver-500">Asistente digital de Real del Monte</p>
               </div>
               <Sparkles className="h-4 w-4 text-gold-400" />
             </div>

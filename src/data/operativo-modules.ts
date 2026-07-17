@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { ModuleState, DomainSummary } from "@/lib/types/operativo";
 
 /**

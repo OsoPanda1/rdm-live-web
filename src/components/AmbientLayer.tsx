@@ -1,42 +1,120 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react"
 
-/**
- * AmbientLayer — Capa atmosférica global absorbida de
- * rdm-digital-nodo-cero + real-del-monte-elevated.
- *
- * Tres capas pasivas (pointer-events: none) sobre toda la app:
- *   1. Aurora viva (gradientes radiales que respiran).
- *   2. Grano cinematográfico (noise SVG, mix-blend overlay).
- *   3. Aura sutil siguiendo el cursor (--mx / --my).
- *
- * Se monta una vez en App.tsx y todo el ecosistema turístico
- * hereda la atmósfera mágica sin tocar layouts existentes.
- */
-export default function AmbientLayer() {
+function CanvasStarfield() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
   useEffect(() => {
-    const root = document.documentElement;
-    let raf = 0;
-    const onMove = (e: MouseEvent) => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        root.style.setProperty("--mx", `${e.clientX}px`);
-        root.style.setProperty("--my", `${e.clientY}px`);
-      });
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    root.classList.add("cursor-ambient");
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    const dpr = window.devicePixelRatio || 1
+    let W = window.innerWidth
+    let H = window.innerHeight
+    canvas.width = W * dpr
+    canvas.height = H * dpr
+    ctx.scale(dpr, dpr)
+
+    const stars = Array.from({ length: 80 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      s: Math.random() * 1.2 + 0.2,
+      o: Math.random() * 0.3 + 0.05,
+      speed: Math.random() * 0.3 + 0.05,
+      phase: Math.random() * Math.PI * 2,
+    }))
+
+    const resize = () => {
+      W = window.innerWidth
+      H = window.innerHeight
+      canvas.width = W * dpr
+      canvas.height = H * dpr
+      ctx.scale(dpr, dpr)
+    }
+    window.addEventListener("resize", resize)
+
+    let running = true
+    const draw = () => {
+      if (!running) return
+      ctx.clearRect(0, 0, W, H)
+      const now = Date.now() / 1000
+      for (const star of stars) {
+        const twinkle = 0.5 + 0.5 * Math.sin(now * star.speed + star.phase)
+        ctx.beginPath()
+        ctx.arc(star.x, star.y, star.s * (0.7 + 0.3 * twinkle), 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255,255,255,${star.o * twinkle})`
+        ctx.fill()
+      }
+      requestAnimationFrame(draw)
+    }
+
+    draw()
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      root.classList.remove("cursor-ambient");
-      cancelAnimationFrame(raf);
-    };
-  }, []);
+      running = false
+      window.removeEventListener("resize", resize)
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ opacity: 0.6 }} />
+}
+
+export default function AmbientLayer() {
+  const rafRef = useRef<number>(0)
+  const mouseRef = useRef({ x: 0.5, y: 0.5 })
+
+  useEffect(() => {
+    const root = document.documentElement
+
+    const onMove = (e: MouseEvent) => {
+      mouseRef.current = {
+        x: e.clientX / window.innerWidth,
+        y: e.clientY / window.innerHeight,
+      }
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(() => {
+        root.style.setProperty("--mx", `${e.clientX}px`)
+        root.style.setProperty("--my", `${e.clientY}px`)
+        root.style.setProperty("--mx-pct", `${mouseRef.current.x * 100}%`)
+        root.style.setProperty("--my-pct", `${mouseRef.current.y * 100}%`)
+      })
+    }
+
+    window.addEventListener("pointermove", onMove, { passive: true })
+    root.classList.add("cursor-ambient")
+
+    return () => {
+      window.removeEventListener("pointermove", onMove)
+      root.classList.remove("cursor-ambient")
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      <div className="absolute inset-0 aurora-bg opacity-90" />
-      <div className="absolute inset-0 grid-paper-fine opacity-60" />
+      {/* Canvas starfield */}
+      <CanvasStarfield />
+
+      {/* Aurora layer 1 — deep shift */}
+      <div className="absolute inset-0 aurora-bg opacity-70" />
+
+      {/* Aurora layer 2 — conic shimmer */}
+      <div className="absolute inset-0 aurora-conic opacity-50" />
+
+      {/* Grid paper fine */}
+      <div className="absolute inset-0 grid-paper-fine opacity-40" />
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 ambient-particles" />
+
+      {/* Shooting stars */}
+      <div className="absolute inset-0 shooting-stars" />
+
+      {/* Noise overlay */}
       <div className="absolute inset-0 noise-overlay" />
+
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
     </div>
-  );
+  )
 }

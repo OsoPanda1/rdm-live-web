@@ -1,14 +1,15 @@
-// @ts-nocheck
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Clock, Sparkles, Star, ArrowRight } from "lucide-react";
 import { RDMLayout } from "@/components/rdm/RDMLayout";
 import { SEOMeta } from "@/components/SEOMeta";
-import { EVENTOS_RDM, EVENT_CATEGORIES } from "@/data/rdm-events";
+import { EVENTOS_RDM, EVENT_CATEGORIES, type RDMEvent } from "@/data/rdm-events";
 import { IMAGE_MAP, RDM_IMAGES } from "@/data/rdm-images";
 
+type CategoryValue = RDMEvent["category"] | "all";
+
 export default function EventosPage() {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState<CategoryValue>("all");
 
   const filteredEvents = useMemo(() => {
     if (activeCategory === "all") return EVENTOS_RDM;
@@ -21,7 +22,7 @@ export default function EventosPage() {
 
       {/* Hero */}
       <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
-        <img src={RDM_IMAGES.festivalPaste} alt="Festival del Paste" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={RDM_IMAGES.festivalPaste} alt="Festival del Paste" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))] via-black/40 to-black/20" />
         <div className="relative z-10 h-full flex items-end pb-12 px-6 md:px-16 lg:px-24">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
@@ -44,7 +45,7 @@ export default function EventosPage() {
           {EVENT_CATEGORIES.map(cat => (
             <button
               key={cat.value}
-              onClick={() => setActiveCategory(cat.value)}
+              onClick={() => setActiveCategory(cat.value as CategoryValue)}
               className={`px-4 py-2 rounded-full text-xs font-medium border transition ${
                 activeCategory === cat.value
                   ? "bg-[hsl(var(--rdm-amber))] text-white border-[hsl(var(--rdm-amber))]"

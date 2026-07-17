@@ -197,7 +197,7 @@ export class ChronusEngine {
     // Logging estructurado, idealmente reemplazable por tu capa de observabilidad.
     logger.warn(
       "[CHRONUS] ALERTA: Saturación crítica",
-      JSON.stringify({ polygonId, presion, componentes, timestamp }),
+      { polygonId, presion, componentes, timestamp },
     );
 
     const payload = JSON.stringify({

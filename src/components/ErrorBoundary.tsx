@@ -13,22 +13,17 @@ interface Props {
 
 interface State {
   hasError: boolean
-  error?: Error
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false }
-  }
+  state: State = { hasError: false }
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+  static getDerivedStateFromError(_error: Error): State {
+    return { hasError: true }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log mínimo en consola, útil en dev
-    logger.error('ErrorBoundary caught:', { error, errorInfo, boundaryId: this.props.boundaryId })
+    logger.error('ErrorBoundary caught:', { error, errorInfo })
 
     // Emite evento global para cualquier listener de telemetría/UI
     if (typeof window !== 'undefined') {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -124,7 +123,7 @@ export function useMusicPlayer({ autoplay = false }: { autoplay?: boolean } = {}
   }, [tracks, pause]);
 
   useEffect(() => () => { cancelRAF(); audioRef.current?.pause(); audioRef.current = null; }, []);
-  useEffect(() => { if (autoplay && tracks.length) play(); }, [autoplay, tracks.length]);
+  useEffect(() => { if (autoplay && tracks.length) play(); }, [autoplay, tracks.length, play]);
 
   // simulated progress when no audio_url
   useEffect(() => {

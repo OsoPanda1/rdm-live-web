@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { 
   MapPin, Clock, Footprints, Mountain, Trees, Camera, 
   Utensils, Beer, History, Compass, Star, ChevronRight, Sparkles,

@@ -1,9 +1,9 @@
-// @ts-nocheck
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { Upload, Music as MusicIcon, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { logAudit } from "@/hooks/useUserRole";
+import { logger } from "@/lib/logger";
 
 type Track = {
   id: string;
@@ -60,7 +60,7 @@ export function MusicAdminPanel() {
       if (error) throw error;
       setTracks((data ?? []) as Track[]);
     } catch (error) {
-      console.error(error);
+      logger.error("Error loading music tracks", { error });
       toast.error("No se pudo cargar la playlist");
     } finally {
       setLoadingList(false);
@@ -125,7 +125,7 @@ export function MusicAdminPanel() {
       setArtist(DEFAULT_ARTIST);
       void loadTracks();
     } catch (error) {
-      console.error(error);
+      logger.error("Error uploading track", { error });
       const message =
         error instanceof Error ? error.message : "Error al subir la pista";
       toast.error(message);
@@ -156,7 +156,7 @@ export function MusicAdminPanel() {
           ),
         );
       } catch (error) {
-        console.error(error);
+        logger.error("Error toggling track active state", { error });
         toast.error("No se pudo actualizar el estado de la pista");
       }
     },
@@ -183,7 +183,7 @@ export function MusicAdminPanel() {
       setTracks((prev) => prev.filter((t) => t.id !== track.id));
       toast.success("Pista eliminada");
     } catch (error) {
-      console.error(error);
+      logger.error("Error removing track", { error });
       toast.error("No se pudo eliminar la pista");
     }
   }, []);

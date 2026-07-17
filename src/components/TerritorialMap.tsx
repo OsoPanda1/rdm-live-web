@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMemo } from "react";
 import { useIsabellaSSE } from "@/hooks/useIsabellaSSE";
 import { REAL_DEL_MONTE_SITES } from "@/lib/kernel";

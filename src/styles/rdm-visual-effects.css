@@ -1,0 +1,405 @@
+/* ============================================================================
+   RDM Visual Effects — Cinematic & Elegant Animations
+   ============================================================================
+   Add this to index.css or import in main.tsx
+   All effects respect prefers-reduced-motion
+   ============================================================================ */
+
+/* ---- PAGE TRANSITIONS ---- */
+.rdm-page-enter {
+  animation: rdmPageEnter 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes rdmPageEnter {
+  from { opacity: 0; transform: translateY(20px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- PARALLAX SECTIONS ---- */
+.rdm-parallax-section {
+  position: relative;
+  overflow: hidden;
+}
+.rdm-parallax-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- FLOATING PARTICLES ---- */
+.rdm-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.rdm-particles span {
+  position: absolute;
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: hsla(43, 80%, 55%, 0.4);
+  border-radius: 50%;
+  animation: rdmFloat 15s linear infinite;
+}
+.rdm-particles span:nth-child(1) { left: 10%; width: 3px; height: 3px; animation-delay: 0s; animation-duration: 18s; }
+.rdm-particles span:nth-child(2) { left: 25%; width: 5px; height: 5px; animation-delay: -3s; animation-duration: 14s; }
+.rdm-particles span:nth-child(3) { left: 40%; width: 2px; height: 2px; animation-delay: -6s; animation-duration: 20s; }
+.rdm-particles span:nth-child(4) { left: 55%; width: 4px; height: 4px; animation-delay: -9s; animation-duration: 16s; }
+.rdm-particles span:nth-child(5) { left: 70%; width: 3px; height: 3px; animation-delay: -12s; animation-duration: 19s; }
+.rdm-particles span:nth-child(6) { left: 85%; width: 5px; height: 5px; animation-delay: -2s; animation-duration: 15s; }
+.rdm-particles span:nth-child(7) { left: 15%; width: 2px; height: 2px; animation-delay: -8s; animation-duration: 22s; }
+.rdm-particles span:nth-child(8) { left: 60%; width: 4px; height: 4px; animation-delay: -5s; animation-duration: 17s; }
+
+@keyframes rdmFloat {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ---- GLOW LINE DIVIDER ---- */
+.rdm-glow-divider {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, hsl(43 80% 55%) 20%, hsl(210 100% 55%) 50%, hsl(43 80% 55%) 80%, transparent 100%);
+  opacity: 0.5;
+}
+.rdm-glow-divider::after {
+  content: '';
+  position: absolute;
+  inset: -4px 20% -4px 20%;
+  background: inherit;
+  filter: blur(8px);
+  opacity: 0.6;
+}
+
+/* ---- IMAGE REVEAL ON SCROLL ---- */
+.rdm-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rdm-reveal.rdm-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.rdm-reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rdm-reveal-left.rdm-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+.rdm-reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rdm-reveal-right.rdm-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+.rdm-reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rdm-reveal-scale.rdm-revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---- STAGGER CHILDREN ---- */
+.rdm-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.rdm-stagger.rdm-revealed > *:nth-child(1) { transition-delay: 0s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(2) { transition-delay: 0.08s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(3) { transition-delay: 0.16s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(4) { transition-delay: 0.24s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(5) { transition-delay: 0.32s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(6) { transition-delay: 0.40s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(7) { transition-delay: 0.48s; opacity: 1; transform: translateY(0); }
+.rdm-stagger.rdm-revealed > *:nth-child(8) { transition-delay: 0.56s; opacity: 1; transform: translateY(0); }
+
+/* ---- HERO CINEMATIC OVERLAY ---- */
+.rdm-hero-cinematic {
+  position: relative;
+}
+.rdm-hero-cinematic::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, hsl(222 47% 5%) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ---- CARD HOVER LIFT ---- */
+.rdm-card-lift {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+}
+.rdm-card-lift:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 60px -15px hsla(0, 0%, 0%, 0.4), 0 0 30px -10px hsla(43, 80%, 55%, 0.15);
+}
+
+/* ---- IMAGE HOVER ZOOM + OVERLAY ---- */
+.rdm-img-hover {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.rdm-img-hover img {
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
+}
+.rdm-img-hover:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.05) saturate(1.1);
+}
+.rdm-img-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, hsla(222, 47%, 5%, 0.6) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.rdm-img-hover:hover::after {
+  opacity: 1;
+}
+
+/* ---- GOLDEN SHIMMER BUTTON ---- */
+.rdm-btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.rdm-btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: left 0.6s ease;
+}
+.rdm-btn-shimmer:hover::before {
+  left: 100%;
+}
+
+/* ---- TEXT REVEAL ---- */
+.rdm-text-reveal {
+  overflow: hidden;
+}
+.rdm-text-reveal > * {
+  display: inline-block;
+  animation: rdmTextReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-play-state: paused;
+}
+.rdm-text-reveal.rdm-revealed > * {
+  animation-play-state: running;
+}
+@keyframes rdmTextReveal {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ---- MAGNETIC BUTTON EFFECT ---- */
+.rdm-magnetic {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rdm-magnetic:hover {
+  transform: scale(1.05);
+}
+.rdm-magnetic:active {
+  transform: scale(0.97);
+}
+
+/* ---- GLOW BORDER ON HOVER ---- */
+.rdm-glow-border {
+  position: relative;
+  border: 1px solid hsla(43, 80%, 55%, 0.15);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.rdm-glow-border:hover {
+  border-color: hsla(43, 80%, 55%, 0.4);
+  box-shadow: 0 0 25px -5px hsla(43, 80%, 55%, 0.2), inset 0 0 25px -5px hsla(43, 80%, 55%, 0.05);
+}
+
+/* ---- MOSAIC GRID ---- */
+.rdm-mosaic {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 180px;
+}
+.rdm-mosaic .rdm-mosaic-tall {
+  grid-row: span 2;
+}
+.rdm-mosaic .rdm-mosaic-wide {
+  grid-column: span 2;
+}
+@media (max-width: 768px) {
+  .rdm-mosaic {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+  }
+}
+
+/* ---- HORIZONTAL SCROLL GALLERY ---- */
+.rdm-scroll-gallery {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 1rem;
+  scrollbar-width: none;
+}
+.rdm-scroll-gallery::-webkit-scrollbar { display: none; }
+.rdm-scroll-gallery > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ---- CINEMATIC BANNER ---- */
+.rdm-cinematic-banner {
+  position: relative;
+  height: 60vh;
+  min-height: 400px;
+  overflow: hidden;
+}
+.rdm-cinematic-banner img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: rdmKenBurns 25s ease-in-out infinite alternate;
+}
+.rdm-cinematic-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    hsla(222, 47%, 5%, 0.7) 0%,
+    hsla(222, 47%, 5%, 0.3) 40%,
+    hsla(222, 47%, 5%, 0.5) 70%,
+    hsla(222, 47%, 5%, 0.8) 100%
+  );
+  z-index: 1;
+}
+@keyframes rdmKenBurns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.08) translate(-1%, -1%); }
+}
+
+/* ---- FLOATING BADGE ---- */
+.rdm-float-badge {
+  position: absolute;
+  animation: rdmBadgeFloat 4s ease-in-out infinite;
+}
+@keyframes rdmBadgeFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ---- PULSE RING ---- */
+.rdm-pulse-ring {
+  position: relative;
+}
+.rdm-pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid hsla(43, 80%, 55%, 0.3);
+  animation: rdmPulseRing 2s ease-out infinite;
+}
+@keyframes rdmPulseRing {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* ---- NOISE TEXTURE OVERLAY ---- */
+.rdm-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* ---- GRADIENT BORDER ANIMATION ---- */
+.rdm-gradient-border {
+  position: relative;
+  background: hsl(222 40% 8%);
+  border-radius: 1rem;
+}
+.rdm-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, hsl(43 80% 55%), hsl(210 100% 55%), hsl(43 80% 55%));
+  background-size: 200% 200%;
+  animation: rdmGradientShift 4s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+@keyframes rdmGradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ---- SECTION BACKGROUNDS ---- */
+.rdm-section-dark {
+  background: linear-gradient(180deg, hsl(222 47% 5%) 0%, hsl(222 50% 3%) 100%);
+}
+.rdm-section-amber {
+  background: linear-gradient(180deg, hsla(43, 80%, 55%, 0.04) 0%, hsla(43, 80%, 55%, 0.08) 50%, hsla(43, 80%, 55%, 0.04) 100%);
+}
+.rdm-section-mixed {
+  background: linear-gradient(135deg, hsl(222 47% 5%) 0%, hsl(222 40% 8%) 50%, hsl(43 80% 55% / 0.03) 100%);
+}
+
+/* ---- REDUCED MOTION ---- */
+@media (prefers-reduced-motion: reduce) {
+  .rdm-reveal, .rdm-reveal-left, .rdm-reveal-right, .rdm-reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .rdm-stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .rdm-particles span { animation: none; }
+  .rdm-cinematic-banner img { animation: none; }
+  .rdm-float-badge { animation: none; }
+  .rdm-pulse-ring::before { animation: none; }
+  .rdm-gradient-border::before { animation: none; }
+}

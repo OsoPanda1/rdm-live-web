@@ -1,8 +1,7 @@
-// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { NOTIFICATION_COLORS } from "@/lib/codex";
+import { FEDERATION_COLORS as NOTIFICATION_COLORS } from "@/lib/federation";
 
 export type ToolbarPosition = "top" | "left" | "right" | "bottom";
 export type NotificationType = keyof typeof NOTIFICATION_COLORS;

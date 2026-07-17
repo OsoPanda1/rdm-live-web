@@ -1,6 +1,6 @@
 # Manual extremo RDM Digital — versión final unificada
 
-Este manual es norma obligatoria para Lovable, CODEX, equipo técnico y cualquier contribuidor. Su objetivo es transformar RDM Digital de prototipo avanzado a infraestructura institucional lista para producción pública sobre Cloudflare.
+Este manual es norma obligatoria para Lovable, CODEX, equipo técnico y cualquier contribuidor. Su objetivo es transformar RDM Digital de prototipo avanzado a infraestructura institucional lista para producción pública sobre Vercel + Supabase.
 
 ## Objetivo global
 
@@ -9,7 +9,7 @@ Alcanzar al menos **95% de madurez operativa por dominio** antes de considerar e
 ## Veredicto operativo
 
 - El monorepo tiene una visión y arquitectura por encima de la media de proyectos generados con Lovable.
-- La implementación debe tratarse como **prototipo avanzado** hasta completar los bloqueantes P0 y los controles Cloudflare.
+- La implementación debe tratarse como **prototipo avanzado** hasta completar los bloqueantes P0 y los controles de seguridad en Vercel.
 - La brecha crítica está entre “funciona y se ve bien” y “resiste carga, ataques, errores y auditoría”.
 
 ## Orden absoluto de ejecución
@@ -19,7 +19,7 @@ Ningún contribuidor debe saltarse este orden:
 1. **P0:** pruebas y seguridad básica.
 2. **P0/P1:** eventos, integridad de datos y observabilidad.
 3. **P2:** Supabase endurecido y RLS sin agujeros.
-4. **Cloudflare:** despliegue protegido, staging y controles de borde.
+4. **Vercel + Supabase:** despliegue protegido, staging y controles de borde.
 5. **P3:** performance y accesibilidad.
 6. **P2 arquitectura:** gobernanza de alcance y dominios.
 
@@ -41,15 +41,15 @@ Norma:
 - `SUPABASE_SERVICE_ROLE_KEY` jamás debe estar disponible para código cliente ni empaquetarse en bundles web.
 - El cliente admin de Supabase debe vivir solo en módulos `*.server.ts`, funciones edge o infraestructura server-only.
 - ESLint debe bloquear imports server-only desde frontend.
-- La llave debe vivir en variables protegidas de Cloudflare/Vault, nunca en código fuente.
+- La llave debe vivir en variables protegidas de Vercel/Vault, nunca en código fuente.
 
-### P0-03 Cloudflare
+### P0-03 Vercel
 
 Norma:
 
-- Debe existir configuración formal de Cloudflare Pages/Workers.
+- Debe existir configuración formal de Vercel deployment.
 - Deben existir entornos separados de preview/staging y production.
-- Secrets se configuran con Cloudflare dashboard o `wrangler pages secret put`; nunca se versionan.
+- Secrets se configuran en Vercel dashboard → Project Settings → Environment Variables; nunca se versionan.
 
 ### P0-04 Observabilidad
 
@@ -95,7 +95,7 @@ Norma:
 
 - Revisar todas las políticas RLS y eliminar `USING (true)` salvo justificación pública explícita.
 - Sustituir whitelists de correos administrativos por roles y autenticación fuerte.
-- Añadir rate limiting, moderación, antispam y Cloudflare Turnstile en formularios expuestos.
+- Añadir rate limiting, moderación, antispam y CAPTCHA (Turnstile o hCaptcha) en formularios expuestos.
 
 ### SEO
 
@@ -120,16 +120,14 @@ Norma:
 - Ejecutar Lighthouse y Axe.
 - Corregir contraste, labels, focus management, navegación por teclado y roles ARIA.
 
-## Checklist Cloudflare obligatorio
+## Checklist Vercel obligatorio
 
-- DNS en zona Cloudflare con registros correctos.
-- Pages conectado al repositorio con preview/staging y production.
-- WAF activo para rutas críticas.
-- Rate limiting por IP/ruta.
-- Turnstile en formularios expuestos.
-- CSP estricta.
-- HSTS habilitado.
-- Analytics Cloudflare y PostHog.
+- DNS en zona Vercel con registros correctos.
+- Proyecto conectado al repositorio con preview/staging y production.
+- Rate limiting por IP/ruta (Vercel WAF o middleware).
+- CSP estricta en vercel.json.
+- HSTS habilitado en vercel.json.
+- PostHog para analytics.
 - Sentry frontend/backend.
 - Staging separado para pruebas y chaos.
 

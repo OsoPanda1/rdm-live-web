@@ -2,7 +2,7 @@
 // RDM Digital OS — Edge Function: Music Streaming & Sovereign Donation Engine v4.0
 // Identidad: Silver & Mist Sovereign — Plata pulida, Platino y Crystal Glow
 // ============================================================================
-import Stripe from "https://esm.sh/stripe@17.7.0?target=deno";
+import { createStripe, safeError } from "../_shared/stripe.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
@@ -119,10 +119,7 @@ Deno.serve(async (req) => {
         throw new Error("El protocolo de RDM Digital exige un micro-donativo mínimo de 25 MXN.");
       }
 
-      // Inicialización de la pasarela Stripe (Configuración Acacia Enterprise)
-      const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-      if (!stripeKey) throw new Error("Módulo crítico STRIPE_SECRET_KEY ausente en el entorno.");
-      const stripe = new Stripe(stripeKey, { apiVersion: "2024-12-18.acacia" });
+      const stripe = createStripe();
 
       // Verificación de Identidad Descentralizada a través de Supabase Auth
       const authHeader = req.headers.get("Authorization");
@@ -145,7 +142,7 @@ Deno.serve(async (req) => {
       const track = track_id ? MUSIC_CATALOG[track_id] : null;
       const finalTrackTitle = track ? track.title : "Legado RDM Digital General";
 
-      const origin = req.headers.get("origin") || "http://localhost:5173";
+      const origin = req.headers.get("origin") || Deno.env.get("PRODUCTION_ORIGIN") || "https://visitarealdelmonte.online";
 
       // Creación de la sesión de pasarela inteligente
       const session = await stripe.checkout.sessions.create({
@@ -202,11 +199,6 @@ Deno.serve(async (req) => {
     throw new Error("Method Not Allowed");
 
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    console.error(`[AUDIO ENGINE KERNEL ERROR]: ${msg}`);
-    return new Response(JSON.stringify({ error: "Internal error" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return safeError(e);
   }
 });

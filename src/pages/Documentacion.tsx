@@ -13,9 +13,14 @@ const templates = [
 const Documentacion = () => (
   <WikiPage
     title="Documentación Técnica"
-    subtitle="Plantillas, estructura y políticas de la wiki TAMV"
-  >
-    <Section title="Plantillas de edición">
+        subtitle="Plantillas, estructura y políticas de la wiki TAMV"
+      >
+        {/* Hero Banner */}
+        <div className="relative h-48 w-full overflow-hidden">
+          <img src="/images/museo-mina.jpg" alt="Museo de la Mina de Real del Monte" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+        <Section title="Plantillas de edición">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {templates.map((t) => (
           <div key={t.title} className="rounded-lg border border-border/50 bg-card/50 p-4">

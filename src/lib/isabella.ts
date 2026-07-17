@@ -4,6 +4,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+import { supabase } from "@/integrations/supabase/client";
 import type {
   TuristaEstado,
   IsabellaDecision,
@@ -17,7 +18,6 @@ import {
   applyDecisionToHeptafederation,
   getGlobalHealth,
   getTelemetry,
-  getFederationStats,
 } from './heptafederation';
 
 // ============================================================================
@@ -167,7 +167,15 @@ export function registrarFeedback(
     timestamp: new Date().toISOString(),
   });
 
-  // TODO: Persistir en base de datos
+  supabase.from("isabella_feedback").insert({
+    decision_trace_id: decisionTraceId,
+    rating,
+    feedback: feedback ?? null,
+    consentimiento: consentimiento ?? null,
+    created_at: new Date().toISOString(),
+  }).then(({ error }: { error: unknown }) => {
+    if (error) logger.error("[Isabella] Error al persistir feedback", { error });
+  });
 }
 
 /**
@@ -175,13 +183,13 @@ export function registrarFeedback(
  */
 export function getSystemStatus(): {
   orchestratorStats: ReturnType<ExperienceOrchestrator['getStats']>;
-  federationStats: ReturnType<typeof getFederationStats>;
+  federationHealth: number;
   systemMetrics: ReturnType<typeof getSystemMetrics>;
   placesCount: number;
 } {
   return {
     orchestratorStats: orchestrator.getStats(),
-    federationStats: getFederationStats(),
+    federationHealth: getGlobalHealth(),
     systemMetrics: getSystemMetrics(),
     placesCount: getAllPlaces().length,
   };
@@ -211,6 +219,20 @@ export function generarSesionTurista(): string {
 }
 
 // ============================================================================
+// FUNCION ADICIONAL para compatibilidad con barrel exports
+// ============================================================================
+
+let _lastDecision: { traceId: string; territory: string; decision?: import('@/core/models').IsabellaDecision } | null = null;
+
+export function getLastDecision() {
+  return _lastDecision;
+}
+
+export function setLastDecision(d: typeof _lastDecision) {
+  _lastDecision = d;
+}
+
+// ============================================================================
 // EXPORTACIONES
 // ============================================================================
 
@@ -221,7 +243,6 @@ export {
   getAllPlaces,
   getGlobalHealth,
   getTelemetry,
-  getFederationStats,
 };
 
 export type {

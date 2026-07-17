@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Isabella Orb - Portal flotante para chat con Isabella AI
  * Orbe 3D que se transforma en ventana de chat

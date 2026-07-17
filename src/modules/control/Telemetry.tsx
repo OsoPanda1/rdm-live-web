@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, Wifi, Cpu, HardDrive, BarChart3 } from "lucide-react";

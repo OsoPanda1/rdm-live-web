@@ -31,7 +31,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         <Card className="overflow-hidden rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-1 group cursor-pointer">
           {pkg.hero_image && (
             <div className="h-48 overflow-hidden relative">
-              <img src={pkg.hero_image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <img src={pkg.hero_image} alt={pkg.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <Badge className={`absolute bottom-3 left-3 ${TYPE_COLORS[pkg.type] ?? TYPE_COLORS.cultural}`}>
                 {pkg.type}

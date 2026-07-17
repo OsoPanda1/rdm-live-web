@@ -147,11 +147,10 @@ export const LSMRenderEngine = ({
               style={{
                 width: 16,
                 height: 16,
-                left: 0,
-                top: 0,
-                // translate3d activa la aceleración por hardware
-                // Se usa vw/vh para hacer la proyección relativa al viewport
-                transform: `translate3d(${nodo.x}vw, ${nodo.y}vh, 0) translate(-50%, -50%) scale(${nodo.scale})`,
+                left: `${nodo.x}%`,
+                top: `${nodo.y}%`,
+                willChange: "transform",
+                transform: `translate(-50%, -50%) scale(${nodo.scale})`,
                 background: isOferta
                   ? "rgba(238, 242, 255, 0.95)"
                   : currentTheme.colorNodo,

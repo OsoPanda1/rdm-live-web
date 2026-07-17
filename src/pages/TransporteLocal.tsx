@@ -1,5 +1,4 @@
 import { RDMLayout } from "@/components/rdm/RDMLayout";
-// @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Car, MapPin, Plus } from "lucide-react";
@@ -7,11 +6,12 @@ import { ModuleCinematicIntro } from "@/components/ModuleCinematicIntro";
 import { TransportCard } from "@/components/transport/TransportCard";
 import { ElegantPagination } from "@/components/ElegantPagination";
 import { supabase } from "@/integrations/supabase/client";
+import type { TransportProvider } from "@/types/supabase";
 
 const PAGE_SIZE = 8;
 
 export default function TransporteLocal() {
-  const [providers, setProviders] = useState<any[]>([]);
+  const [providers, setProviders] = useState<TransportProvider[]>([]);
   const [page, setPage] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
 

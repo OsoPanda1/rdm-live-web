@@ -48,37 +48,30 @@ const BackgroundEffects: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} className="fixed inset-0 bg-black z-0">
-      {/* Cosmic Tree Layer */}
+    <div ref={containerRef} className="fixed inset-0 bg-gradient-to-b from-black via-indigo-950/30 to-black z-0">
       <div 
-        className="absolute inset-0 bg-[url('/lovable-uploads/46b80c50-4191-4268-9b90-920da55ae5e6.png')] bg-cover bg-center opacity-30 mix-blend-screen"
+        className="absolute inset-0 bg-gradient-to-br from-blue-950/40 via-indigo-900/30 to-transparent opacity-30 mix-blend-screen"
         style={{
           transform: `translateZ(-200px) scale(${1 + scrollPosition * 0.0005})`,
           transition: "transform 0.1s ease-out",
         }}
       />
-      
-      {/* Mystical Tree Layer */}
       <div 
-        className="absolute inset-0 bg-[url('/lovable-uploads/7f7da0f7-8fa6-4df7-a139-2668062c0b01.png')] bg-cover bg-center opacity-20 mix-blend-overlay"
+        className="absolute inset-0 bg-gradient-to-tr from-violet-950/30 via-transparent to-blue-900/20 opacity-20 mix-blend-overlay"
         style={{
           ...getParallaxStyle(20),
           transform: `translateZ(-150px) translateX(${-scrollPosition * 0.02}px)`,
         }}
       />
-      
-      {/* Cosmic Circle Layer */}
       <div 
-        className="absolute inset-0 bg-[url('/lovable-uploads/e56b7d2b-3b9b-4f2d-bc6c-245f063b39ec.png')] bg-cover opacity-15 mix-blend-luminosity"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-950/20 to-transparent opacity-15 mix-blend-luminosity"
         style={{
           ...getParallaxStyle(15),
           transform: `translateZ(-100px) translateX(${scrollPosition * 0.03}px)`,
         }}
       />
-
-      {/* Digital Earth Layer */}
       <div 
-        className="absolute inset-0 bg-[url('/lovable-uploads/81cc94d5-e823-4cb3-8227-f751a0c02485.png')] bg-cover bg-center opacity-10 mix-blend-overlay"
+        className="absolute inset-0 bg-gradient-to-bl from-indigo-950/30 via-transparent to-blue-950/20 opacity-10 mix-blend-overlay"
         style={{
           ...getParallaxStyle(25),
           transform: `translateZ(-120px) scale(${1 + scrollPosition * 0.0005})`,

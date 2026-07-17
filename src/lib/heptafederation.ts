@@ -23,6 +23,7 @@ import {
 export const HEPTAFEDERATION: FederationModule[] = [
   {
     id: 'DEKATEOTL',
+    federationNumber: 'F1',
     name: 'Dekateotl',
     specialty: 'Etica y Logica Narrativa',
     stack: ['LangGraph', 'SHAP', 'RLHF'],
@@ -34,6 +35,7 @@ export const HEPTAFEDERATION: FederationModule[] = [
   },
   {
     id: 'ANUBIS',
+    federationNumber: 'F2',
     name: 'Anubis Sentinel',
     specialty: 'Seguridad PQC',
     stack: ['Dilithium-5', 'Kyber-1024', 'zk-SNARKs'],
@@ -45,6 +47,7 @@ export const HEPTAFEDERATION: FederationModule[] = [
   },
   {
     id: 'BOOKPI_DATAGIT',
+    federationNumber: 'F3',
     name: 'BookPI / DataGit',
     specialty: 'Inmutabilidad y Auditoria',
     stack: ['IPFS Pinning', 'Merkle Trees', 'MSR Blockchain'],
@@ -56,6 +59,7 @@ export const HEPTAFEDERATION: FederationModule[] = [
   },
   {
     id: 'PHOENIX',
+    federationNumber: 'F4',
     name: 'Phoenix Protocol',
     specialty: 'Resiliencia y P2P',
     stack: ['libp2p', 'Swarm Quorum'],
@@ -67,6 +71,7 @@ export const HEPTAFEDERATION: FederationModule[] = [
   },
   {
     id: 'MDD_TAMV',
+    federationNumber: 'F5',
     name: 'MDD / TAMV Credits',
     specialty: 'Economia Creativa',
     stack: ['Web3 Identity', 'Quadratic Funding'],
@@ -78,6 +83,7 @@ export const HEPTAFEDERATION: FederationModule[] = [
   },
   {
     id: 'KAOS_HYPERRENDER',
+    federationNumber: 'F6',
     name: 'KAOS / HyperRender',
     specialty: 'Sensorialidad y XR',
     stack: ['Three.js', 'WebNN', 'Haptics API'],
@@ -89,6 +95,7 @@ export const HEPTAFEDERATION: FederationModule[] = [
   },
   {
     id: 'CHRONOS',
+    federationNumber: 'F7',
     name: 'Chronos Planning',
     specialty: 'Gestion de Tiempo y Guia',
     stack: ['Genetic Algorithms', 'Mapbox GL', 'Turf.js'],
@@ -323,7 +330,7 @@ const LOCAL_FEDERATION_DEFAULTS: LocalFederationStatus[] = [
   { id: Federacion.GOBIERNO_DIGITAL, name: 'Gobierno Digital', activeBusiness: 3, satisfaction: 0.75, revenue24h: 0, trending: 'stable' },
 ];
 
-let localFederations: LocalFederationStatus[] = [...LOCAL_FEDERATION_DEFAULTS];
+const localFederations: LocalFederationStatus[] = [...LOCAL_FEDERATION_DEFAULTS];
 
 export function getLocalFederations(): LocalFederationStatus[] {
   return localFederations;
@@ -346,6 +353,27 @@ export function updateLocalFederation(
   };
 
   return localFederations[index];
+}
+
+// ============================================================================
+// INTEGRACION CON FEDERATIONBUS (F1-F7 TAMV)
+// ============================================================================
+
+import { federationBus } from "@/federaciones/FederationBus";
+import type { FederationModule as FedBusModule, FederationId as FedBusId } from "@/core/models";
+
+export function getFederationBusModules(): FedBusModule[] {
+  return federationBus.getAllFederations();
+}
+
+export function getFederationBusModule(id: FedBusId): FedBusModule | undefined {
+  return federationBus.getFederation(id);
+}
+
+export function getFederationBusHealth(): number {
+  const feds = federationBus.getAllFederations();
+  if (!feds.length) return 0;
+  return Math.round(feds.reduce((sum, f) => sum + f.health, 0) / feds.length * 100) / 100;
 }
 
 // ============================================================================

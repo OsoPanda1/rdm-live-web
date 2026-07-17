@@ -3,11 +3,30 @@
  * Metricas tecnicas y de negocio para observabilidad
  */
 
+import { logger } from '@/lib/logger';
+
 type Labels = Record<string, string>;
 
 // ============================================================================
 // PRIMITIVAS DE METRICAS
 // ============================================================================
+
+const MAX_CARDINALITY = 10_000;
+const MAX_LABEL_KEYS = 5;
+const MAX_LABEL_VALUE_LENGTH = 64;
+
+function validateLabels(labels: Labels, metricName: string): void {
+  const keys = Object.keys(labels);
+  if (keys.length > MAX_LABEL_KEYS) {
+    logger.warn(`[prometheus] ${metricName}: truncating labels from ${keys.length} to ${MAX_LABEL_KEYS}`);
+    for (const k of keys.slice(MAX_LABEL_KEYS)) delete labels[k];
+  }
+  for (const [k, v] of Object.entries(labels)) {
+    if (v.length > MAX_LABEL_VALUE_LENGTH) {
+      labels[k] = v.slice(0, MAX_LABEL_VALUE_LENGTH);
+    }
+  }
+}
 
 export class Counter {
   private data = new Map<string, number>();
@@ -18,7 +37,12 @@ export class Counter {
   ) {}
 
   inc(labels: Labels = {}, value = 1): void {
+    validateLabels(labels, this.name);
     const key = JSON.stringify(labels);
+    if (!this.data.has(key) && this.data.size >= MAX_CARDINALITY) {
+      logger.warn(`[prometheus] ${this.name}: cardinality limit (${MAX_CARDINALITY}) reached, dropping labels`);
+      return;
+    }
     const previous = this.data.get(key) ?? 0;
     this.data.set(key, previous + value);
   }
@@ -28,6 +52,10 @@ export class Counter {
       labels: JSON.parse(labels),
       value,
     }));
+  }
+
+  cardinality(): number {
+    return this.data.size;
   }
 
   reset(): void {

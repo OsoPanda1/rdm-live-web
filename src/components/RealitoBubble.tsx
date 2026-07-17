@@ -53,7 +53,7 @@ const RealitoBubble = () => {
       osc.connect(gain).connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.4);
-    } catch {}
+    } catch { /* audio context may not be available */ }
   }, [soundEnabled]);
 
   const handleSend = useCallback(async (text: string) => {
@@ -122,11 +122,11 @@ const RealitoBubble = () => {
       }
 
       playSound(880);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setMessages(prev => [...prev, {
         id: assistantId,
         role: "assistant",
-        content: `Lo siento, hubo un error: ${err.message}. Intenta de nuevo.`,
+        content: `Lo siento, hubo un error: ${err instanceof Error ? err.message : 'desconocido'}. Intenta de nuevo.`,
         timestamp: new Date(),
       }]);
     } finally {
@@ -158,7 +158,7 @@ const RealitoBubble = () => {
         {open ? (
           <span className="text-lg font-bold text-night-900">✕</span>
         ) : (
-          <img src={logoImg} alt="Realito" className="w-8 h-8 object-contain" />
+          <img src={logoImg} alt="Realito" loading="lazy" className="w-8 h-8 object-contain" />
         )}
       </motion.button>
 
@@ -181,7 +181,7 @@ const RealitoBubble = () => {
             <div className="px-5 py-4 flex items-center gap-3" style={{ borderBottom: "1px solid hsla(43, 80%, 55%, 0.1)" }}>
               <div className="w-9 h-9 rounded-full flex items-center justify-center pulse-gold overflow-hidden"
                 style={{ background: "radial-gradient(circle, hsl(43, 80%, 55%), hsl(43, 60%, 35%))" }}>
-                <img src={logoImg} alt="Realito" className="w-6 h-6 object-contain" />
+                <img src={logoImg} alt="Realito" loading="lazy" className="w-6 h-6 object-contain" />
               </div>
               <div className="flex-1">
                 <h4 className="font-display text-sm text-foreground flex items-center gap-1.5">

@@ -5,9 +5,14 @@ import { Crown, MapPin, Code, Eye, Flame, Palette, BookOpen, Target, Shield, Glo
 const BiografiaCEO = () => (
   <WikiPage
     title="Edwin Oswaldo Castillo Trejo"
-    subtitle="Anubis Villaseñor — Fundador y CEO del TAMV Online Network 4D™ / TAMV MD‑X4"
-  >
-    <div className="space-y-8">
+      subtitle="Anubis Villaseñor — Fundador y CEO del TAMV Online Network 4D™ / TAMV MD‑X4"
+    >
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/ceo-tamv.jpg" alt="Edwin Oswaldo Castillo Trejo, fundador de TAMV" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
+      <div className="space-y-8">
       {/* I. Identidad y Origen */}
       <Section title="I. Identidad, origen y construcción desde la periferia">
         <div className="flex items-start gap-4">

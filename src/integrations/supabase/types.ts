@@ -14,291 +14,690 @@ export type Database = {
   }
   public: {
     Tables: {
-      activity_log: {
+      community_photos: {
         Row: {
-          action: string
+          alt_text: string
           created_at: string
           id: string
-          metadata: Json | null
-          target_id: string | null
-          target_type: string | null
+          image_url: string
+          post_id: string | null
+          status: Database["public"]["Enums"]["content_status"]
           user_id: string
         }
         Insert: {
-          action: string
+          alt_text: string
           created_at?: string
           id?: string
-          metadata?: Json | null
-          target_id?: string | null
-          target_type?: string | null
+          image_url: string
+          post_id?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
           user_id: string
         }
         Update: {
-          action?: string
+          alt_text?: string
           created_at?: string
           id?: string
-          metadata?: Json | null
-          target_id?: string | null
-          target_type?: string | null
+          image_url?: string
+          post_id?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
           user_id?: string
-        }
-        Relationships: []
-      }
-      admin_email_whitelist: {
-        Row: {
-          created_at: string
-          email: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-        }
-        Relationships: []
-      }
-      badges: {
-        Row: {
-          category: string
-          created_at: string
-          description: string
-          icon: string
-          id: string
-          name: string
-          points_required: number
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          description: string
-          icon: string
-          id: string
-          name: string
-          points_required?: number
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          description?: string
-          icon?: string
-          id?: string
-          name?: string
-          points_required?: number
-        }
-        Relationships: []
-      }
-      forum_comments: {
-        Row: {
-          author_name: string
-          content: string
-          created_at: string
-          id: string
-          post_id: string
-        }
-        Insert: {
-          author_name: string
-          content: string
-          created_at?: string
-          id?: string
-          post_id: string
-        }
-        Update: {
-          author_name?: string
-          content?: string
-          created_at?: string
-          id?: string
-          post_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "forum_comments_post_id_fkey"
+            foreignKeyName: "community_photos_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
-            referencedRelation: "forum_posts"
+            referencedRelation: "community_posts"
             referencedColumns: ["id"]
           },
         ]
       }
-      forum_posts: {
+      community_posts: {
         Row: {
-          author_avatar: string | null
-          author_name: string
-          category: string
-          content: string
+          body: string
           created_at: string
           id: string
-          image_url: string | null
-          likes: number
-          place_name: string | null
-          title: string
-          video_url: string | null
+          location_name: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          author_avatar?: string | null
-          author_name: string
-          category?: string
-          content: string
+          body: string
           created_at?: string
           id?: string
-          image_url?: string | null
-          likes?: number
-          place_name?: string | null
-          title: string
-          video_url?: string | null
+          location_name?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          author_avatar?: string | null
-          author_name?: string
-          category?: string
-          content?: string
+          body?: string
           created_at?: string
           id?: string
-          image_url?: string | null
-          likes?: number
-          place_name?: string | null
-          title?: string
-          video_url?: string | null
+          location_name?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
-      point_transactions: {
+      forum_replies: {
         Row: {
-          action: string
+          body: string
           created_at: string
           id: string
-          metadata: Json | null
+          status: Database["public"]["Enums"]["content_status"]
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          topic_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          topic_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_replies_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "forum_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_topics: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          category: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gamification_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
           points: number
           user_id: string
         }
         Insert: {
-          action: string
           created_at?: string
+          event_type: string
           id?: string
-          metadata?: Json | null
+          metadata?: Json
           points: number
           user_id: string
         }
         Update: {
-          action?: string
           created_at?: string
+          event_type?: string
           id?: string
-          metadata?: Json | null
+          metadata?: Json
           points?: number
           user_id?: string
         }
         Relationships: []
       }
-      profiles: {
+      gamification_profiles: {
         Row: {
-          avatar_url: string | null
-          bio: string | null
-          created_at: string
-          display_name: string
-          id: string
+          badges: Json
           level: number
-          location: string | null
-          total_points: number
+          points: number
+          streak_days: number
           updated_at: string
+          user_id: string
         }
         Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string
-          display_name: string
-          id: string
+          badges?: Json
           level?: number
-          location?: string | null
-          total_points?: number
+          points?: number
+          streak_days?: number
           updated_at?: string
+          user_id: string
         }
         Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string
-          display_name?: string
-          id?: string
+          badges?: Json
           level?: number
-          location?: string | null
-          total_points?: number
+          points?: number
+          streak_days?: number
           updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
-      songs: {
+      isabella_conversations: {
         Row: {
-          artist: string | null
+          archived: boolean
           created_at: string
-          description: string | null
-          duration_seconds: number | null
           id: string
-          is_public: boolean
-          mime_type: string
-          size_bytes: number | null
-          storage_path: string
+          last_message_at: string
+          summary: string | null
           title: string
           updated_at: string
-          uploaded_by: string | null
+          user_id: string
         }
         Insert: {
-          artist?: string | null
+          archived?: boolean
           created_at?: string
-          description?: string | null
-          duration_seconds?: number | null
           id?: string
-          is_public?: boolean
-          mime_type: string
-          size_bytes?: number | null
-          storage_path: string
-          title: string
-          updated_at?: string
-          uploaded_by?: string | null
-        }
-        Update: {
-          artist?: string | null
-          created_at?: string
-          description?: string | null
-          duration_seconds?: number | null
-          id?: string
-          is_public?: boolean
-          mime_type?: string
-          size_bytes?: number | null
-          storage_path?: string
+          last_message_at?: string
+          summary?: string | null
           title?: string
           updated_at?: string
-          uploaded_by?: string | null
-        }
-        Relationships: []
-      }
-      user_badges: {
-        Row: {
-          badge_id: string
-          earned_at: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          badge_id: string
-          earned_at?: string
-          id?: string
           user_id: string
         }
         Update: {
-          badge_id?: string
-          earned_at?: string
+          archived?: boolean
+          created_at?: string
           id?: string
+          last_message_at?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      isabella_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          latency_ms: number | null
+          role: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          role: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          role?: string
+          tokens_used?: number | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_badges_badge_id_fkey"
-            columns: ["badge_id"]
+            foreignKeyName: "isabella_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
             isOneToOne: false
-            referencedRelation: "badges"
+            referencedRelation: "isabella_conversations"
             referencedColumns: ["id"]
           },
         ]
+      }
+      memberships: {
+        Row: {
+          amount_mxn: number
+          created_at: string
+          id: string
+          merchant_id: string | null
+          period_end: string | null
+          period_start: string | null
+          plan_code: string
+          provider_customer_id: string | null
+          provider_subscription_id: string | null
+          status: Database["public"]["Enums"]["membership_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_mxn: number
+          created_at?: string
+          id?: string
+          merchant_id?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          plan_code: string
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["membership_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_mxn?: number
+          created_at?: string
+          id?: string
+          merchant_id?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          plan_code?: string
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["membership_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memberships_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "merchant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      merchant_profiles: {
+        Row: {
+          address: string | null
+          business_name: string
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          owner_id: string
+          phone: string | null
+          plan_code: string
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+          verified: boolean
+        }
+        Insert: {
+          address?: string | null
+          business_name: string
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          owner_id: string
+          phone?: string | null
+          plan_code?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          verified?: boolean
+        }
+        Update: {
+          address?: string | null
+          business_name?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          owner_id?: string
+          phone?: string | null
+          plan_code?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      music_tracks: {
+        Row: {
+          artist: string
+          audio_url: string | null
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_seconds: number
+          id: string
+          kind: string
+          popularity: number
+          status: Database["public"]["Enums"]["content_status"]
+          tags: string[]
+          theme: string | null
+          title: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          artist: string
+          audio_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          kind?: string
+          popularity?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          tags?: string[]
+          theme?: string | null
+          title: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          artist?: string
+          audio_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          kind?: string
+          popularity?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          tags?: string[]
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
+      pending_role_grants: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
+      place_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          place_id: string
+          rating: number
+          status: Database["public"]["Enums"]["content_status"]
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          place_id: string
+          rating: number
+          status?: Database["public"]["Enums"]["content_status"]
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          place_id?: string
+          rating?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "place_reviews_place_id_fkey"
+            columns: ["place_id"]
+            isOneToOne: false
+            referencedRelation: "tourism_places"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          federation: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          federation?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          federation?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      store_orders: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          provider_payment_id: string | null
+          shipping_address: Json | null
+          status: string
+          total_mxn: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items?: Json
+          provider_payment_id?: string | null
+          shipping_address?: Json | null
+          status?: string
+          total_mxn: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          provider_payment_id?: string | null
+          shipping_address?: Json | null
+          status?: string
+          total_mxn?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      store_products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          inventory: number
+          name: string
+          price_mxn: number
+          slug: string
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          inventory?: number
+          name: string
+          price_mxn: number
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          inventory?: number
+          name?: string
+          price_mxn?: number
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      telemetry_pulses: {
+        Row: {
+          created_at: string
+          federation: string
+          id: string
+          metadata: Json | null
+          pulse_type: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          federation: string
+          id?: string
+          metadata?: Json | null
+          pulse_type: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          federation?: string
+          id?: string
+          metadata?: Json | null
+          pulse_type?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      tourism_places: {
+        Row: {
+          address: string | null
+          category: string
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+          opening_hours: string | null
+          phone: string | null
+          short_description: string
+          slug: string
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category: string
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          opening_hours?: string | null
+          phone?: string | null
+          short_description: string
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          opening_hours?: string | null
+          phone?: string | null
+          short_description?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -326,15 +725,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      award_points: {
-        Args: {
-          _action: string
-          _metadata?: Json
-          _points: number
-          _user_id: string
-        }
-        Returns: undefined
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -344,7 +734,9 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "merchant" | "tourist"
+      app_role: "admin" | "merchant" | "user"
+      content_status: "draft" | "published" | "archived"
+      membership_status: "pending" | "active" | "past_due" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -472,7 +864,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "merchant", "tourist"],
+      app_role: ["admin", "merchant", "user"],
+      content_status: ["draft", "published", "archived"],
+      membership_status: ["pending", "active", "past_due", "cancelled"],
     },
   },
 } as const

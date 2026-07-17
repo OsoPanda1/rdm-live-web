@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { RDMPageShell } from "@/components/rdm/RDMPageShell";
 import { OperationalReadinessBoard } from "@/components/operations/OperationalReadinessBoard";
 

@@ -1,4 +1,4 @@
-import Stripe from "https://esm.sh/stripe@17.7.0?target=deno";
+import { createStripe, safeError } from "../_shared/stripe.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { premiumCheckoutSchema } from "../_shared/validation.ts";
 import { checkRateLimit, jsonResponse, corsHeaders } from "../_shared/rate-limit.ts";
@@ -27,9 +27,7 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Demasiadas solicitudes", retryAfter: rl.retryAfter }, 429);
     }
 
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY missing");
-    const stripe = new Stripe(stripeKey, { apiVersion: "2024-12-18.acacia" });
+    const stripe = createStripe();
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header");
@@ -39,7 +37,7 @@ Deno.serve(async (req) => {
     const { data: { user }, error: userErr } = await supabase.auth.getUser();
     if (userErr || !user?.email) throw new Error("Not authenticated");
 
-    const origin = req.headers.get("origin") || "http://localhost:5173";
+    const origin = req.headers.get("origin") || Deno.env.get("PRODUCTION_ORIGIN") || "https://visitarealdelmonte.online";
 
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId = customers.data[0]?.id;
@@ -68,8 +66,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ url: session.url });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    console.error("create-premium-checkout error:", msg);
-    return jsonResponse({ error: "Internal error" }, 500);
+    if (e instanceof Response) return e;
+    return safeError(e);
   }
 });

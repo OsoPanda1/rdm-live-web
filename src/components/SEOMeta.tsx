@@ -6,7 +6,7 @@ interface SEOMetaProps {
   image?: string;
   url?: string;
   type?: 'website' | 'article' | 'business' | 'event' | 'place';
-  jsonLd?: Record<string, any>;
+  jsonLd?: Record<string, unknown>;
   publishedTime?: string;
   author?: string;
 }
@@ -116,7 +116,7 @@ export function SEOMeta({
     canonicalLink.href = canonicalUrl;
 
     // JSON-LD structured data
-    const defaultJsonLd: Record<string, any> = {
+    const defaultJsonLd: Record<string, unknown> = {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: DEFAULT_META.siteName,

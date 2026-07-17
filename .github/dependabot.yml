@@ -1,0 +1,50 @@
+version: 2
+
+updates:
+  # 1) npm / Node.js dependencies (root)
+  - package-ecosystem: "npm"
+    directory: "/"              # package.json en la raíz
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "07:00"
+      timezone: "America/Mexico_City"
+    # Opcional: agrupar actualizaciones para reducir ruido
+    groups:
+      core-deps:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "vite"
+          - "@supabase/*"
+      dev-tools:
+        patterns:
+          - "eslint*"
+          - "typescript"
+          - "vitest"
+          - "@types/*"
+    # Ignorar majors si quieres más estabilidad
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # 2) npm / Node.js dependencies (server subdir, si tienes backend separado)
+  - package-ecosystem: "npm"
+    directory: "/server"        # package.json dentro de server/
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "07:15"
+      timezone: "America/Mexico_City"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # 3) GitHub Actions (workflow files)
+  - package-ecosystem: "github-actions"
+    directory: "/"              # .github/workflows en la raíz del repo
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:30"
+      timezone: "America/Mexico_City"

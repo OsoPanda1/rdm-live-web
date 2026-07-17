@@ -9,7 +9,7 @@
 | Email | Pendiente | Resend | SES/Mailgun | `@infra/email` |
 | Storage | Supabase Storage | S3 compatible | GCS/Azure Blob | `@infra/storage` |
 | Métricas | Prometheus local | Grafana Cloud | OpenTelemetry collector | `@infra/metrics` |
-| CDN/DNS | Pendiente | Cloudflare | Fastly/AWS CloudFront | `@infra/network` |
+| CDN/DNS | Vercel Edge Network | — | Fastly/AWS CloudFront | `@infra/network` |
 
 ## Repos consolidados como versiones del mismo proyecto
 

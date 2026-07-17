@@ -12,7 +12,7 @@
 ## 2. Incidente: filtración de service-role key
 
 1. Rotar inmediatamente en Supabase → Settings → API → Reset service_role.
-2. `wrangler pages secret put SUPABASE_SERVICE_ROLE_KEY` con la nueva.
+2. Actualizar en Vercel dashboard → Project Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` con la nueva.
 3. Revocar sesiones admin: `auth.admin.signOut(user_id)`.
 4. `git log -p -- src/integrations/supabase/admin*` para auditar accesos.
 5. Notificar a DPO + abrir post-mortem.
@@ -40,13 +40,13 @@
 ## 6. Despliegue (happy path)
 
 1. PR → CI verde (lint, typecheck, test, build, security).
-2. Merge a `main` → Cloudflare Pages deploy preview.
+2. Merge a `main` → Vercel deploy preview automático (GitHub → Vercel).
 3. Smoke E2E contra preview.
-4. Promote a producción desde Cloudflare dashboard.
+4. Promote a producción desde Vercel dashboard (o automático si el pipeline es `--prod`).
 
 ## 7. Rollback
 
-- Cloudflare Pages → Deployments → "Rollback to this deployment".
+- Vercel → Deployments → "..." → "Rollback to this deployment".
 - Migraciones SQL: cada migración debe tener `down.sql` reversible.
 
 ## 8. Contactos

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import { MapPin, Phone, Globe, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,7 +37,7 @@ export function BusinessCard({ business }: { business: Business }) {
       <Card className="overflow-hidden rounded-2xl border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-1">
         {heroImg && (
           <div className="h-44 overflow-hidden">
-            <img src={heroImg} alt={business.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <img src={heroImg} alt={business.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
           </div>
         )}
         <CardContent className="p-5 space-y-3">

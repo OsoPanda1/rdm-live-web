@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
@@ -40,7 +39,7 @@ const Navigation = () => {
             </li>
             <li>
               <Link 
-                to="/documentation" 
+                to="/documentacion" 
                 className="text-sm text-muted-foreground hover:text-blue-300 transition-colors relative group px-2"
               >
                 Documentación
@@ -49,7 +48,7 @@ const Navigation = () => {
             </li>
             <li>
               <Link 
-                to="/membership" 
+                to="/membresias" 
                 className="text-sm text-muted-foreground hover:text-blue-300 transition-colors relative group px-2"
               >
                 Membresía

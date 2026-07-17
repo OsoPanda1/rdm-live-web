@@ -56,9 +56,14 @@ const casos = [
 const CasosDeUso = () => (
   <WikiPage
     title="Casos de Uso Documentados"
-    subtitle="Ejemplos prácticos de implementación del ecosistema TAMV por sector"
-  >
-    <div className="space-y-6">
+      subtitle="Ejemplos prácticos de implementación del ecosistema TAMV por sector"
+    >
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/paste-rdm.jpg" alt="Pastes coloniales de Real del Monte" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
+      <div className="space-y-6">
       {casos.map((caso) => (
         <Section key={caso.title} title="">
           <div className="rounded-lg border border-border/50 bg-card/50 p-5">

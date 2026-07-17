@@ -88,7 +88,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-primary overflow-hidden">
             {creatorAvatar ? (
-              <img src={creatorAvatar} alt={creator} className="w-full h-full object-cover" />
+              <img src={creatorAvatar} alt={creator} loading="lazy" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm">
                 {creator[0]}

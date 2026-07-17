@@ -9,6 +9,11 @@ import rdm1 from "@/assets/rdm1.jpeg";
 import rdm2 from "@/assets/rdm2.jpeg";
 import rdm3 from "@/assets/rdm01.jpg";
 import rdm4 from "@/assets/rdm02.jpg";
+import callesJpg from "@/assets/calles.jpg";
+import heroPrincipalPng from "@/assets/heroprincipal.png";
+import laDificultadImg from "@/assets/ladificultad.jpg";
+import miradorPurisimaImg from "@/assets/mirador_purisima.jpg";
+import rdmInfografia from "@/assets/rdm-infografia.png";
 
 const activities = [
   {
@@ -47,9 +52,29 @@ const activities = [
     duration: "Variable",
     distance: "Libre",
     description: "Real del Monte es famoso por su neblina etérea. Los mejores puntos para observar este fenómeno natural son los miradores al amanecer y atardecer.",
-    image: penasImg,
+    image: miradorPurisimaImg,
     highlights: ["Fotografía artística", "Atmósfera mística", "Miradores", "Amanecer/Atardecer"],
     bestTime: "Junio - Septiembre"
+  },
+  {
+    title: "Recorrido Fotográfico Urbano",
+    difficulty: "Fácil",
+    duration: "2-3 horas",
+    distance: "2.5 km",
+    description: "Explora las calles empedradas y la arquitectura colonial de Real del Monte. Ideal para fotografía de arquitectura y vida cotidiana del pueblo mágico.",
+    image: callesJpg,
+    highlights: ["Arquitectura", "Calles empedradas", "Fotografía urbana", "Cultura local"],
+    bestTime: "Todo el año"
+  },
+  {
+    title: "Ruta del Minero",
+    difficulty: "Difícil",
+    duration: "4-5 horas",
+    distance: "8 km",
+    description: "Desafiante ruta que sigue los pasos de los antiguos mineros. Atraviesa terrenos irregulares, túneles abandonados y ofrece vistas de la sierra que pocos conocen.",
+    image: laDificultadImg,
+    highlights: ["Túneles históricos", "Terreno desafiante", "Vistas únicas", "Historia minera"],
+    bestTime: "Octubre - Marzo"
   }
 ];
 
@@ -310,8 +335,8 @@ const EcoturismoPage = () => {
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="py-20">
+        {/* CTA dual */}
+        <section className="py-20 space-y-8">
           <div className="container mx-auto px-4 md:px-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -320,9 +345,9 @@ const EcoturismoPage = () => {
               className="relative rounded-3xl overflow-hidden"
             >
               <img 
-                src={penasImg}
-                alt="Ecoturismo Real del Monte"
-                className="w-full h-[400px] object-cover"
+                src={heroPrincipalPng}
+                alt="Real del Monte"
+                loading="lazy" className="w-full h-[400px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-forest/90 to-forest/70 flex items-center">
                 <div className="px-8 md:px-16 max-w-xl">
@@ -339,6 +364,26 @@ const EcoturismoPage = () => {
                   </button>
                 </div>
               </div>
+            </motion.div>
+          </div>
+
+          {/* Infografía */}
+          <div className="container mx-auto px-4 md:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="glass rounded-2xl p-6 text-center"
+            >
+              <img
+                src={rdmInfografia}
+                alt="Infografía Real del Monte"
+                loading="lazy" className="max-w-full h-auto mx-auto rounded-xl"
+                style={{ maxHeight: "500px" }}
+              />
+              <p className="text-xs text-muted-foreground mt-4">
+                Datos y cifras de Real del Monte — Un pueblo mágico con historia minera
+              </p>
             </motion.div>
           </div>
         </section>

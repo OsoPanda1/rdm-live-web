@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import { Activity, GitCommitHorizontal, Layers3, Network, TrendingUp } from "lucide-react";
 import MainLayout from "@/components/layout/MainLayout";

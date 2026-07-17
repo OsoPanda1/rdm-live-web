@@ -54,20 +54,16 @@ export function logUIError(payload: UIErrorPayload): void {
     switch (enriched.level) {
       case 'fatal':
       case 'error':
-        // eslint-disable-next-line no-console
-        logger.error(msg, enriched.details ?? '')
+        logger.error(msg, enriched.details)
         break
       case 'warn':
-        // eslint-disable-next-line no-console
-        logger.warn(msg, enriched.details ?? '')
+        logger.warn(msg, enriched.details)
         break
       case 'info':
-        // eslint-disable-next-line no-console
-        logger.info(msg, enriched.details ?? '')
+        logger.info(msg, enriched.details)
         break
       default:
-        // eslint-disable-next-line no-console
-        logger.debug(msg, enriched.details ?? '')
+        logger.debug(msg, enriched.details)
     }
   }
 }

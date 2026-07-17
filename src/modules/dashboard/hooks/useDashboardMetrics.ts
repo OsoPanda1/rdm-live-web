@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Hook para métricas del Dashboard CEO.
  * Consume el edge function `metrics-aggregates`.

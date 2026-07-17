@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Interfaz de Chat con Isabella AI
  * Triple Federado: Conceptual | Legal | Técnico
@@ -6,23 +5,26 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Send, 
-  Sparkles, 
-  Shield, 
-  Zap, 
-  Brain, 
+import {
+  Send,
+  Sparkles,
+  Shield,
+  Zap,
+  Brain,
   Heart,
   AlertTriangle,
   RefreshCw,
   X,
-  ChevronDown
+  ChevronDown,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsabella, IsabellaMessage } from '@/hooks/useIsabella';
+import { useIsabellaVoice, type IsabellaVoiceMode } from '@/hooks/useIsabellaVoice';
 import { SECURITY_PROTOCOLS, ISABELLA_CORE_IDENTITY } from '@/lib/federation';
 
 const IsabellaChat = () => {
@@ -37,6 +39,10 @@ const IsabellaChat = () => {
     cancelRequest
   } = useIsabella();
 
+  const { speak, isSpeaking: voiceSpeaking, cancelAll: cancelVoice, error: voiceError, mode: voiceMode, switchMode } = useIsabellaVoice({
+    preferredMode: "cloud",
+    consentAudio: true,
+  });
   const [input, setInput] = useState('');
   const [showProtocols, setShowProtocols] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -155,6 +161,16 @@ const IsabellaChat = () => {
               </Badge>
             )}
 
+            {/* Voice mode toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => switchMode(voiceMode === "cloud" ? "local" : "cloud")}
+              title={`Voz: ${voiceMode === "cloud" ? "Cloud TTS" : "Web Speech (local)"}`}
+            >
+              {voiceMode === "cloud" ? <Volume2 className="w-4 h-4 text-green-400" /> : <Volume2 className="w-4 h-4 text-yellow-400" />}
+            </Button>
+
             {/* Botón de protocolos */}
             <Button 
               variant="ghost" 
@@ -258,6 +274,14 @@ const IsabellaChat = () => {
         <div ref={messagesEndRef} />
       </ScrollArea>
 
+      {/* Voice Error */}
+      {voiceError && (
+        <div className="mx-4 mb-2 p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-2">
+          <VolumeX className="w-3 h-3 text-yellow-500" />
+          <span className="text-xs text-yellow-500">{voiceError}</span>
+        </div>
+      )}
+
       {/* Error */}
       {error && (
         <div className="mx-4 mb-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30 flex items-center gap-2">
@@ -281,6 +305,21 @@ const IsabellaChat = () => {
             className="min-h-[44px] max-h-32 resize-none"
             rows={1}
           />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (voiceSpeaking) { cancelVoice(); return; }
+              const lastAi = [...messages].reverse().find((m) => m.role === "assistant");
+              if (lastAi) speak(lastAi.content, { federation: "F6", useCase: "comunidad" });
+            }}
+            className="shrink-0 relative"
+            title={voiceSpeaking ? "Detener voz" : "Leer último mensaje"}
+          >
+            {voiceSpeaking ? <VolumeX className="w-4 h-4 text-purple-400" /> : <Volume2 className="w-4 h-4" />}
+            <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${voiceMode === "cloud" ? "bg-green-400" : "bg-yellow-400"}`} />
+          </Button>
           <Button 
             type="submit" 
             disabled={!input.trim() || isLoading}

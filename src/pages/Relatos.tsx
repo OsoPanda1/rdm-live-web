@@ -231,7 +231,7 @@ const RelatosPage = () => {
                       <img 
                         src={legend.image}
                         alt={legend.title}
-                        className="w-full h-[350px] object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy" className="w-full h-[350px] object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className={`absolute inset-0 bg-gradient-to-t ${legend.theme} to-transparent opacity-60`} />
                       <div className="absolute bottom-4 left-4 right-4">

@@ -8,6 +8,12 @@ import GradientSeparator from "@/components/GradientSeparator";
 import pasteImg from "@/assets/paste.webp";
 import rdm1 from "@/assets/rdm1.jpeg";
 import rdm2 from "@/assets/rdm2.jpeg";
+
+const GASTRO_IMAGES = [
+  "/images/gastronomia-pastes.jpg",
+  "/images/gastronomia-paste.jpg",
+  "/images/gastronomia-festival.jpg",
+];
 import { logger } from "@/lib/logger";
 
 interface Business {
@@ -17,7 +23,7 @@ interface Business {
   description: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 
 const culinaryHighlights = [
   {
@@ -157,26 +163,38 @@ export default function GastronomiaPage() {
           </div>
         </section>
 
-        {/* Gallery Strip */}
+        {/* Gallery Strip — Expanded */}
         <section className="relative overflow-hidden py-12">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[pasteImg, rdm1, rdm2].map((img, i) => (
+            <div className="rdm-mosaic" style={{ gridAutoRows: "200px" }}>
+              {[
+                { src: pasteImg, label: "Pastes tradicionales", tall: true },
+                { src: rdm1, label: "Gastronomia local" },
+                { src: rdm2, label: "Sabores de la sierra" },
+                { src: GASTRO_IMAGES[0], label: "Festival del Paste" },
+                { src: GASTRO_IMAGES[1], label: "Cocina cornish" },
+                { src: GASTRO_IMAGES[2], label: "Gastronomia en vivo", wide: true },
+              ].map((photo, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="relative h-48 md:h-64 rounded-2xl overflow-hidden group"
+                  transition={{ delay: i * 0.08 }}
+                  className={`relative rounded-2xl overflow-hidden group rdm-img-hover ${
+                    photo.tall ? "rdm-mosaic-tall" : photo.wide ? "rdm-mosaic-wide" : ""
+                  }`}
                 >
                   <img
-                    src={img}
-                    alt={`Gastronomia ${i + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    src={photo.src}
+                    alt={photo.label}
+                    className="w-full h-full object-cover"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-night-900/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-night-900/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0 z-10">
+                    <p className="text-white text-sm font-medium" style={{ fontFamily: "var(--font-body)" }}>{photo.label}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>

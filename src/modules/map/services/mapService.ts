@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Map service abstraction.
  * Implementación actual: Leaflet. Switch a Mapbox solo requiere reescribir este archivo.

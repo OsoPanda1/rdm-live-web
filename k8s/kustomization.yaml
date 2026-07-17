@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rdm-digital-hub
+
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - ingress.yaml
+
+secretGenerator:
+  - name: supabase-credentials
+    literals:
+      - url=SUPABASE_URL_PLACEHOLDER
+      - anon-key=SUPABASE_ANON_KEY_PLACEHOLDER
+  - name: stripe-credentials
+    literals:
+      - secret-key=STRIPE_SECRET_KEY_PLACEHOLDER
+      - webhook-secret=STRIPE_WEBHOOK_SECRET_PLACEHOLDER
+  - name: isabella-credentials
+    literals:
+      - google-genai-key=GOOGLE_GENAI_API_KEY_PLACEHOLDER
+
+images:
+  - name: ghcr.io/osopanda1/real-del-monte-digital-hub
+    newTag: latest

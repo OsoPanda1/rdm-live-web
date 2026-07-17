@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export const useWebSocketSubscription = <T = any>(channel: string) => {
+export const useWebSocketSubscription = <T = unknown>(channel: string) => {
   const [event, setEvent] = useState<T | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 

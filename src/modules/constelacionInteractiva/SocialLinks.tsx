@@ -1,7 +1,6 @@
 // @ts-nocheck
 
-import React from "react";
-import { Facebook, Instagram, Twitter, Github, Send, Phone, Slack, Music } from "lucide-react";
+import { Facebook, Instagram, Twitter, Github, Send, Phone, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type SocialLinksProps = {

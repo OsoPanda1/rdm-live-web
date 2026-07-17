@@ -45,9 +45,14 @@ const metricasEcon = [
 const EconomiaFederada = () => (
   <WikiPage
     title="Economía Federada TAMV"
-    subtitle="30+ Formas de Monetización Ética — Sistema FairSplit de Reparto Justo"
-  >
-    <InfoBox type="success" title="Modelo Económico Civilizatorio">
+      subtitle="30+ Formas de Monetización Ética — Sistema FairSplit de Reparto Justo"
+    >
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/aerial-realmont.jpg" alt="Vista aérea de Real del Monte" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
+      <InfoBox type="success" title="Modelo Económico Civilizatorio">
       La economía TAMV redistribuye el 70% de los ingresos a los creadores, con transparencia total 
       y trazabilidad blockchain mediante el sistema FairSplit.
     </InfoBox>

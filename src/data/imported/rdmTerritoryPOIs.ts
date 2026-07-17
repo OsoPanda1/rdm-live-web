@@ -1,4 +1,3 @@
-// @ts-nocheck
 // src/data/rdmTerritoryPOIs.ts
 // Núcleo territorial del Nodo Cero Real del Monte / Kernel TAMV.
 // Combina POIs canónicos + entidades narrativas (minas, pastes, calles, leyendas, rutas, eventos)

@@ -149,7 +149,7 @@ const Index = () => {
             ))}
           </div>
           <div className="text-center mt-6">
-            <Link to="/comunidad-social" className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--rdm-amber))] hover:underline" style={{ fontFamily: "var(--font-body)" }}>
+            <Link to="/comunidad" className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--rdm-amber))] hover:underline" style={{ fontFamily: "var(--font-body)" }}>
               <Camera className="w-4 h-4" /> Comparte tus fotos en el muro social →
             </Link>
           </div>
@@ -322,7 +322,7 @@ const Index = () => {
             <Link to="/mapa" className="inline-flex items-center gap-3 bg-[hsl(var(--rdm-amber))] text-white px-10 py-4 rounded-full font-semibold text-sm hover:scale-105 transition-transform" style={{ fontFamily: "var(--font-body)" }}>
               <MapPin className="w-4 h-4" /> Explorar Mapa
             </Link>
-            <Link to="/comunidad-social" className="inline-flex items-center gap-3 border-2 border-[hsl(var(--rdm-amber))] text-[hsl(var(--rdm-amber))] px-10 py-4 rounded-full font-semibold text-sm hover:bg-[hsl(var(--rdm-amber)/0.1)] transition-colors" style={{ fontFamily: "var(--font-body)" }}>
+            <Link to="/comunidad" className="inline-flex items-center gap-3 border-2 border-[hsl(var(--rdm-amber))] text-[hsl(var(--rdm-amber))] px-10 py-4 rounded-full font-semibold text-sm hover:bg-[hsl(var(--rdm-amber)/0.1)] transition-colors" style={{ fontFamily: "var(--font-body)" }}>
               <Heart className="w-4 h-4" /> Muro Social
             </Link>
           </div>

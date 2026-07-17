@@ -28,7 +28,7 @@ const mainNav = [
   { title: "Introducción", url: "/introduccion", icon: BookOpen },
   { title: "Filosofía y Códice", url: "/filosofia", icon: Landmark },
   { title: "Arquitectura", url: "/arquitectura", icon: Layers },
-  { title: "WikiTAMV", url: "/wikitamv", icon: Library },
+  { title: "WikiTAMV", url: "/wiki", icon: Library },
 ];
 
 const dominios = [

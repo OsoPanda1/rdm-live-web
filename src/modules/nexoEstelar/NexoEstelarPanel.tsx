@@ -90,7 +90,7 @@ const NexoEstelarPanel = () => {
         {/* Main content with panels representing the blueprint structure */}
         <section className="relative">
           {/* Neural Network Background Effect */}
-          <div className="absolute inset-0 bg-[url('/photo-1485827404703-89b55fcc595e')] bg-cover opacity-5 mix-blend-overlay rounded-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20 opacity-10 rounded-2xl" />
           
           <div className="grid md:grid-cols-3 gap-6">
             <motion.div 
@@ -123,7 +123,7 @@ const NexoEstelarPanel = () => {
                 transition={{ duration: 0.7, delay: 0.5 }}
               >
                 <PrismaticCard variant="crystal" className="relative overflow-hidden p-5">
-                  <div className="absolute inset-0 bg-[url('/photo-1439337153520-7082a56a81f4')] bg-cover opacity-10 rounded-lg" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-blue-900/20 opacity-20 rounded-lg" />
                   <div className="flex items-center mb-2">
                     <div className="mr-2 p-1.5 rounded-full bg-cyan-500/20 text-cyan-300">
                       <Github className="h-4 w-4" />
@@ -143,7 +143,7 @@ const NexoEstelarPanel = () => {
                 transition={{ duration: 0.7, delay: 0.7 }}
               >
                 <PrismaticCard variant="quantum" className="relative overflow-hidden p-5">
-                  <div className="absolute inset-0 bg-[url('/photo-1496307653780-42ee777d4833')] bg-cover opacity-10 rounded-lg" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-pink-900/20 opacity-20 rounded-lg" />
                   <div className="flex items-center mb-2">
                     <div className="mr-2 p-1.5 rounded-full bg-purple-500/20 text-purple-300">
                       <Zap className="h-4 w-4" />
@@ -163,7 +163,7 @@ const NexoEstelarPanel = () => {
                 transition={{ duration: 0.7, delay: 0.9 }}
               >
                 <PrismaticCard variant="nebula" className="relative overflow-hidden p-5">
-                  <div className="absolute inset-0 bg-[url('/photo-1551038247-3d9af20df552')] bg-cover opacity-10 rounded-lg" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-rose-900/20 to-orange-900/20 opacity-20 rounded-lg" />
                   <div className="flex items-center mb-2">
                     <div className="mr-2 p-1.5 rounded-full bg-rose-500/20 text-rose-300">
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

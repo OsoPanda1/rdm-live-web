@@ -1,5 +1,5 @@
 // src/contexts/RDMAuthContext.tsx
-// Contexto de autenticación endurecido para RDM Digital Hub (Vite + Supabase + Lovable, despliegue en Cloudflare).
+// Contexto de autenticación endurecido para RDM Digital Hub (Vite + Supabase + Lovable, despliegue en Vercel).
 
 import {
   createContext,
@@ -45,6 +45,19 @@ interface RDMAuthContextValue {
 }
 
 const RDMAuthContext = createContext<RDMAuthContextValue | undefined>(undefined)
+const AUTH_QUERY_TIMEOUT_MS = 5_000
+
+function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      window.setTimeout(
+        () => reject(new Error(`${label} excedió ${AUTH_QUERY_TIMEOUT_MS}ms`)),
+        AUTH_QUERY_TIMEOUT_MS,
+      )
+    }),
+  ])
+}
 
 export function RDMAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
@@ -57,22 +70,19 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
 
   const loadProfileAndRoles = useCallback(
     async (uid: string) => {
-      if (!supabase) {
-        setError(
-          '[auth] Supabase no está disponible; no se pueden cargar perfiles ni roles en este entorno.',
-        )
-        setProfile(null)
-        setRoles([])
-        return
-      }
-
       try {
         const [
           { data: profileData, error: profileError },
           { data: rolesData, error: rolesError },
         ] = await Promise.all([
-          supabase.from('profiles').select('*').eq('id', uid).maybeSingle(),
-          supabase.from('user_roles').select('role').eq('user_id', uid),
+          withTimeout(
+            Promise.resolve(supabase.from('profiles').select('*').eq('id', uid).maybeSingle()),
+            'profiles',
+          ),
+          withTimeout(
+            Promise.resolve(supabase.from('user_roles').select('role').eq('user_id', uid)),
+            'user_roles',
+          ),
         ])
 
         if (profileError || rolesError) {
@@ -92,8 +102,7 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
         setProfile(profileData ?? null)
         setRoles(((rolesData ?? []) as { role: AppRole }[]).map((x) => x.role))
       } catch (e) {
-        const message =
-          e instanceof Error ? e.message : 'Error desconocido al cargar perfil/roles'
+        const message = e instanceof Error ? e.message : 'Error desconocido al cargar perfil/roles'
         setError(`[auth] Excepción en loadProfileAndRoles: ${message}`)
         setProfile(null)
         setRoles([])
@@ -104,26 +113,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let isMounted = true
-
-    // Protección inicial: si el cliente Supabase no se pudo inicializar (Cloudflare sin envs, etc.),
-    // no colapsamos toda la app; deshabilitamos auth y exponemos estado explícito.
-    if (!supabase) {
-      if (isMounted) {
-        setIsSupabaseReady(false)
-        setLoading(false)
-        setSession(null)
-        setUser(null)
-        setProfile(null)
-        setRoles([])
-        setError(
-          '[auth] Supabase no está inicializado. La autenticación está deshabilitada, ' +
-            'pero el resto de la aplicación puede seguir funcionando.',
-        )
-      }
-      return () => {
-        isMounted = false
-      }
-    }
 
     setIsSupabaseReady(true)
 
@@ -136,10 +125,10 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
       setSession(s)
       setUser(s?.user ?? null)
 
-      if (s?.user) {
-        // Defer DB calls para no bloquear el hilo principal.
+      const uid = s?.user?.id
+      if (uid) {
         setTimeout(() => {
-          void loadProfileAndRoles(s.user!.id)
+          void loadProfileAndRoles(uid)
         }, 0)
       } else {
         setProfile(null)
@@ -153,7 +142,7 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
         const {
           data: { session: currentSession },
           error: sessionError,
-        } = await supabase.auth.getSession()
+        } = await withTimeout(supabase.auth.getSession(), 'auth.getSession')
 
         if (!isMounted) return
 
@@ -174,8 +163,7 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (e) {
         if (!isMounted) return
-        const message =
-          e instanceof Error ? e.message : 'Error desconocido al inicializar sesión'
+        const message = e instanceof Error ? e.message : 'Error desconocido al inicializar sesión'
         setError(`[auth] Excepción en init de sesión: ${message}`)
         setSession(null)
         setUser(null)
@@ -197,13 +185,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
   }, [loadProfileAndRoles])
 
   const signInEmail = async (email: string, password: string) => {
-    if (!supabase) {
-      const msg =
-        '[auth] Supabase no está disponible; no es posible iniciar sesión con email/password en este entorno.'
-      setError(msg)
-      return { error: msg }
-    }
-
     setLoading(true)
     setError(null)
     try {
@@ -227,8 +208,7 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
       }
       return { error: null }
     } catch (e) {
-      const message =
-        e instanceof Error ? e.message : 'Error desconocido al iniciar sesión'
+      const message = e instanceof Error ? e.message : 'Error desconocido al iniciar sesión'
       const msg = `[auth] Excepción en signInEmail: ${message}`
       setError(msg)
       setUser(null)
@@ -244,25 +224,23 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
     password: string,
     displayName: string,
   ) => {
-    if (!supabase) {
-      const msg =
-        '[auth] Supabase no está disponible; no es posible registrarse con email/password en este entorno.'
-      setError(msg)
-      return { error: msg }
-    }
-
     setLoading(true)
     setError(null)
     try {
-      const redirectUrl =
-        import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_REDIRECT_URL ??
-        (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined)
+      const isDev = import.meta.env.DEV
 
-      const { error } = await supabase.auth.signUp({
+      // En desarrollo: si no hay redirect URL configurada, no esperar confirmación de email
+      // para desarrollo más fluido (email confirmations disabled en Supabase dashboard)
+      const redirectUrl = isDev
+        ? undefined
+        : (import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_REDIRECT_URL ??
+          (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined))
+
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
+          ...(redirectUrl && { emailRedirectTo: redirectUrl }),
           data: { display_name: displayName },
         },
       })
@@ -273,10 +251,19 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
         return { error: msg }
       }
 
+      // En dev: si no hay redirect URL y el usuario se creó, intentar auto sign-in
+      // (funciona si email confirmations están deshabilitadas en Supabase dashboard)
+      if (isDev && data.user && !data.session && !redirectUrl) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+        if (!signInError) {
+          return { error: null }
+        }
+        // Si falla el auto sign-in, es porque requiere confirmación de email
+      }
+
       return { error: null }
     } catch (e) {
-      const message =
-        e instanceof Error ? e.message : 'Error desconocido al registrarse'
+      const message = e instanceof Error ? e.message : 'Error desconocido al registrarse'
       const msg = `[auth] Excepción en signUpEmail: ${message}`
       setError(msg)
       return { error: msg }
@@ -287,12 +274,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
 
   const signInGoogle = async () => {
     setError(null)
-
-    if (!supabase) {
-      const msg = '[auth] Supabase no disponible; Google OAuth deshabilitado.'
-      setError(msg)
-      return { error: msg }
-    }
 
     try {
       const redirectTo =
@@ -312,8 +293,7 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
 
       return { error: null }
     } catch (e) {
-      const message =
-        e instanceof Error ? e.message : 'Error desconocido en signInGoogle'
+      const message = e instanceof Error ? e.message : 'Error desconocido en signInGoogle'
       const msg = `[auth] Excepción en signInGoogle: ${message}`
       setError(msg)
       return { error: msg }
@@ -321,13 +301,6 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    if (!supabase) {
-      setError(
-        '[auth] Supabase no está disponible; signOut no es posible en este entorno.',
-      )
-      return
-    }
-
     setLoading(true)
     setError(null)
     try {
@@ -341,8 +314,7 @@ export function RDMAuthProvider({ children }: { children: ReactNode }) {
       setProfile(null)
       setRoles([])
     } catch (e) {
-      const message =
-        e instanceof Error ? e.message : 'Error desconocido al cerrar sesión'
+      const message = e instanceof Error ? e.message : 'Error desconocido al cerrar sesión'
       setError(`[auth] Excepción en signOut: ${message}`)
     } finally {
       setLoading(false)

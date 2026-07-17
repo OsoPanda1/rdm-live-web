@@ -44,14 +44,14 @@ const Apoya = () => {
     }
     setLoading(true);
     try {
-      const response = await paymentsApi.createDonation({
+      const response = await paymentsApi.createPayment({
         amount: parseFloat(amount),
         currency: 'MXN',
         message: 'Donación desde RDM Digital',
-      });
+      }) as { data: { url: string } };
       window.location.href = response.data.url;
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Error al procesar la donación.', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error al procesar la donación.', variant: 'destructive' });
       setLoading(false);
     }
   };

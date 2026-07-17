@@ -1,16 +1,20 @@
-
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import PrismaticCard from "./PrismaticCard";
 import UploadVisualizer from "./UploadVisualizer";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useRDMAuth } from "@/contexts/RDMAuthContext";
 import { toast } from "sonner";
 
 interface FileUploadProps {
   className?: string;
   maxFiles?: number;
-  maxSize?: number; // in MB
+  maxSize?: number;
   allowedTypes?: string[];
+  bucket?: string;
+  folder?: string;
+  onUploadComplete?: (urls: string[]) => void;
 }
 
 interface UploadFile {
@@ -18,14 +22,19 @@ interface UploadFile {
   file: File;
   progress: number;
   status: "idle" | "uploading" | "complete" | "error";
+  url?: string;
 }
 
 const FileUpload = ({
   className,
   maxFiles = 5,
-  maxSize = 10, // 10MB
-  allowedTypes = ["image/*", "application/pdf", "text/*", "application/json"],
+  maxSize = 10,
+  allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  bucket = "media",
+  folder,
+  onUploadComplete,
 }: FileUploadProps) => {
+  const { user } = useRDMAuth();
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -45,35 +54,30 @@ const FileUpload = ({
 
   const processFiles = (fileList: FileList) => {
     if (files.length >= maxFiles) {
-      toast.error(`Maximum ${maxFiles} files allowed`);
+      toast.error(`Máximo ${maxFiles} archivos permitidos`);
       return;
     }
 
     const newFiles: UploadFile[] = [];
     
-    // Convert FileList to Array
     Array.from(fileList).forEach((file) => {
-      // Check if we've hit the file limit
       if (files.length + newFiles.length >= maxFiles) return;
       
-      // Check file size
       if (file.size > maxSize * 1024 * 1024) {
-        toast.error(`"${file.name}" exceeds the ${maxSize}MB limit`);
+        toast.error(`"${file.name}" excede el límite de ${maxSize}MB`);
         return;
       }
       
-      // Check file type
       const fileType = file.type || "";
       const isAllowed = allowedTypes.some(type => {
         if (type.endsWith("/*")) {
-          const category = type.split("/")[0];
-          return fileType.startsWith(category);
+          return fileType.startsWith(type.split("/")[0]);
         }
         return type === fileType;
       });
       
       if (!isAllowed) {
-        toast.error(`"${file.name}" file type not supported`);
+        toast.error(`"${file.name}" tipo de archivo no soportado`);
         return;
       }
       
@@ -106,45 +110,60 @@ const FileUpload = ({
     }
   };
 
-  const simulateUpload = () => {
+  const uploadFiles = async () => {
     if (!files.length || isUploading) return;
-    
+    if (!user) {
+      toast.error("Debes iniciar sesión para subir archivos");
+      return;
+    }
+
     setIsUploading(true);
-    
-    // Update all idle files to uploading
     setFiles(prev => prev.map(file => 
       file.status === "idle" ? { ...file, status: "uploading" as const } : file
     ));
-    
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setFiles(prev => {
-        const updatedFiles = prev.map(file => {
-          if (file.status === "uploading") {
-            const newProgress = Math.min(file.progress + Math.random() * 5, 100);
-            return {
-              ...file,
-              progress: newProgress,
-              status: newProgress >= 100 ? "complete" as const : "uploading" as const
-            };
-          }
-          return file;
+
+    const uploadedUrls: string[] = [];
+    const userId = user.id;
+    const baseFolder = folder || `${userId}`;
+
+    for (const uploadFile of files) {
+      if (uploadFile.status !== "idle" && uploadFile.status !== "uploading") continue;
+
+      const ext = uploadFile.file.name.split(".").pop();
+      const fileName = `${baseFolder}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, uploadFile.file, {
+          cacheControl: "3600",
+          upsert: false,
         });
-        
-        // Check if all files are complete
-        const allComplete = updatedFiles.every(file => 
-          file.status === "complete" || file.status === "error"
-        );
-        
-        if (allComplete) {
-          clearInterval(interval);
-          setIsUploading(false);
-          toast.success("All files processed successfully");
-        }
-        
-        return updatedFiles;
-      });
-    }, 200);
+
+      if (error) {
+        toast.error(`Error al subir ${uploadFile.file.name}: ${error.message}`);
+        setFiles(prev => prev.map(f =>
+          f.id === uploadFile.id ? { ...f, progress: 0, status: "error" as const } : f
+        ));
+        continue;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+      setFiles(prev => prev.map(f =>
+        f.id === uploadFile.id ? { ...f, progress: 100, status: "complete" as const, url: publicUrl } : f
+      ));
+
+      uploadedUrls.push(publicUrl);
+    }
+
+    setIsUploading(false);
+
+    if (uploadedUrls.length > 0) {
+      toast.success(`${uploadedUrls.length} archivo(s) subido(s) correctamente`);
+      onUploadComplete?.(uploadedUrls);
+    }
   };
 
   const handleRemoveFile = (id: string) => {
@@ -267,10 +286,10 @@ const FileUpload = ({
             <Button
               size="sm"
               className="bg-gradient-prismatic hover:opacity-90 text-primary-foreground"
-              onClick={simulateUpload}
-              disabled={isUploading || files.every(f => f.status !== "idle")}
+              onClick={uploadFiles}
+              disabled={isUploading || !user || files.every(f => f.status !== "idle")}
             >
-              {isUploading ? "Processing..." : "Begin Neural Integration"}
+              {isUploading ? "Subiendo..." : "Subir a Supabase Storage"}
             </Button>
           </div>
         </PrismaticCard>

@@ -15,7 +15,7 @@ export default function Leaderboard() {
   useEffect(() => {
     (async () => {
       const { data } = await supabase
-        .from("profiles")
+        .from("profiles_public")
         .select("id, display_name, avatar_url, total_points, level, location")
         .order("total_points", { ascending: false })
         .limit(50);

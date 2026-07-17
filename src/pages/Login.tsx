@@ -1,5 +1,4 @@
 
-import React from "react";
 import Layout from "@/modules/core/Layout";
 import AuthForm from "@/modules/oraculoTecnologico/AuthForm";
 import BackgroundEffects from "@/modules/interfazSensorial/BackgroundEffects";

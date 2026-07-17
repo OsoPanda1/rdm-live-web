@@ -1,4 +1,3 @@
-// @ts-nocheck
 export type POICategory = "historico" | "mineria" | "geologico" | "plaza" | "mercado" | "templo" | "escuela"
 export type FederationLayer = "subsuelo" | "memoria-comestible" | "memoria-silenciosa" | "superficie" | "economia-local" | "metadatos" | "simulacion"
 
@@ -40,9 +39,9 @@ export const pastes: Paste[] = [
 
 export interface Legend { id: string; title: string; summary: string }
 export const legends: Legend[] = [
-  { id: "legend-llorona-mina", name: "", title: "La Llorona de la Mina", summary: "Voz femenina que se escucha en los socavones de Acosta al caer la noche." } as any,
-  { id: "legend-cornish-fantasma", title: "El minero cornish fantasma", summary: "Aparición de un capataz inglés que recorre el Panteón Inglés.", name: "" } as any,
-  { id: "legend-niebla-hiloche", title: "La niebla del Hiloche", summary: "Bruma que oculta caminos y devuelve a los viajeros al punto de partida.", name: "" } as any,
+  { id: "legend-llorona-mina", title: "La Llorona de la Mina", summary: "Voz femenina que se escucha en los socavones de Acosta al caer la noche." },
+  { id: "legend-cornish-fantasma", title: "El minero cornish fantasma", summary: "Aparición de un capataz inglés que recorre el Panteón Inglés." },
+  { id: "legend-niebla-hiloche", title: "La niebla del Hiloche", summary: "Bruma que oculta caminos y devuelve a los viajeros al punto de partida." },
 ]
 
 export function haversineKm(a: LatLng, b: LatLng): number {

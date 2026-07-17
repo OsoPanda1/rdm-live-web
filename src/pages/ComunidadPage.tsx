@@ -1,8 +1,3 @@
-// @ts-nocheck
-/**
- * Muro Social - Estilo muro de Facebook
- * Usuarios comparten experiencias, fotos y opiniones de Real del Monte
- */
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Camera, Heart, MessageCircle, MapPin, Share2, Star, Clock, User, Image as ImageIcon } from "lucide-react";

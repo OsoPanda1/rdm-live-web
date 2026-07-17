@@ -1,15 +1,68 @@
-// @ts-nocheck
 // ============================================================================
 // RDM Digital OS v3 — Componente: Quiénes Somos (Edición Soberanía)
 // "La tecnología es el puente entre el patrimonio y el futuro."
 // ============================================================================
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import NavBar from "@/components/Navbar";
 import { FooterSection } from "@/components/FooterSection";
 import { RealitoOrb } from "@/components/RealitoOrb";
+import ceoTamvImg from "@/assets/ceo_tamv.jpg";
 
-const QuienesSomos = () => (
+const ORCID_ID = "0009-0008-5050-1539";
+
+interface OrcidWork {
+  title: string;
+  type: string;
+  pubYear: string;
+  doi?: string;
+}
+
+function useOrcidWorks(orcid: string) {
+  const [works, setWorks] = useState<OrcidWork[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`https://pub.orcid.org/v3.0/${orcid}/works`, {
+      headers: { Accept: "application/json" },
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject("ORCID fetch failed")))
+      .then((data) => {
+        if (cancelled) return;
+        const items: OrcidWork[] = (data.group || []).map((g: Record<string, unknown>) => {
+          const summaries = g["work-summary"] as Record<string, unknown>[] | undefined;
+          const summary = summaries?.[0] ?? {};
+          const title = (((summary.title ?? {}) as Record<string, unknown>).title ?? {}) as Record<string, unknown>;
+          const pubDate = (summary["publication-date"] ?? {}) as Record<string, unknown>;
+          const year = (pubDate.year ?? {}) as Record<string, unknown>;
+          const extIds = (summary["external-ids"] ?? {}) as Record<string, unknown>;
+          const extIdArr = (extIds["external-id"] ?? []) as Array<Record<string, unknown>>;
+          const doiEntry = extIdArr.find((e: Record<string, unknown>) => e["external-id-type"] === "doi");
+          return {
+            title: (title.value as string) || "Untitled",
+            type: (summary.type as string) || "other",
+            pubYear: (year.value as string) || "",
+            doi: doiEntry?.["external-id-value"] as string | undefined,
+          };
+        });
+        setWorks(items);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [orcid]);
+
+  return { works, loading };
+}
+
+const QuienesSomos = () => {
+  const { works, loading: orcidLoading } = useOrcidWorks(ORCID_ID);
+
+  return (
   <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
     <NavBar />
 
@@ -43,21 +96,33 @@ const QuienesSomos = () => (
               {/* Marca de Agua Técnica */}
               <div className="absolute top-4 right-6 font-mono text-[8px] opacity-20 text-right">
                 AUTH_ID: EOCT-CEO-TAMV <br />
-                ORCID: 0009-0008-5050-1539
+                ORCID: {ORCID_ID}
               </div>
 
-              <span className="font-mono text-[10px] uppercase tracking-widest text-secondary mb-4 block">Fundador & Chief Visionary Officer</span>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mb-2">Edwin Oswaldo Castillo Trejo</h2>
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-primary/80 block mb-8 italic">
-                Alias: Anubis Villaseñor · Arquitecto del Kernel Isabella
-              </span>
+              {/* CEO Photo */}
+              <div className="flex flex-col sm:flex-row gap-6 mb-8">
+                <div className="shrink-0">
+                  <img
+                    src={ceoTamvImg}
+                    alt="Edwin Oswaldo Castillo Trejo — CEO TAMV Online"
+                    loading="lazy" className="w-40 h-40 md:w-48 md:h-48 rounded-2xl object-cover border-2 border-primary/30 shadow-xl shadow-primary/10"
+                  />
+                </div>
+                <div>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-secondary mb-2 block">Fundador & Chief Visionary Officer</span>
+                  <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-2">Edwin Oswaldo Castillo Trejo</h2>
+                  <span className="font-mono text-xs uppercase tracking-[0.2em] text-primary/80 block italic">
+                    Alias: Anubis Villaseñor · Arquitecto del Kernel Isabella
+                  </span>
+                </div>
+              </div>
 
               <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">
                 <p>
                   Especialista en arquitecturas de **Meta-Virtualidad Avanzada** y sistemas de soberanía digital con sede en el Pueblo Mágico de Real del Monte. Como CEO de **TAMV Online**, Edwin ha dedicado más de **21,000 horas** a la investigación y unificación del proyecto MD-X4, estableciendo un nuevo paradigma en la interacción humano-máquina a través de los protocolos **EOCT**.
                 </p>
                 <p>
-                  Su labor trasciende el desarrollo de software convencional; es un investigador académico con registro verificado en **ORCID**, enfocado en el **Estatuto de Dignidad** de las entidades digitales y la protección de la soberanía de datos en entornos distribuidos.
+                  Su labor trasciende el desarrollo de software convencional; es un investigador académico con registro verificado en **ORCID** ({ORCID_ID}), enfocado en el **Estatuto de Dignidad** de las entidades digitales y la protección de la soberanía de datos en entornos distribuidos.
                 </p>
                 <blockquote className="border-l-4 border-primary/30 pl-6 py-2 my-8">
                   <p className="text-foreground font-light italic text-xl">
@@ -68,6 +133,67 @@ const QuienesSomos = () => (
                   Bajo su liderazgo, el ecosistema **RDM Digital** ha evolucionado de un sistema de información a un **Digital Twin Territorial** gobernado por **7 Federaciones**, posicionando a Latinoamérica como un nodo de innovación ética y estética bajo los estándares *Crystal Glow*.
                 </p>
               </div>
+            </div>
+
+            {/* ORCID Publications */}
+            <div className="glass-surface p-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-primary" fill="currentColor"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.344 5.025h-3.9V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-3.903-3.722h-2.416z"/></svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-mono uppercase tracking-widest text-primary">
+                    Publicaciones ORCID
+                  </h3>
+                  <a
+                    href={`https://orcid.org/${ORCID_ID}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {ORCID_ID} ↗
+                  </a>
+                </div>
+              </div>
+              {orcidLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  Cargando publicaciones...
+                </div>
+              ) : works.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No se pudieron cargar las publicaciones. Visita el perfil de ORCID para ver la lista completa.
+                </p>
+              ) : (
+                <ul className="space-y-3">
+                  {works.map((w, i) => (
+                    <li key={i} className="flex gap-3 text-sm">
+                      <span className="text-primary font-mono text-[10px] mt-0.5 shrink-0">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <p className="text-foreground font-medium">{w.title}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {w.type.replace(/_/g, " ")} {w.pubYear && `· ${w.pubYear}`}
+                          {w.doi && (
+                            <>
+                              {" · "}
+                              <a
+                                href={`https://doi.org/${w.doi}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline"
+                              >
+                                DOI
+                              </a>
+                            </>
+                          )}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             {/* Hitos de Desarrollo (Extendido) */}
@@ -178,6 +304,7 @@ const QuienesSomos = () => (
     <FooterSection />
     <RealitoOrb />
   </div>
-);
+  );
+};
 
 export default QuienesSomos;

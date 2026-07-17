@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Heart, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 type DonationButtonProps = {
   trackTitle?: string;
@@ -72,7 +73,7 @@ export function DonationButton({
         toast.error("No se recibió una URL de pago");
       }
     } catch (error) {
-      console.error(error);
+      logger.error("Error initiating donation", { error });
       const message =
         error instanceof Error
           ? error.message

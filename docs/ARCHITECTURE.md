@@ -4,8 +4,8 @@
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                 Cloudflare Pages (SPA)                   │
-│  apps/web    apps/admin    (Vite + React + TanStack)     │
+│                   Vercel (SPA)                           │
+│         src/pages  src/components  (Vite + React)        │
 └─────────────┬──────────────────────────┬─────────────────┘
               │ publishable key          │ user JWT
               ▼                          ▼
@@ -38,7 +38,7 @@
 1. **Browser ↔ Supabase**: publishable key + RLS. Nunca service_role.
 2. **Browser ↔ Edge Functions**: JWT del usuario, validado por la función.
 3. **Edge Function ↔ Postgres**: service_role solo cuando se requiere bypass de RLS, con verificación previa del rol via `has_role()`.
-4. **CI ↔ Cloudflare/Supabase**: tokens OIDC efímeros, nunca PATs en secretos largos.
+4. **CI ↔ Vercel/Supabase**: tokens OIDC efímeros, nunca PATs en secretos largos.
 
 ## Datos sensibles
 

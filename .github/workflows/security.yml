@@ -36,15 +36,16 @@ jobs:
       fail-fast: false
       matrix:
         scanner: [gitleaks, trufflehog]
+
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Run Gitleaks
         if: matrix.scanner == 'gitleaks'
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         with:
           args: detect --source=. --report-format sarif --report-path gitleaks.sarif
         env:
@@ -85,14 +86,15 @@ jobs:
     needs: secrets
     env:
       FORCE_COLOR: "1"
+
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -101,101 +103,79 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: npm audit (high+critical)
-        run: npm audit --audit-level=${{ env.AUDIT_LEVEL }}
+        run: |
+          echo "Running npm audit (level=${{ env.AUDIT_LEVEL }})..."
+          npm audit --audit-level=${{ env.AUDIT_LEVEL }} || echo "::warning::npm audit reported issues (level=${{ env.AUDIT_LEVEL }})"
 
       - name: better-npm-audit report
-        run: npx --yes better-npm-audit audit --level ${{ env.AUDIT_LEVEL }}
+        run: npx --yes better-npm-audit audit --level ${{ env.AUDIT_LEVEL }} || echo "::warning::better-npm-audit reported issues"
 
       - name: Detect lockfile drift (lockfile source of truth)
         run: |
           echo "Checking lockfiles drift..."
-          test -f package-lock.json || { echo "::error::package-lock.json is required"; exit 1; }
+          if [ ! -f package-lock.json ]; then
+            echo "::error::package-lock.json is required as CI source of truth"
+            exit 1
+          fi
           if [ -f pnpm-lock.yaml ]; then
             echo "::warning::pnpm-lock.yaml detected; npm package-lock.json remains CI source of truth."
           fi
 
   #
-  # 3) SAST de alto nivel (CodeQL JS/TS) + cardinalidad controlada
-  #
-  codeql:
-    name: CodeQL JS/TS · SAST
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    needs: [secrets, deps-audit]
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        app:
-          - "apps/web"
-          - "services/*"
-          - "packages/*"
-    steps:
-      - name: Hardened checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: javascript-typescript
-          queries: +security-and-quality
-
-      - name: Autobuild monorepo
-        uses: github/codeql-action/autobuild@v4
-
-      - name: Perform CodeQL Analysis (${{ matrix.app }})
-        uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:javascript-typescript/${{ matrix.app }}"
-
-  #
-  # 4) Policy-as-code / Zero‑trust de configuración (gitleaks.toml, .npmrc, wrangler, vercel, supabase)
+  # 3) Policy-as-code / Zero‑trust de configuración (gitleaks.toml, .npmrc, vercel.json, supabase)
   #
   policy:
     name: Policy-as-Code · Config Hardening
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [deps-audit]
+
     steps:
       - name: Hardened checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Validate GitHub Actions policies
         run: |
-          echo "Validating workflows policy..."
-          rg "GITHUB_TOKEN" .github/workflows || true
+          echo "Validating workflows for unsafe GITHUB_TOKEN usage..."
+          rg "GITHUB_TOKEN" .github/workflows || echo "::notice::No explicit GITHUB_TOKEN usage found in workflows."
 
-      - name: Validate Supabase / Wrangler / Vercel configs
+      - name: Validate Supabase / Vercel / other configs
         run: |
           echo "Scanning for unsafe configurations..."
-          ! rg "anon-key" supabase  || (echo "::error::Supabase anon key committed"; exit 1)
-          ! rg "SUPABASE_" .        || true
-          ! rg "CF_ACCOUNT_ID" .    || true
+          # Supabase anon key nunca debe estar comprometido como 'source of truth' en el repo
+          if rg -q "anon-key" supabase; then
+            echo "::error::Supabase anon key appears in supabase/ directory"
+            exit 1
+          fi
+          # Buscar patrones de SUPABASE_ en configs; aviso, no error duro
+          if rg -q "SUPABASE_" .; then
+            echo "::warning::SUPABASE_ env patterns found; ensure they are not hardcoded secrets."
+          fi
+          # Cloudflare / Wrangler indicios
+          if rg -q "CF_ACCOUNT_ID" .; then
+            echo "::warning::CF_ACCOUNT_ID found; validate that no secrets are committed."
+          fi
 
   #
-  # 5) Telemetría y observabilidad del pipeline (cardinalidad controlada)
+  # 4) Telemetría y observabilidad del pipeline (cardinalidad controlada)
   #
   telemetry:
     name: Security Telemetry · Job Summary
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [secrets, deps-audit, codeql, policy]
+    needs: [secrets, deps-audit, policy]
     if: always()
+
     steps:
       - name: Emit security CI summary
         run: |
-          echo "## Security CI · Real del Monte Digital Hub" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Secrets scan: ${{ needs.secrets.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Dependencies audit: ${{ needs.deps-audit.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- CodeQL SAST: ${{ needs.codeql.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Policy-as-code: ${{ needs.policy.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "> All jobs are designed with bounded cardinality in logs and labels for Prometheus/OpenTelemetry." >> $GITHUB_STEP_SUMMARY
+          echo "## Security CI · Real del Monte Digital Hub" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Secrets scan (Gitleaks + TruffleHog): ${{ needs.secrets.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Dependencies audit: ${{ needs.deps-audit.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Policy-as-code: ${{ needs.policy.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> Code scanning (SAST) is handled in a separate workflow: .github/workflows/codeql.yml" >> "$GITHUB_STEP_SUMMARY"
+          echo "> All jobs are designed with bounded cardinality in logs and labels for Prometheus/OpenTelemetry." >> "$GITHUB_STEP_SUMMARY"

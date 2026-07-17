@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import {
   Pickaxe,
@@ -25,6 +24,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 type RdmProfile = {
   user_id: string;
@@ -125,7 +125,7 @@ export default function GamePortal() {
         .eq("user_id", user.id)
         .maybeSingle();
       if (error) {
-        console.error("Error loading profile", error);
+        logger.error("Error loading profile", { error });
         return null;
       }
       return (data ?? null) as RdmProfile | null;
@@ -143,7 +143,7 @@ export default function GamePortal() {
         .eq("user_id", user.id)
         .maybeSingle();
       if (error) {
-        console.error("Error loading premium", error);
+        logger.error("Error loading premium", { error });
         return null;
       }
       return (data ?? null) as PremiumSub | null;
@@ -160,7 +160,7 @@ export default function GamePortal() {
         .eq("is_active", true)
         .order("points_cost");
       if (error) {
-        console.error("Error loading rewards", error);
+        logger.error("Error loading rewards", { error });
         return [];
       }
       return (data || []) as Reward[];
@@ -176,7 +176,7 @@ export default function GamePortal() {
         .select("*")
         .eq("user_id", user.id);
       if (error) {
-        console.error("Error loading missions", error);
+        logger.error("Error loading missions", { error });
         return [];
       }
       return (data || []) as Mission[];
@@ -195,7 +195,7 @@ export default function GamePortal() {
         .order("unlocked_at", { ascending: false })
         .limit(6);
       if (error) {
-        console.error("Error loading achievements", error);
+        logger.error("Error loading achievements", { error });
         return [];
       }
       return (data || []) as Achievement[];
@@ -238,7 +238,7 @@ export default function GamePortal() {
       });
 
       if (error) {
-        console.error("Error create-premium-checkout", error);
+        logger.error("Error create-premium-checkout", { error });
         throw error;
       }
 
@@ -267,7 +267,7 @@ export default function GamePortal() {
       const { data, error } = await supabase.functions.invoke("customer-portal");
 
       if (error) {
-        console.error("Error customer-portal", error);
+        logger.error("Error customer-portal", { error });
         throw error;
       }
 
@@ -332,7 +332,7 @@ export default function GamePortal() {
         .single();
 
       if (error) {
-        console.error("Error reward_redemptions insert", error);
+        logger.error("Error reward_redemptions insert", { error });
         toast.error("No se pudo canjear el premio");
         return;
       }
@@ -350,7 +350,7 @@ export default function GamePortal() {
         .eq("user_id", user.id);
 
       if (updateError) {
-        console.error("Error profiles update", updateError);
+        logger.error("Error profiles update", { error: updateError });
         toast.error("Premio canjeado, pero no se pudo actualizar tus minerales");
       }
     } catch (e: unknown) {

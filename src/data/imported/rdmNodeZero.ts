@@ -1,4 +1,3 @@
-// @ts-nocheck
 export type NodeZeroRepoStatus = "absorbed" | "orchestrated" | "reference";
 
 export interface NodeZeroRepo {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 import { Share2, Download, Link2, Loader2 } from "lucide-react";
 import { toast } from "sonner";

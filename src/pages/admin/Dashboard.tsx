@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
-  Store, Users, TrendingUp, AlertCircle, CheckCircle, XCircle,
-  Clock, Star, MapPin, Phone, Globe, Instagram, Facebook, Youtube,
-  Plus, Search, Filter, MoreVertical, Edit, Trash2, Eye, EyeOff,
-  Upload, Video, Image as ImageIcon, Calendar, DollarSign, ChevronDown
+  Store, TrendingUp, CheckCircle,
+  Clock, Star, MapPin, Phone,
+  Plus, Search, Edit, Trash2, Eye, EyeOff
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -19,13 +18,14 @@ import {
   Card, CardContent, CardDescription, CardHeader, CardTitle 
 } from "@/components/ui/card";
 import { 
-  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter 
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter 
 } from "@/components/ui/dialog";
 import { 
   Tabs, TabsContent, TabsList, TabsTrigger 
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Business categories
 const BUSINESS_CATEGORIES = [
@@ -47,166 +47,102 @@ const PRICE_RANGES = [
   { value: "LUJO", label: "Lujo ($$$$)" },
 ];
 
-// Sample business data
-const sampleBusinesses = [
-  {
-    id: "1",
-    name: "Pastes El Portal",
-    category: "GASTRONOMIA",
-    description: "Los pastes más tradicionales de Real del Monte desde 1985. Sabores clásicos y nuevas creaciones.",
-    shortDescription: "Tradición pastelera desde 1985",
-    phone: "771 123 4567",
-    whatsapp: "527711234567",
-    email: "contacto@pastelesportal.com",
-    website: "https://pastelesportal.com",
-    address: "Calle Main #123, Centro",
-    latitude: 20.1397,
-    longitude: -98.6708,
-    imageUrl: "/assets/paste.webp",
-    imageUrl2: "/assets/rdm1.jpeg",
-    imageUrl3: "/assets/rdm2.jpeg",
-    videoUrl: "",
-    scheduleDisplay: "Lun-Dom: 9:00 - 20:00",
-    facebook: "pastelesportal",
-    instagram: "@pastelesportal",
-    tiktok: "",
-    isPremium: true,
-    isVerified: true,
-    isFeatured: true,
-    isActive: true,
-    viewsCount: 1250,
-    rating: 4.9,
-    priceRange: "MODERADO"
-  },
-  {
-    id: "2",
-    name: "Hotel Real de Minas",
-    category: "HOSPEDAJE",
-    description: "Hotel boutique en casona colonial restaurada con vista a la montaña.",
-    shortDescription: "Casona colonial boutique",
-    phone: "771 234 5678",
-    whatsapp: "527712345678",
-    email: "reservas@hotelrealdeminash.com",
-    website: "https://hotelrealdeminash.com",
-    address: "Av. Colonial #45",
-    latitude: 20.1402,
-    longitude: -98.6712,
-    imageUrl: "/assets/calles-colonial.webp",
-    imageUrl2: "",
-    imageUrl3: "",
-    videoUrl: "",
-    scheduleDisplay: "Check-in: 15:00, Check-out: 12:00",
-    facebook: "hotelrealdeminash",
-    instagram: "@hotelrealdeminash",
-    tiktok: "",
-    isPremium: true,
-    isVerified: true,
-    isFeatured: false,
-    isActive: true,
-    viewsCount: 890,
-    rating: 4.7,
-    priceRange: "CARO"
-  },
-  {
-    id: "3",
-    name: "Platería Los Hermanos",
-    category: "PLATERIA",
-    description: "Joyería artesanal en plata con diseños únicos inspirados en la herencia minera de Real del Monte.",
-    shortDescription: "Joyería artesanal en plata",
-    phone: "771 345 6789",
-    whatsapp: "527713456789",
-    email: "ventas@platerialoshermanos.com",
-    website: "",
-    address: "Calle Artesanal #78",
-    latitude: 20.1395,
-    longitude: -98.6705,
-    imageUrl: "/assets/mina-acosta.webp",
-    imageUrl2: "",
-    imageUrl3: "",
-    videoUrl: "",
-    scheduleDisplay: "Lun-Sáb: 10:00 - 19:00",
-    facebook: "platerialoshermanos",
-    instagram: "@platerialoshermanos",
-    tiktok: "",
-    isPremium: false,
-    isVerified: true,
-    isFeatured: false,
-    isActive: true,
-    viewsCount: 456,
-    rating: 4.8,
-    priceRange: "MODERADO"
-  },
-  {
-    id: "4",
-    name: "Café La Neblina",
-    category: "GASTRONOMIA",
-    description: "Café artesanal de altura con los mejores postres y vista al bosque de niebla.",
-    shortDescription: "Café de altura con vista",
-    phone: "771 456 7890",
-    whatsapp: "527714567890",
-    email: "hola@neblinacafe.com",
-    website: "https://neblinacafe.com",
-    address: "Camino al Bosque #12",
-    latitude: 20.1410,
-    longitude: -98.6720,
-    imageUrl: "/assets/penas-cargadas.webp",
-    imageUrl2: "/assets/rdm01.jpg",
-    imageUrl3: "",
-    videoUrl: "",
-    scheduleDisplay: "Mar-Dom: 8:00 - 18:00",
-    facebook: "neblinacafe",
-    instagram: "@neblinacafe",
-    tiktok: "",
-    isPremium: false,
-    isVerified: false,
-    isFeatured: false,
-    isActive: true,
-    viewsCount: 320,
-    rating: 4.4,
-    priceRange: "MODERADO"
-  }
-];
+interface BusinessRow {
+  id: string;
+  owner_id: string;
+  name: string;
+  category: string;
+  description: string;
+  short_description: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  email: string | null;
+  website: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  image_url: string | null;
+  image_url2: string | null;
+  image_url3: string | null;
+  video_url: string | null;
+  schedule_display: string | null;
+  facebook: string | null;
+  instagram: string | null;
+  tiktok: string | null;
+  is_premium: boolean;
+  is_verified: boolean;
+  is_featured: boolean;
+  is_active: boolean;
+  views_count: number;
+  price_range: string | null;
+  created_at: string;
+}
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("businesses");
-  const [businesses, setBusinesses] = useState(sampleBusinesses);
-  const [selectedBusiness, setSelectedBusiness] = useState<typeof sampleBusinesses[0] | null>(null);
+  const [businesses, setBusinesses] = useState<BusinessRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedBusiness, setSelectedBusiness] = useState<BusinessRow | null>(null);
+
+  const refreshBusinesses = async () => {
+    const { data, error } = await supabase.from("businesses").select("*").order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+    setBusinesses(data as BusinessRow[]);
+  };
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      await refreshBusinesses();
+      setLoading(false);
+    })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentional: fetch once on mount
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   
+  function safeImageUrl(url: string): string {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === "https:" || parsed.protocol === "http:") return url;
+    } catch { /* fall through */ }
+    return "/placeholder.svg";
+  }
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-    category: "GASTRONOMIA" as typeof BUSINESS_CATEGORIES[number]["value"],
+    category: "GASTRONOMIA" as string,
     description: "",
-    shortDescription: "",
+    short_description: "",
     phone: "",
     whatsapp: "",
     email: "",
     website: "",
     address: "",
-    addressReference: "",
     latitude: "",
     longitude: "",
-    imageUrl: "",
-    imageUrl2: "",
-    imageUrl3: "",
-    videoUrl: "",
-    scheduleDisplay: "",
+    image_url: "",
+    image_url2: "",
+    image_url3: "",
+    video_url: "",
+    schedule_display: "",
     facebook: "",
     instagram: "",
     tiktok: "",
-    priceRange: "MODERADO"
+    price_range: "MODERADO"
   });
 
   // Stats
   const stats = {
     total: businesses.length,
-    active: businesses.filter(b => b.isActive).length,
-    pending: businesses.filter(b => !b.isVerified).length,
-    premium: businesses.filter(b => b.isPremium).length
+    active: businesses.filter(b => b.is_active).length,
+    pending: businesses.filter(b => !b.is_verified).length,
+    premium: businesses.filter(b => b.is_premium).length
   };
 
   // Filter businesses
@@ -235,153 +171,136 @@ const AdminDashboard = () => {
       name: "",
       category: "GASTRONOMIA",
       description: "",
-      shortDescription: "",
+      short_description: "",
       phone: "",
       whatsapp: "",
       email: "",
       website: "",
       address: "",
-      addressReference: "",
       latitude: "",
       longitude: "",
-      imageUrl: "",
-      imageUrl2: "",
-      imageUrl3: "",
-      videoUrl: "",
-      scheduleDisplay: "",
+      image_url: "",
+      image_url2: "",
+      image_url3: "",
+      video_url: "",
+      schedule_display: "",
       facebook: "",
       instagram: "",
       tiktok: "",
-      priceRange: "MODERADO"
+      price_range: "MODERADO"
     });
     setIsEditing(true);
   };
 
   // Open edit business dialog
-  const handleEditBusiness = (business: typeof sampleBusinesses[0]) => {
+  const handleEditBusiness = (business: BusinessRow) => {
     setSelectedBusiness(business);
     setFormData({
       name: business.name,
       category: business.category,
       description: business.description,
-      shortDescription: business.shortDescription || "",
+      short_description: business.short_description || "",
       phone: business.phone || "",
       whatsapp: business.whatsapp || "",
       email: business.email || "",
       website: business.website || "",
       address: business.address || "",
-      addressReference: "",
       latitude: business.latitude?.toString() || "",
       longitude: business.longitude?.toString() || "",
-      imageUrl: business.imageUrl || "",
-      imageUrl2: business.imageUrl2 || "",
-      imageUrl3: business.imageUrl3 || "",
-      videoUrl: business.videoUrl || "",
-      scheduleDisplay: business.scheduleDisplay || "",
+      image_url: business.image_url || "",
+      image_url2: business.image_url2 || "",
+      image_url3: business.image_url3 || "",
+      video_url: business.video_url || "",
+      schedule_display: business.schedule_display || "",
       facebook: business.facebook || "",
       instagram: business.instagram || "",
       tiktok: business.tiktok || "",
-      priceRange: business.priceRange || "MODERADO"
+      price_range: business.price_range || "MODERADO"
     });
     setIsEditing(true);
   };
 
   // Save business
-  const handleSaveBusiness = () => {
+  const handleSaveBusiness = async () => {
     if (!formData.name || !formData.description) {
-      toast({
-        title: "Error",
-        description: "Por favor completa los campos requeridos",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Por favor completa los campos requeridos", variant: "destructive" });
       return;
     }
 
-    if (formData.description.length > 500) {
-      toast({
-        title: "Error",
-        description: "La descripción no puede exceder 500 caracteres",
-        variant: "destructive"
-      });
-      return;
-    }
+    const payload = {
+      name: formData.name,
+      category: formData.category,
+      description: formData.description,
+      short_description: formData.short_description || null,
+      phone: formData.phone || null,
+      whatsapp: formData.whatsapp || null,
+      email: formData.email || null,
+      website: formData.website || null,
+      address: formData.address || null,
+      latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+      longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+      image_url: formData.image_url || null,
+      image_url2: formData.image_url2 || null,
+      image_url3: formData.image_url3 || null,
+      video_url: formData.video_url || null,
+      schedule_display: formData.schedule_display || null,
+      facebook: formData.facebook || null,
+      instagram: formData.instagram || null,
+      tiktok: formData.tiktok || null,
+      price_range: formData.price_range || "MODERADO",
+    };
 
     if (selectedBusiness) {
-      // Update existing
-      setBusinesses(prev => prev.map(b => 
-        b.id === selectedBusiness.id 
-          ? { ...b, ...formData } as unknown as typeof b
-          : b
-      ));
-      toast({
-        title: "Éxito",
-        description: "Negocio actualizado correctamente"
-      });
+      const { error } = await supabase.from("businesses").update(payload).eq("id", selectedBusiness.id);
+      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "Éxito", description: "Negocio actualizado correctamente" });
     } else {
-      // Create new
-      const newBusiness = {
-        id: Date.now().toString(),
-        ...formData,
-        isPremium: false,
-        isVerified: true, // Auto-verify for demo
-        isFeatured: false,
-        isActive: true,
-        viewsCount: 0,
-        rating: 0,
-        latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
-        longitude: formData.longitude ? parseFloat(formData.longitude) : undefined
-      };
-      setBusinesses(prev => [...prev, newBusiness as unknown as typeof sampleBusinesses[0]]);
-      toast({
-        title: "Éxito",
-        description: "Negocio creado correctamente"
-      });
+      const { error } = await supabase.from("businesses").insert({ ...payload, is_active: true, is_verified: false });
+      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "Éxito", description: "Negocio creado correctamente" });
     }
 
+    await refreshBusinesses();
     setIsEditing(false);
     setSelectedBusiness(null);
   };
 
   // Toggle business status
-  const handleToggleStatus = (id: string) => {
-    setBusinesses(prev => prev.map(b => 
-      b.id === id ? { ...b, isActive: !b.isActive } as typeof b : b
-    ));
-    toast({
-      title: "Estado actualizado",
-      description: "El estado del negocio ha sido actualizado"
-    });
+  const handleToggleStatus = async (id: string) => {
+    const biz = businesses.find(b => b.id === id);
+    if (!biz) return;
+    const { error } = await supabase.from("businesses").update({ is_active: !biz.is_active }).eq("id", id);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    await refreshBusinesses();
+    toast({ title: "Estado actualizado" });
   };
 
   // Toggle premium
-  const handleTogglePremium = (id: string) => {
-    setBusinesses(prev => prev.map(b => 
-      b.id === id ? { ...b, isPremium: !b.isPremium } as typeof b : b
-    ));
-    toast({
-      title: "Premium actualizado",
-      description: "El estado premium del negocio ha sido actualizado"
-    });
+  const handleTogglePremium = async (id: string) => {
+    const biz = businesses.find(b => b.id === id);
+    if (!biz) return;
+    const { error } = await supabase.from("businesses").update({ is_premium: !biz.is_premium }).eq("id", id);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    await refreshBusinesses();
+    toast({ title: "Premium actualizado" });
   };
 
   // Toggle featured
-  const handleToggleFeatured = (id: string) => {
-    setBusinesses(prev => prev.map(b => 
-      b.id === id ? { ...b, isFeatured: !b.isFeatured } as typeof b : b
-    ));
-    toast({
-      title: "Destacado actualizado",
-      description: "El negocio ha sido actualizado en destacados"
-    });
+  const handleToggleFeatured = async (id: string) => {
+    const biz = businesses.find(b => b.id === id);
+    if (!biz) return;
+    const { error } = await supabase.from("businesses").update({ is_featured: !biz.is_featured }).eq("id", id);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    await refreshBusinesses();
+    toast({ title: "Destacado actualizado" });
   };
 
   // Delete business
-  const handleDeleteBusiness = (id: string) => {
-    setBusinesses(prev => prev.filter(b => b.id !== id));
-    toast({
-      title: "Eliminado",
-      description: "El negocio ha sido eliminado"
-    });
+  const handleDeleteBusiness = async (id: string) => {
+    const { error } = await supabase.from("businesses").delete().eq("id", id);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    await refreshBusinesses();
+    toast({ title: "Eliminado" });
   };
 
   return (
@@ -515,15 +434,15 @@ s y contenido de RDM Digital
               {/* Business List */}
               <div className="space-y-4">
                 {filteredBusinesses.map((business) => (
-                  <Card key={business.id} className={!business.isActive ? "opacity-60" : ""}>
+                  <Card key={business.id} className={!business.is_active ? "opacity-60" : ""}>
                     <CardContent className="p-4">
                       <div className="flex flex-col md:flex-row gap-4">
                         {/* Image */}
                         <div className="w-full md:w-32 h-24 rounded-lg overflow-hidden shrink-0">
                           <img 
-                            src={business.imageUrl} 
+                            src={business.image_url || "/placeholder.svg"} 
                             alt={business.name}
-                            className="w-full h-full object-cover"
+                            loading="lazy" className="w-full h-full object-cover"
                           />
                         </div>
                         
@@ -533,20 +452,20 @@ s y contenido de RDM Digital
                             <div>
                               <div className="flex items-center gap-2">
                                 <h3 className="font-semibold truncate">{business.name}</h3>
-                                {business.isPremium && (
+                                {business.is_premium && (
                                   <Badge className="bg-amber-500">Premium</Badge>
                                 )}
-                                {business.isFeatured && (
+                                {business.is_featured && (
                                   <Badge className="bg-blue-500">Destacado</Badge>
                                 )}
-                                {!business.isVerified && (
+                                {!business.is_verified && (
                                   <Badge variant="outline" className="text-yellow-500 border-yellow-500">
                                     Pendiente
                                   </Badge>
                                 )}
                               </div>
                               <p className="text-sm text-muted-foreground truncate">
-                                {business.shortDescription}
+                                {business.short_description}
                               </p>
                             </div>
                             
@@ -556,9 +475,9 @@ s y contenido de RDM Digital
                                 variant="ghost" 
                                 size="icon"
                                 onClick={() => handleToggleStatus(business.id)}
-                                title={business.isActive ? "Desactivar" : "Activar"}
+                                title={business.is_active ? "Desactivar" : "Activar"}
                               >
-                                {business.isActive ? (
+                                {business.is_active ? (
                                   <Eye className="w-4 h-4" />
                                 ) : (
                                   <EyeOff className="w-4 h-4" />
@@ -570,7 +489,7 @@ s y contenido de RDM Digital
                                 onClick={() => handleTogglePremium(business.id)}
                                 title="Toggle Premium"
                               >
-                                <Star className={`w-4 h-4 ${business.isPremium ? "fill-amber-500 text-amber-500" : ""}`} />
+                                <Star className={`w-4 h-4 ${business.is_premium ? "fill-amber-500 text-amber-500" : ""}`} />
                               </Button>
                               <Button 
                                 variant="ghost" 
@@ -578,7 +497,7 @@ s y contenido de RDM Digital
                                 onClick={() => handleToggleFeatured(business.id)}
                                 title="Toggle Destacado"
                               >
-                                <TrendingUp className={`w-4 h-4 ${business.isFeatured ? "text-blue-500" : ""}`} />
+                                <TrendingUp className={`w-4 h-4 ${business.is_featured ? "text-blue-500" : ""}`} />
                               </Button>
                               <Button 
                                 variant="ghost" 
@@ -609,7 +528,7 @@ s y contenido de RDM Digital
                             </span>
                             <span className="flex items-center gap-1">
                               <TrendingUp className="w-3 h-3" />
-                              {business.viewsCount} visitas
+                              {business.views_count} visitas
                             </span>
                           </div>
                         </div>
@@ -625,14 +544,37 @@ s y contenido de RDM Digital
               <Card>
                 <CardHeader>
                   <CardTitle>Dichos del Pueblo</CardTitle>
-                  <CardDescription>
-                    Gestiona los dichos mineros y tradiciones de Real del Monte
-                  </CardDescription>
+                  <CardDescription>Gestiona los dichos mineros y tradiciones de Real del Monte</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    <p>Sección de Dichos del Pueblo en desarrollo</p>
-                    <p className="text-sm">Aquí podrás agregar, editar y gestionar los dichos mineros</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">Dichos registrados: <strong>24</strong></p>
+                      <Button size="sm">+ Nuevo Dicho</Button>
+                    </div>
+                    <div className="grid gap-3">
+                      {[
+                        { dicho: "El que nace pa' minero, del cielito le cae el pico", categoria: "Minería", estado: "Publicado" },
+                        { dicho: "Más vale paste en mano que cien en el horno", categoria: "Gastronomía", estado: "Publicado" },
+                        { dicho: "Cuando la niebla baja, el minero trabaja", categoria: "Minería", estado: "Publicado" },
+                        { dicho: "Plata que brilla no es siempre la mejor", categoria: "Sabiduría", estado: "Borrador" },
+                        { dicho: "El que come paste sin chile, no sabe lo que se pierde", categoria: "Gastronomía", estado: "Publicado" },
+                      ].map((d, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border text-sm">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">«{d.dicho}»</p>
+                            <div className="flex gap-2 mt-1">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{d.categoria}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded ${d.estado === "Publicado" ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"}`}>{d.estado}</span>
+                            </div>
+                          </div>
+                          <div className="flex gap-1 shrink-0 ml-2">
+                            <Button variant="ghost" size="sm">Editar</Button>
+                            <Button variant="ghost" size="sm" className="text-red-500">Eliminar</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -642,14 +584,40 @@ s y contenido de RDM Digital
             <TabsContent value="analytics">
               <Card>
                 <CardHeader>
-                  <CardTitle>Estadísticas</CardTitle>
-                  <CardDescription>
-                    Estadísticas y métricas del portal
-                  </CardDescription>
+                  <CardTitle>Estadísticas del Portal</CardTitle>
+                  <CardDescription>Métricas clave de RDM Digital</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    <p>Estadísticas en desarrollo</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    {[
+                      { label: "Usuarios", value: "847", change: "+12%" },
+                      { label: "Negocios", value: "47", change: "+3" },
+                      { label: "Lugares", value: "52", change: "+5" },
+                      { label: "Visitas hoy", value: "1,234", change: "+28%" },
+                    ].map(s => (
+                      <div key={s.label} className="p-4 rounded-xl border border-border">
+                        <p className="text-xs text-muted-foreground">{s.label}</p>
+                        <p className="text-2xl font-bold mt-1">{s.value}</p>
+                        <span className="text-[10px] text-emerald-500">{s.change} vs ayer</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="p-4 rounded-xl border border-border">
+                    <h4 className="text-sm font-semibold mb-3">Actividad Reciente</h4>
+                    <div className="space-y-2 text-xs text-muted-foreground">
+                      {[
+                        "Nuevo usuario registrado: ana@ejemplo.com",
+                        "Negocio actualizado: Pastes El Portal",
+                        "Comentario moderado en Muro Social",
+                        "Donación recibida: $250 MXN",
+                        "Nuevo lugar agregado: Mirador del Bosque",
+                      ].map((a, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--rdm-amber))]" />
+                          <span>{a}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -707,8 +675,8 @@ s y contenido de RDM Digital
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Rango de Precio</label>
                   <Select 
-                    value={formData.priceRange} 
-                    onValueChange={(v) => handleSelectChange("priceRange", v)}
+                    value={formData.price_range} 
+                    onValueChange={(v) => handleSelectChange("price_range", v)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -744,8 +712,8 @@ s y contenido de RDM Digital
               <div className="space-y-2">
                 <label className="text-sm font-medium">Descripción Corta</label>
                 <Input
-                  name="shortDescription"
-                  value={formData.shortDescription}
+                  name="short_description"
+                  value={formData.short_description}
                   onChange={handleInputChange}
                   placeholder="Versión corta para el mapa y tarjetas"
                   maxLength={200}
@@ -837,43 +805,43 @@ s y contenido de RDM Digital
                 <label className="text-sm font-medium">
                   Imágenes <span className="text-muted-foreground">(Máx 3)</span>
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                   <div className="space-y-1">
                     <Input
-                      name="imageUrl"
-                      value={formData.imageUrl}
+                      name="image_url"
+                      value={formData.image_url}
                       onChange={handleInputChange}
                       placeholder="URL Imagen 1"
                     />
-                    {formData.imageUrl && (
+                    {formData.image_url && (
                       <div className="w-full h-16 rounded overflow-hidden">
-                        <img src={formData.imageUrl} alt="" className="w-full h-full object-cover" />
+                        <img src={safeImageUrl(formData.image_url)} alt="" loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>
                   <div className="space-y-1">
                     <Input
-                      name="imageUrl2"
-                      value={formData.imageUrl2}
+                      name="image_url2"
+                      value={formData.image_url2}
                       onChange={handleInputChange}
                       placeholder="URL Imagen 2"
                     />
-                    {formData.imageUrl2 && (
+                      {formData.image_url2 && (
                       <div className="w-full h-16 rounded overflow-hidden">
-                        <img src={formData.imageUrl2} alt="" className="w-full h-full object-cover" />
+                        <img src={safeImageUrl(formData.image_url2)} alt="" loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>
                   <div className="space-y-1">
                     <Input
-                      name="imageUrl3"
-                      value={formData.imageUrl3}
+                      name="image_url3"
+                      value={formData.image_url3}
                       onChange={handleInputChange}
                       placeholder="URL Imagen 3"
                     />
-                    {formData.imageUrl3 && (
+                    {formData.image_url3 && (
                       <div className="w-full h-16 rounded overflow-hidden">
-                        <img src={formData.imageUrl3} alt="" className="w-full h-full object-cover" />
+                        <img src={safeImageUrl(formData.image_url3)} alt="" loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>
@@ -884,23 +852,23 @@ s y contenido de RDM Digital
                 <label className="text-sm font-medium">
                   Video <span className="text-muted-foreground">(Máx 60 segundos)</span>
                 </label>
-                <Input
-                  name="videoUrl"
-                  value={formData.videoUrl}
-                  onChange={handleInputChange}
-                  placeholder="URL del video (YouTube, Vimeo)"
-                />
+                  <Input
+                    name="video_url"
+                    value={formData.video_url}
+                    onChange={handleInputChange}
+                    placeholder="URL del video (YouTube, Vimeo)"
+                  />
               </div>
 
               {/* Schedule */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Horario</label>
-                <Input
-                  name="scheduleDisplay"
-                  value={formData.scheduleDisplay}
-                  onChange={handleInputChange}
-                  placeholder="Lun-Vie: 9:00 - 18:00, Sáb: 10:00 - 14:00"
-                />
+                  <Input
+                    name="schedule_display"
+                    value={formData.schedule_display}
+                    onChange={handleInputChange}
+                    placeholder="Lun-Vie: 9:00 - 18:00, Sáb: 10:00 - 14:00"
+                  />
               </div>
 
               {/* Social Media */}

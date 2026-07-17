@@ -5,9 +5,14 @@ import { Shield, Users, FileCheck, RefreshCw, BookOpen, Scale, Eye, GitBranch, G
 const Gobernanza = () => (
   <WikiPage
     title="Gobernanza y Políticas"
-    subtitle="Reglas de contribución, roles y principios del ecosistema TAMV"
-  >
-    <Section title="Principios de gobernanza">
+      subtitle="Reglas de contribución, roles y principios del ecosistema TAMV"
+    >
+      {/* Hero Banner */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src="/images/streets-colonial.jpg" alt="Calles coloniales de Real del Monte" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      </div>
+      <Section title="Principios de gobernanza">
       <p className="text-muted-foreground leading-relaxed">
         TAMV opera bajo un modelo de gobernanza abierta progresiva, donde la transparencia, el respeto
         y el enfoque civilizatorio son pilares fundamentales. El{" "}

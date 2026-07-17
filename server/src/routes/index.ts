@@ -26,6 +26,7 @@ import geolocationRouter from "./geolocation.js";
 import tamvRouter from "./tamv.js";
 import tamvThesisRouter from "./tamv-thesis.js";
 import tenochtitlanRouter from "./tenochtitlan.js";
+import dgRouter from "../data-gateway/routes/dg.js";
 
 const apiRouter = Router();
 
@@ -56,5 +57,6 @@ apiRouter.use("/geolocation", geolocationRouter);
 apiRouter.use("/tamv", tamvRouter);
 apiRouter.use("/tamv", tamvThesisRouter);
 apiRouter.use("/tenochtitlan", tenochtitlanRouter);
+apiRouter.use("/dg", dgRouter);
 
 export default apiRouter;

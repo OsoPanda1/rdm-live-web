@@ -30,10 +30,7 @@ function frequencyToColor(frequency: number): string {
 async function performRender(payload: Record<string, unknown>) {
   const startTime = Date.now();
 
-<<<<<<< Updated upstream
-  // Simular renderizado
-=======
->>>>>>> Stashed changes
+
   const renderTime = Math.random() * 50 + 10;
   await new Promise((resolve) => setTimeout(resolve, renderTime));
 

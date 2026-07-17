@@ -1,10 +1,7 @@
-<<<<<<< Updated upstream
 // api/model-router.ts — Vercel Serverless Function
 // Unified entry point for open-source models (Hugging Face, OpenLLM, etc.)
 // Auth + Rate limiting + CORS unified
 
-=======
->>>>>>> Stashed changes
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { requireAuth } from "./_shared/auth.js";
 import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
@@ -74,18 +71,12 @@ function emitTelemetry(
     federation,
     data,
   };
-<<<<<<< Updated upstream
   // eslint-disable-next-line no-console
-=======
->>>>>>> Stashed changes
   console.log("[model-router]", JSON.stringify(payload));
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-<<<<<<< Updated upstream
   // CORS preflight
-=======
->>>>>>> Stashed changes
   if (req.method === "OPTIONS") {
     return res.status(204).end();
   }
@@ -96,19 +87,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const webRequest = vercelRequestToWebRequest(req);
 
-<<<<<<< Updated upstream
   // Auth check
-=======
->>>>>>> Stashed changes
   const auth = await requireAuth(webRequest);
   if (auth.errorResponse) {
     return sendWebResponse(res, auth.errorResponse);
   }
 
-<<<<<<< Updated upstream
   // Rate limit
-=======
->>>>>>> Stashed changes
   const rateLimit = checkRateLimit(webRequest, RATE_LIMITS.model);
   if (!rateLimit.allowed) {
     return res.status(429).json({
@@ -144,10 +129,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       temperature,
     });
 
-<<<<<<< Updated upstream
     // Hugging Face provider
-=======
->>>>>>> Stashed changes
     if (
       model.startsWith("Qwen/") ||
       model.startsWith("mistralai/") ||
@@ -195,10 +177,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       output = candidate?.generated_text ?? JSON.stringify(hfData);
       tokens = typeof candidate?.tokens === "number" ? candidate.tokens : undefined;
     } else {
-<<<<<<< Updated upstream
       // OpenLLM / future provider
-=======
->>>>>>> Stashed changes
       const openllmUrl = process.env.OPENLLM_API_URL;
 
       if (openllmUrl) {
@@ -263,10 +242,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (e: unknown) {
     const errMsg = e instanceof Error ? e.message : "unknown error";
     emitTelemetry("error", "Model router fatal error", federation, traceId, { error: errMsg });
-<<<<<<< Updated upstream
     // eslint-disable-next-line no-console
-=======
->>>>>>> Stashed changes
     console.error("Model router error:", e);
     return res.status(500).json({
       error: "Model router error",

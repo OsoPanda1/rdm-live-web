@@ -240,6 +240,226 @@ model AiInteractionLog {
 }
 
 // =====================================================
+// YUN BE · JOURNALING & RECUPERACIÓN
+// =====================================================
+
+model YunBeEvent {
+  id              String   @id @default(cuid())
+  eventType       String
+  payload         Json     @default("{}")
+  status          JournalStatus @default(PENDING)
+  idempotencyKey  String   @unique
+  supabaseUserId  String?
+  source          String   @default("system")
+  federationId    String?
+  ethicsScore     Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([idempotencyKey])
+  @@index([eventType, status])
+}
+
+model YunBeJournal {
+  id              String   @id @default(cuid())
+  operationType   String
+  entityType      String
+  entityId        String?
+  payload         Json     @default("{}")
+  status          JournalStatus @default(PENDING)
+  idempotencyKey  String   @unique
+  supabaseUserId  String?
+  stripeId        String?
+  metadata        Json     @default("{}")
+  retryCount      Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([idempotencyKey])
+  @@index([operationType, status])
+}
+
+model YunBeRecoveryReport {
+  id                 String   @id @default(cuid())
+  startedAt          DateTime @default(now())
+  endedAt            DateTime?
+  operationsReplayed Int      @default(0)
+  incidentsCount     Int      @default(0)
+  details            Json     @default("{}")
+  environment        String   @default("unknown")
+  createdAt          DateTime @default(now())
+}
+
+model YunBeSlackNotification {
+  id              String   @id @default(cuid())
+  channel         String   @default("#kernel-alerts")
+  eventType       String
+  message         String   @db.Text
+  incidentLevel   String   @default("info")
+  delivered       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+enum JournalStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  RECONCILED
+}
+
+// =====================================================
+// GAMIFICATION KERNEL · GUARDIANES & MISIONES
+// =====================================================
+
+model GamificationPlayer {
+  id              Int      @id @default(autoincrement())
+  supabaseUserId  String   @unique
+  displayName     String   @default("")
+  avatarId        Int?
+  level           Int      @default(1)
+  xp              Int      @default(0)
+  virtuePoints    Int      @default(0)
+  reputationScore Int      @default(2000)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  avatar          GamificationGuardian?  @relation(fields: [avatarId], references: [id])
+  questLogs       GamificationQuestLog[]
+  rewards         GamificationReward[]
+  emotionStates   EmotionState[]
+  cattleyaLinks   GamificationCattleyaLink[]
+}
+
+model GamificationGuardian {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  name          String
+  description   String   @db.Text
+  archetype     String   @default("observador")
+  primaryVirtue String   @default("calma")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  players       GamificationPlayer[]
+}
+
+model EmotionState {
+  id             Int      @id @default(autoincrement())
+  playerId       Int
+  label          String   @default("tranquilo")
+  primaryEmotion String   @default("calm")
+  intensity      Float    @default(0.5)
+  source         String   @default("auto")
+  createdAt      DateTime @default(now())
+
+  player         GamificationPlayer @relation(fields: [playerId], references: [id])
+}
+
+model GamificationMission {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique
+  title          String
+  description    String   @db.Text
+  context        String   @default("turismo")
+  xpReward       Int      @default(100)
+  virtueReward   Int      @default(10)
+  maxCompletions Int      @default(1)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  questLogs      GamificationQuestLog[]
+}
+
+model GamificationQuestLog {
+  id          Int              @id @default(autoincrement())
+  playerId    Int
+  missionId   Int
+  status      QuestStatus      @default(PENDING)
+  progress    Float            @default(0)
+  completions Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  player      GamificationPlayer  @relation(fields: [playerId], references: [id])
+  mission     GamificationMission @relation(fields: [missionId], references: [id])
+
+  @@unique([playerId, missionId])
+}
+
+enum QuestStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+model GamificationReward {
+  id          Int        @id @default(autoincrement())
+  playerId    Int
+  rewardCode  String
+  type        RewardType @default(BADGE)
+  metadata    Json       @default("{}")
+  claimedAt   DateTime   @default(now())
+
+  player      GamificationPlayer @relation(fields: [playerId], references: [id])
+}
+
+enum RewardType {
+  BADGE
+  SKIN
+  XR_ACCESS
+  CATTLEYA_BENEFIT
+}
+
+model GamificationCattleyaLink {
+  id             Int      @id @default(autoincrement())
+  playerId       Int
+  cattleyaUserId Int
+  createdAt      DateTime @default(now())
+
+  player         GamificationPlayer @relation(fields: [playerId], references: [id])
+
+  @@unique([playerId, cattleyaUserId])
+}
+
+// =====================================================
+// DATA GATEWAY · AUDIT LOGS & CACHE
+// =====================================================
+
+model DgAuditLog {
+  id               String   @id @default(cuid())
+  userId           String?
+  serviceId        String?
+  endpoint         String
+  method           String
+  params           Json     @default("{}")
+  statusCode       Int
+  durationMs       Int
+  sourceIp         String?
+  sensitivityLevel String   @default("low")
+  federationId     String?
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([endpoint, createdAt])
+}
+
+model DgCacheEntry {
+  id        String   @id @default(cuid())
+  cacheKey  String   @unique
+  value     Json
+  ttl       Int      @default(300)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+// =====================================================
 // ARCHIVO SONORO DIGITAL · MÚSICA
 // =====================================================
 

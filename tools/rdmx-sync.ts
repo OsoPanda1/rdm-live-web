@@ -5,6 +5,7 @@
 // ============================================================================
 
 import { execSync } from "child_process";
+import { existsSync } from "fs";
 
 interface ModuleRef {
   id: string;
@@ -13,18 +14,66 @@ interface ModuleRef {
 }
 
 const MODULES: ModuleRef[] = [
-  { id: "real-del-monte-explorer", repo: "https://github.com/OsoPanda1/real-del-monte-explorer.git", path: "." },
-  { id: "real-del-monte-twin", repo: "https://github.com/OsoPanda1/real-del-monte-twin.git", path: "packages/real-del-monte-twin" },
-  { id: "rdm-digital-core", repo: "https://github.com/OsoPanda1/rdm-digital-2dbd42b0.git", path: "packages/rdm-digital-core" },
-  { id: "rdm-smart-city-os", repo: "https://github.com/OsoPanda1/rdm-smart-city-os.git", path: "packages/rdm-smart-city-os" },
-  { id: "real-del-monte-elevated", repo: "https://github.com/OsoPanda1/real-del-monte-elevated.git", path: "packages/real-del-monte-elevated" },
-  { id: "citemesh-roots", repo: "https://github.com/OsoPanda1/citemesh-roots.git", path: "packages/citemesh-roots" },
-  { id: "genesis-digytamv-nexus", repo: "https://github.com/OsoPanda1/genesis-digytamv-nexus.git", path: "packages/genesis-digytamv-nexus" },
-  { id: "civilizational-core", repo: "https://github.com/OsoPanda1/civilizational-core.git", path: "packages/civilizational-core" },
-  { id: "quantum-system-tamv", repo: "https://github.com/OsoPanda1/quantum-system-tamv.git", path: "packages/quantum-system-tamv" },
-  { id: "rdm-digital-nodo-cero", repo: "https://github.com/OsoPanda1/rdm-digital-nodo-cero.git", path: "packages/rdm-digital-nodo-cero" },
-  { id: "real-del-monte-explorer-11b3982a", repo: "https://github.com/OsoPanda1/real-del-monte-explorer-11b3982a.git", path: "packages/real-del-monte-explorer-11b3982a" },
-  { id: "rdm-digital-2026", repo: "https://github.com/OsoPanda1/RDM-DIGITAL2026.git", path: "packages/rdm-digital-2026" },
+  {
+    id: "real-del-monte-explorer",
+    repo: "https://github.com/OsoPanda1/real-del-monte-explorer.git",
+    path: ".",
+  },
+  {
+    id: "real-del-monte-twin",
+    repo: "https://github.com/OsoPanda1/real-del-monte-twin.git",
+    path: "packages/real-del-monte-twin",
+  },
+  {
+    id: "rdm-digital-core",
+    repo: "https://github.com/OsoPanda1/rdm-digital-2dbd42b0.git",
+    path: "packages/rdm-digital-core",
+  },
+  {
+    id: "rdm-smart-city-os",
+    repo: "https://github.com/OsoPanda1/rdm-smart-city-os.git",
+    path: "packages/rdm-smart-city-os",
+  },
+  {
+    id: "real-del-monte-elevated",
+    repo: "https://github.com/OsoPanda1/real-del-monte-elevated.git",
+    path: "packages/real-del-monte-elevated",
+  },
+  {
+    id: "citemesh-roots",
+    repo: "https://github.com/OsoPanda1/citemesh-roots.git",
+    path: "packages/citemesh-roots",
+  },
+  {
+    id: "genesis-digytamv-nexus",
+    repo: "https://github.com/OsoPanda1/genesis-digytamv-nexus.git",
+    path: "packages/genesis-digytamv-nexus",
+  },
+  {
+    id: "civilizational-core",
+    repo: "https://github.com/OsoPanda1/civilizational-core.git",
+    path: "packages/civilizational-core",
+  },
+  {
+    id: "quantum-system-tamv",
+    repo: "https://github.com/OsoPanda1/quantum-system-tamv.git",
+    path: "packages/quantum-system-tamv",
+  },
+  {
+    id: "rdm-digital-nodo-cero",
+    repo: "https://github.com/OsoPanda1/rdm-digital-nodo-cero.git",
+    path: "packages/rdm-digital-nodo-cero",
+  },
+  {
+    id: "real-del-monte-explorer-11b3982a",
+    repo: "https://github.com/OsoPanda1/real-del-monte-explorer-11b3982a.git",
+    path: "packages/real-del-monte-explorer-11b3982a",
+  },
+  {
+    id: "rdm-digital-2026",
+    repo: "https://github.com/OsoPanda1/RDM-DIGITAL2026.git",
+    path: "packages/rdm-digital-2026",
+  },
 ];
 
 function run(cmd: string, cwd?: string): string {
@@ -38,7 +87,12 @@ function run(cmd: string, cwd?: string): string {
   }
 }
 
+function isGitWorkTree(cwd: string): boolean {
+  return existsSync(cwd) && run("git rev-parse --is-inside-work-tree", cwd) === "true";
+}
+
 function getShortHash(cwd: string): string {
+  if (!isGitWorkTree(cwd)) return "";
   return run("git rev-parse --short HEAD", cwd);
 }
 
@@ -57,6 +111,11 @@ function syncSubmodules(): void {
     console.log(`\n── ${mod.id} ──`);
     console.log(`   Path: ${mod.path}`);
 
+    if (!existsSync(mod.path)) {
+      console.log("   ⚠ Path missing — skipping residual ecosystem reference");
+      continue;
+    }
+
     const hash = getShortHash(mod.path);
     if (hash) {
       console.log(`   Current: ${hash}`);
@@ -69,11 +128,9 @@ function syncSubmodules(): void {
     }
   }
 
-  // Commit submodule pointer updates
-  console.log("\n→ Staging submodule changes...");
-  run('git add . && git diff --cached --quiet || git commit -m "chore: sync submodules"');
-
-  console.log("\n✅ Sync complete.\n");
+  console.log(
+    "\n✅ Sync complete. Review git status and commit intentionally if submodule pointers changed.\n",
+  );
 }
 
 function showStatus(): void {

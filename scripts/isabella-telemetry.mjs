@@ -9,8 +9,8 @@ const ENV =
   process.env.NODE_ENV === "production"
     ? "prod"
     : process.env.NODE_ENV === "staging"
-    ? "staging"
-    : "dev";
+      ? "staging"
+      : "dev";
 
 function log(message, data = {}) {
   const payload = {
@@ -20,7 +20,6 @@ function log(message, data = {}) {
     message,
     data,
   };
-  // eslint-disable-next-line no-console
   console.log("[isabella:telemetry]", JSON.stringify(payload));
 }
 
@@ -38,10 +37,7 @@ async function ping(url, label) {
 }
 
 async function main() {
-  const BASE_URL =
-    process.env.RDMX_BASE_URL ||
-    process.env.VERCEL_URL ||
-    "http://localhost:4173";
+  const BASE_URL = process.env.RDMX_BASE_URL || process.env.VERCEL_URL || "http://localhost:4173";
 
   const healthUrl = `${BASE_URL}/api/health`;
   const federationHealthUrl = `${BASE_URL}/api/federation-health`;

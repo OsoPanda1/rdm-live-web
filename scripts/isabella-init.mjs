@@ -9,8 +9,8 @@ const ENV =
   process.env.NODE_ENV === "production"
     ? "prod"
     : process.env.NODE_ENV === "staging"
-    ? "staging"
-    : "dev";
+      ? "staging"
+      : "dev";
 
 function log(message, data = {}) {
   const payload = {
@@ -20,7 +20,6 @@ function log(message, data = {}) {
     message,
     data,
   };
-  // eslint-disable-next-line no-console
   console.log("[isabella:init]", JSON.stringify(payload));
 }
 
@@ -30,9 +29,7 @@ async function main() {
 
   if (!url || !key) {
     log("Supabase service role config missing", { url: !!url, key: !!key });
-    throw new Error(
-      "SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY no están definidos",
-    );
+    throw new Error("SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY no están definidos");
   }
 
   const supabase = createClient(url, key);
@@ -60,9 +57,7 @@ async function main() {
   }
 
   const existingTables = (tableInfo || []).map((t) => t.table_name);
-  const missingTables = tablesToCheck.filter(
-    (t) => !existingTables.includes(t),
-  );
+  const missingTables = tablesToCheck.filter((t) => !existingTables.includes(t));
 
   log("Table check result", { existingTables, missingTables });
 
@@ -85,15 +80,11 @@ async function main() {
     trace_id: `bootstrap-${Date.now()}`,
   };
 
-  const { error: insertError } = await supabase
-    .from("ai_prompts_log")
-    .insert(bootstrapEvent);
+  const { error: insertError } = await supabase.from("ai_prompts_log").insert(bootstrapEvent);
 
   if (insertError) {
     log("Error inserting bootstrap event", { error: insertError.message });
-    throw new Error(
-      `Error al registrar evento de bootstrap: ${insertError.message}`,
-    );
+    throw new Error(`Error al registrar evento de bootstrap: ${insertError.message}`);
   }
 
   log("Isabella init completed", { bootstrapEventId: "ai_prompts_log" });

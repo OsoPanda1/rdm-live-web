@@ -1,0 +1,67 @@
+// Optional Prisma model projection for YUN BE™ when DATABASE_URL points to Neon Postgres.
+// This file is intentionally standalone because the repository does not yet ship Prisma as a runtime dependency.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model YunBeEvent {
+  eventId        String         @id @map("event_id")
+  userId         String?        @map("user_id") @db.Uuid
+  sourceSystem   String         @map("source_system")
+  payload        Json
+  riskClass      String         @map("risk_class")
+  yunEventType   String?        @map("yun_event_type")
+  federation     String?
+  idempotencyKey String         @unique @map("idempotency_key")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  journal        YunBeJournal[]
+
+  @@map("yunbe_events")
+}
+
+model YunBeJournal {
+  journalId      String      @id @map("journal_id") @db.Uuid
+  eventId        String      @map("event_id")
+  userId         String?     @map("user_id") @db.Uuid
+  sourceSystem   String      @map("source_system")
+  operationType  String      @map("operation_type")
+  payload        Json
+  riskClass      String      @map("risk_class")
+  status         String
+  attempts       Int         @default(0)
+  nextReplayAt   DateTime?   @map("next_replay_at") @db.Timestamptz(6)
+  completedAt    DateTime?   @map("completed_at") @db.Timestamptz(6)
+  lastError      String?     @map("last_error")
+  eoctScore      Decimal?    @map("eoct_score") @db.Decimal(5, 4)
+  idempotencyKey String      @unique @map("idempotency_key")
+  metadata       Json
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  event          YunBeEvent  @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+
+  @@index([status, nextReplayAt, createdAt], map: "idx_yunbe_journal_replayable")
+  @@map("yunbe_journal")
+}
+
+model YunBeRecoveryReport {
+  reportId            String   @id @map("report_id") @db.Uuid
+  startedAt           DateTime @map("started_at") @db.Timestamptz(6)
+  finishedAt          DateTime @map("finished_at") @db.Timestamptz(6)
+  previousState       String   @map("previous_state")
+  finalState          String   @map("final_state")
+  replayed            Int      @default(0)
+  blocked             Int      @default(0)
+  failed              Int      @default(0)
+  completed           Int      @default(0)
+  degradedFederations Json     @map("degraded_federations")
+  summary             String
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("yunbe_recovery_reports")
+}

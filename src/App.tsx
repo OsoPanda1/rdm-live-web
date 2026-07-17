@@ -413,9 +413,8 @@ const AppInner = () => {
       return false
     }
 
-    if (sessionStorage.getItem('rdm_intro_shown')) return false
-    sessionStorage.setItem('rdm_intro_shown', 'true')
-    return true
+    const params = new URLSearchParams(window.location.search)
+    return params.get('intro') === '1'
   })
 
   return (

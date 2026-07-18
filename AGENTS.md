@@ -8,9 +8,10 @@
 - **Fase 1 — YUN + YUN BE**: 18 archivos core auditados, 67 tests en `yun-core.test.ts`, todos pasan
 - **Fase 2a — DB Core**: 18 archivos auditados; `augment.d.ts` corregido, `admin.server.ts` eliminado, `prisma/schema.yunbe.prisma` eliminado, `.env` placeholder warning, `env.ts` detecta placeholders
 - **Fase 2b — Data Gateway**: 17 archivos auditados; bugs corregidos (XP multiplier, evaluateAndReward signature, avatar non-null assertion, getSource non-null assertion, CattleyaBenefits types, setGuardian cast); 38 tests escritos y pasando
+- **Fase 2c — FederationBus**: 3 archivos auditados (FederationBus.ts, territorial-federation-bridge.ts, event-bus-bridge.ts); 35 tests escritos y pasando
 
 ## Next Phase
-- **Fase 2c — FederationBus**: audit + tests
+- **Fase 3 — Isabella**: audit + tests
 
 ## Test Commands
 - Data Gateway: `npx vitest run --config vitest.data-gateway.config.ts`

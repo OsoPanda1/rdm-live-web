@@ -269,6 +269,7 @@ Stack de observabilidad:
 - [x] Observability (métricas, logs, traces, health checks)
 - [x] Federation Coordinator (heartbeat, status, cross-federation events)
 - [x] Event Bus Bridge (unifica 3 sistemas de eventos)
+- [x] FederationBus tests (35 tests — emit, subscribe, broadcast, health, territorial routing, YUN bridge mapping)
 
 ### Frontend
 - [x] SPA con React Router DOM (migrado desde TanStack Router/Start)
@@ -335,7 +336,7 @@ Stack de observabilidad:
 - [x] **Fase 1** — YUN + YUN BE (18 archivos, 67 tests)
 - [x] **Fase 2a** — DB Core (18 archivos, Prisma/schema corregido, env placeholders)
 - [x] **Fase 2b** — Data Gateway (17 archivos, 38 tests, bugs corregidos)
-- [ ] **Fase 2c** — FederationBus (audit + tests)
+- [x] **Fase 2c** — FederationBus (3 archivos, 35 tests, bridge mapping validado)
 - [ ] **Fase 3** — Isabella (32 archivos auditados)
 - [ ] **Fase 4** — Conexiones + Vercel deploy production
 - [ ] **Fase 5** — Frontend (páginas, componentes, hooks)

@@ -202,7 +202,7 @@ export function recommendSpatialMode(
   if (hour >= 21 || hour < 6) {
     return track.spatial_profiles?.metaverso ? 'metaverso' : 'espacio';
   }
-  if (hour >= 18 || hour < 21) {
+  if (hour >= 18 && hour < 21) {
     return 'espacio';
   }
   return 'archivo';

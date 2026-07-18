@@ -13,9 +13,10 @@
 - **Fase 4 — Conexiones + Vercel deploy production**: Build fixes (Sentry inline, toaster.tsx shim), `.vercelignore`, `outputDirectory`, prebuilt deploy exitoso. Pendiente: deshabilitar Vercel Authentication (login wall) desde dashboard → Settings → Deployment Protection → desactivar para producción
 
 ## Next Phase
-- **Fase 5 — Frontend tests**
+- **Fase 6 — Pendientes** (issues, edge cases, Vercel Authentication desbloquear)
 
 ## Test Commands
+- Frontend: `npx vitest run --config vitest.frontend.config.ts` (43 tests — gamification, music, validation, twins, time-theme)
 - Data Gateway: `npx vitest run --config vitest.data-gateway.config.ts`
 - YUN Core: `npx vitest run --config vitest.yun-core.config.ts`
 

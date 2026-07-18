@@ -1,26 +1,11 @@
-// api/telemetry.js — Vercel Edge Function
-// Endpoint perimetral de telemetría del Nodo Cero
-// Auth + Rate limiting + CORS unificados
+import { corsPreflightResponse, corsJsonResponse } from "./_shared/cors";
+import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit";
 
-import { getCorsHeaders, corsPreflightResponse, corsJsonResponse } from "./_shared/cors.js";
-import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
-
-const ORIGIN_ALLOWLIST = [
-  "https://www.visitarealdelmonte.online",
-  "https://visitarealdelmonte.online",
-  "https://rdm-digital-hub.vercel.app",
-];
-
-/**
- * @param {Request} request
- */
-export default async function handler(request) {
-  // CORS preflight
+export default async function handler(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return corsPreflightResponse(request);
   }
 
-  // Rate limit
   const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const rateLimitKey = `telemetry:${clientIp}`;
   const rateLimit = checkRateLimit(rateLimitKey, RATE_LIMITS.telemetry.limit, RATE_LIMITS.telemetry.windowMs);
@@ -31,7 +16,7 @@ export default async function handler(request) {
         status: 429,
         headers: {
           "Content-Type": "application/json",
-          "Retry-After": String(Math.ceil(rateLimit.retryAfter / 1000)),
+          "Retry-After": String(Math.ceil((rateLimit.retryAfter ?? 0) / 1000)),
         },
       },
     );
@@ -43,7 +28,7 @@ export default async function handler(request) {
     const topologyState = netflowDbUrl ? "FEDERATED_ACTIVE" : "STANDALONE_MODAL";
 
     const payloadBase = {
-      infra_status: "operational",
+      infra_status: "operational" as const,
       node_id: "nodo-cero-001",
       federation_schema_count: 7,
       topology_state: topologyState,
@@ -64,7 +49,7 @@ export default async function handler(request) {
         "cpu_percent",
         "memory_percent",
         "active_connections",
-      ];
+      ] as const;
 
       for (const field of requiredFields) {
         if (body[field] === undefined) {
@@ -108,7 +93,6 @@ export default async function handler(request) {
       return corsJsonResponse(request, { accepted: true, stored, ...payloadBase });
     }
 
-    // GET — health check
     return corsJsonResponse(request, payloadBase);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown telemetry error";

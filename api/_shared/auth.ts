@@ -1,9 +1,16 @@
-// api/_shared/auth.js — Autenticación unificada para Vercel Serverless/Edge Functions
-// Verifica JWT del usuario (Supabase) o CRON_SECRET para cron jobs
-
 import { createClient } from "@supabase/supabase-js";
 
-export async function verifyAuth(request) {
+interface AuthResult {
+  authenticated: boolean;
+  errorMessage?: string;
+  role?: string;
+  userId?: string;
+  email?: string;
+  supabase?: ReturnType<typeof createClient>;
+  errorResponse?: Response;
+}
+
+export async function verifyAuth(request: Request): Promise<AuthResult> {
   const authHeader = request.headers.get("authorization");
 
   if (!authHeader) {
@@ -54,7 +61,7 @@ export async function verifyAuth(request) {
   }
 }
 
-export async function requireAuth(request) {
+export async function requireAuth(request: Request): Promise<AuthResult> {
   const result = await verifyAuth(request);
 
   if (!result.authenticated) {
@@ -76,11 +83,10 @@ export async function requireAuth(request) {
   return result;
 }
 
-export async function requireRole(request, allowedRoles) {
+export async function requireRole(request: Request, allowedRoles: string[]): Promise<AuthResult> {
   const result = await requireAuth(request);
 
   if (result.errorResponse) return result;
-
   if (result.role === "cron") return result;
 
   if (!result.role || !allowedRoles.includes(result.role)) {

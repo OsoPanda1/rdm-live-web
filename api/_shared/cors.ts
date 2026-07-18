@@ -26,3 +26,14 @@ export function handleCors(req: Request): Response | null {
   }
   return null;
 }
+
+export function corsPreflightResponse(req: Request): Response {
+  return new Response(null, { status: 204, headers: getCorsHeaders(req.headers.get("origin")) });
+}
+
+export function corsJsonResponse(req: Request, body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json", ...getCorsHeaders(req.headers.get("origin")) },
+  });
+}

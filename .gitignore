@@ -39,3 +39,4 @@ real-del-monte-digital-hub-*/
 *.njsproj
 *.sln
 *.sw?
+.env*

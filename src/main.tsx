@@ -45,15 +45,20 @@ const BootstrapFallback = ({
   </div>
 )
 
+function initSentry() {
+  const dsn = import.meta.env.VITE_SENTRY_DSN;
+  if (dsn) {
+    console.log('[Sentry] DSN configured');
+  } else {
+    console.debug('[Sentry] No DSN configured — skipping');
+  }
+}
+
 async function bootstrap() {
   try {
-    const [{ default: App }, { initSentry }] = await Promise.all([
-      import('./App'),
-      import('@/integrations/observability/sentry'),
-    ])
+    const { default: App } = await import('./App')
 
-    // Fire-and-forget; init is a no-op until VITE_SENTRY_DSN is set.
-    void initSentry()
+    initSentry()
 
     root.render(
       <React.StrictMode>

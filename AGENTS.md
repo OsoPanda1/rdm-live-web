@@ -10,9 +10,10 @@
 - **Fase 2b — Data Gateway**: 17 archivos auditados; bugs corregidos (XP multiplier, evaluateAndReward signature, avatar non-null assertion, getSource non-null assertion, CattleyaBenefits types, setGuardian cast); 38 tests escritos y pasando
 - **Fase 2c — FederationBus**: 3 archivos auditados (FederationBus.ts, territorial-federation-bridge.ts, event-bus-bridge.ts); 35 tests escritos y pasando
 - **Fase 3 — Isabella**: 35 archivos auditados (core, emotional, knowledge, pipeline, skills, ontology, api, kernel, quantum); 65 tests escritos y pasando
+- **Fase 4 — Conexiones + Vercel deploy production**: Build fixes (Sentry inline, toaster.tsx shim), `.vercelignore`, `outputDirectory`, prebuilt deploy exitoso. Pendiente: deshabilitar Vercel Authentication (login wall) desde dashboard → Settings → Deployment Protection → desactivar para producción
 
 ## Next Phase
-- **Fase 4 — Conexiones + Vercel deploy production**
+- **Fase 5 — Frontend tests**
 
 ## Test Commands
 - Data Gateway: `npx vitest run --config vitest.data-gateway.config.ts`

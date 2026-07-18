@@ -351,7 +351,7 @@ Stack de observabilidad:
 - [x] **Fase 2b** — Data Gateway (17 archivos, 38 tests, bugs corregidos)
 - [x] **Fase 2c** — FederationBus (3 archivos, 35 tests, bridge mapping validado)
 - [x] **Fase 3** — Isabella (35 archivos, 65 tests — identity, oath, consciousness, emotional, skills, ontology, api, kernel, quantum, awakening)
-- [ ] **Fase 4** — Conexiones + Vercel deploy production
+- [x] **Fase 4** — Conexiones + Vercel deploy production (Sentry stub, toaster shim, .vercelignore, prebuilt deploy exitoso). **Pendiente:** deshabilitar Vercel Authentication en dashboard
 - [ ] **Fase 5** — Frontend (páginas, componentes, hooks)
 - [ ] **Fase 6** — Pendientes
 

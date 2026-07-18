@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
 import { config } from "../config.js";
+import { prisma } from "../lib/prisma.js";
 
 const systemRouter = Router();
-const prisma = config.databaseUrl ? new PrismaClient() : null;
 
 const withTimeout = async <T>(promise: Promise<T>, timeoutMs: number) => {
   return await Promise.race([
@@ -15,10 +14,6 @@ const withTimeout = async <T>(promise: Promise<T>, timeoutMs: number) => {
 };
 
 async function getDatabaseStatus() {
-  if (!prisma) {
-    return { ok: false, reason: "DATABASE_URL_NOT_CONFIGURED" };
-  }
-
   try {
     await withTimeout(prisma.$queryRaw`SELECT 1`, 1500);
     return { ok: true };

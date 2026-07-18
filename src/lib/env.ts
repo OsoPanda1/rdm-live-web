@@ -19,6 +19,14 @@ const clientSchema = z.object({
 
 export type ClientEnv = z.infer<typeof clientSchema>;
 
+const IS_PLACEHOLDER = /placeholder|changeme|your-/i;
+
+function detectPlaceholders(raw: Record<string, unknown>): string[] {
+  return Object.entries(raw)
+    .filter(([, v]) => typeof v === "string" && IS_PLACEHOLDER.test(v))
+    .map(([k]) => k);
+}
+
 function parseClient(): ClientEnv {
   const raw = {
     VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
@@ -28,6 +36,15 @@ function parseClient(): ClientEnv {
     VITE_POSTHOG_HOST: import.meta.env.VITE_POSTHOG_HOST,
     VITE_APP_ENV: import.meta.env.VITE_APP_ENV ?? import.meta.env.MODE,
   };
+  const placeholders = detectPlaceholders(raw);
+  if (placeholders.length > 0) {
+    console.warn(
+      "[env] Variables de entorno con valores placeholder detectadas:\n  " +
+        placeholders.join(", ") +
+        "\n  Copia .env.example como .env y completa los valores reales.\n" +
+        "  https://supabase.com/dashboard/project\n",
+    );
+  }
   const parsed = clientSchema.safeParse(raw);
   if (!parsed.success) {
     // Do not import the app logger here: logger imports this env module, so that

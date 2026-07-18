@@ -46,23 +46,20 @@ export class SovereignEngine {
     const finalResponse = culturalGuardian(rawResponse, context);
     await cacheSet(key, finalResponse, 300);
 
-    if (prisma) {
-      const aiInteractionLog = (prisma as unknown as { aiInteractionLog?: { create: (input: unknown) => Promise<unknown> } }).aiInteractionLog;
-      await aiInteractionLog
-        ?.create({
-          data: {
-            userId: context.userId ?? "anon",
-            channel: context.channel ?? "realito",
-            sourceModel: source,
-            prompt,
-            response: finalResponse,
-            latencyMs: Date.now() - startedAt,
-          },
-        })
-        .catch((error: unknown) => {
-          console.warn("[SovereignEngine] aiInteractionLog create failed", error);
-        });
-    }
+    await prisma.aiInteractionLog
+      .create({
+        data: {
+          userId: context.userId ?? "anon",
+          channel: context.channel ?? "realito",
+          sourceModel: source,
+          prompt,
+          response: finalResponse,
+          latencyMs: Date.now() - startedAt,
+        },
+      })
+      .catch((error: unknown) => {
+        console.warn("[SovereignEngine] aiInteractionLog create failed", error);
+      });
 
     return finalResponse;
   }

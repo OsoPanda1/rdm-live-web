@@ -11,9 +11,11 @@
 - **Fase 2c — FederationBus**: 3 archivos auditados (FederationBus.ts, territorial-federation-bridge.ts, event-bus-bridge.ts); 35 tests escritos y pasando
 - **Fase 3 — Isabella**: 35 archivos auditados (core, emotional, knowledge, pipeline, skills, ontology, api, kernel, quantum); 65 tests escritos y pasando
 - **Fase 4 — Conexiones + Vercel deploy production**: Build fixes (Sentry inline, toaster.tsx shim), `.vercelignore`, `outputDirectory`, prebuilt deploy exitoso. Pendiente: deshabilitar Vercel Authentication (login wall) desde dashboard → Settings → Deployment Protection → desactivar para producción
+- **Fase 5 — Frontend tests**: 5 test files (43 tests — gamification, music, validation, twins, time-theme); bug fix en `recommendSpatialMode`
+- **Fase 6 — Pendientes**: dependencias faltantes agregadas (jsdom, testing-library), vitest configs unificados con `@/` alias, `auth.js`/`telemetry.js` migrados a TS, `ai-text-demo/` eliminado. Pendiente Vercel Authentication
 
 ## Next Phase
-- **Fase 6 — Pendientes** (issues, edge cases, Vercel Authentication desbloquear)
+- **Fase 7 — ...** (all phases complete except Vercel Authentication)
 
 ## Test Commands
 - Frontend: `npx vitest run --config vitest.frontend.config.ts` (43 tests — gamification, music, validation, twins, time-theme)

@@ -271,6 +271,19 @@ Stack de observabilidad:
 - [x] Event Bus Bridge (unifica 3 sistemas de eventos)
 - [x] FederationBus tests (35 tests — emit, subscribe, broadcast, health, territorial routing, YUN bridge mapping)
 
+### Isabella AI
+- [x] Identity, ethical oath (6 principios), consciousness (10 layers)
+- [x] Emotional engine (8 patterns, detection, resonance)
+- [x] Emotional memory (per-user, stats, dominant emotion)
+- [x] 5 skills tested (Orion, Sophia, Argus, Mnemos, Lumen)
+- [x] Ontology (alignment index, TimeUp boundary enforcement)
+- [x] API router (8 routes, param matching)
+- [x] Security middleware (API key, double hexagon, trace ID)
+- [x] Awakening Protocol (5 phases: SILENT → TRANSCEND)
+- [x] Kernel (resonance, crono, empathy, aesthetic, mesh)
+- [x] Isabella pipeline guardian evaluation
+- [x] Isabella tests: 65 tests, all passing
+
 ### Frontend
 - [x] SPA con React Router DOM (migrado desde TanStack Router/Start)
 - [x] 117+ páginas con lazy loading
@@ -337,7 +350,7 @@ Stack de observabilidad:
 - [x] **Fase 2a** — DB Core (18 archivos, Prisma/schema corregido, env placeholders)
 - [x] **Fase 2b** — Data Gateway (17 archivos, 38 tests, bugs corregidos)
 - [x] **Fase 2c** — FederationBus (3 archivos, 35 tests, bridge mapping validado)
-- [ ] **Fase 3** — Isabella (32 archivos auditados)
+- [x] **Fase 3** — Isabella (35 archivos, 65 tests — identity, oath, consciousness, emotional, skills, ontology, api, kernel, quantum, awakening)
 - [ ] **Fase 4** — Conexiones + Vercel deploy production
 - [ ] **Fase 5** — Frontend (páginas, componentes, hooks)
 - [ ] **Fase 6** — Pendientes

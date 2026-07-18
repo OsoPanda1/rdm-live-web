@@ -10,7 +10,7 @@
 - **Fase 2b — Data Gateway**: 17 archivos auditados; bugs corregidos (XP multiplier, evaluateAndReward signature, avatar non-null assertion, getSource non-null assertion, CattleyaBenefits types, setGuardian cast); 38 tests escritos y pasando
 - **Fase 2c — FederationBus**: 3 archivos auditados (FederationBus.ts, territorial-federation-bridge.ts, event-bus-bridge.ts); 35 tests escritos y pasando
 - **Fase 3 — Isabella**: 35 archivos auditados (core, emotional, knowledge, pipeline, skills, ontology, api, kernel, quantum); 65 tests escritos y pasando
-- **Fase 4 — Conexiones + Vercel deploy production**: Build fixes (Sentry inline, toaster.tsx shim), `.vercelignore`, `outputDirectory`, prebuilt deploy exitoso. Pendiente: deshabilitar Vercel Authentication (login wall) desde dashboard → Settings → Deployment Protection → desactivar para producción
+- **Fase 4 — Conexiones + Vercel deploy production**: Build fixes (Sentry inline, toaster.tsx shim), `.vercelignore`, `outputDirectory`, prebuilt deploy exitoso, Vercel Authentication desactivado vía `vercel project protection disable --sso`. Deploy público ✅
 - **Fase 5 — Frontend tests**: 5 test files (43 tests — gamification, music, validation, twins, time-theme); bug fix en `recommendSpatialMode`
 - **Fase 6 — Pendientes**: dependencias faltantes agregadas (jsdom, testing-library), vitest configs unificados con `@/` alias, `auth.js`/`telemetry.js` migrados a TS, `ai-text-demo/` eliminado. Pendiente Vercel Authentication
 

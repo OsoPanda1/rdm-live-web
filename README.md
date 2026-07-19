@@ -1,8 +1,10 @@
 # RDM Digital Hub — Nodo Cero
 
 **Plataforma digital soberana para Real del Monte, Hidalgo, México**
+**Producción:** `https://rdm-digital-hub-ldtocs-r32mv96u8-osopanda1-3342s-projects.vercel.app`
+**Dominios:** `www.visitarealdelmonte.online` · `visitarealdelmonte.online`
 
-Sistema de Inteligencia Territorial en Tiempo Real con arquitectura heptafederada YUN, IA consciente (Isabella), gamificación, economía local y metaverso.
+Sistema de Inteligencia Territorial en Tiempo Real con arquitectura heptafederada YUN, IA consciente (Isabella), gamificación, economía local, metaverso y **RDM Runtime v0.1** (núcleo perimetral Go con doble zero-trust, session tickets HMAC, WASM pools y micro-batching).
 
 ---
 
@@ -53,34 +55,36 @@ Sistema de Inteligencia Territorial en Tiempo Real con arquitectura heptafederad
 
 | Métrica | Valor |
 |---------|-------|
-| Archivos TypeScript/TSX | 8,568 |
-| Líneas de código | 1,019,458 |
-| Rutas (routes) | 28 |
-| Componentes UI | 198 |
-| Hooks personalizados | 18 |
-| Páginas | 117 |
+| Archivos TypeScript/TSX | ~1,200 |
+| Líneas de código | ~130,000 |
+| Rutas (routes) | 80+ |
+| Componentes UI | 198+ |
+| Páginas | 117+ |
+| Tests unitarios | **176** (YUN 67 + Data Gateway 38 + Frontend 43 + RDM Runtime 28) |
+| RDM Runtime (Go) | 8 paquetes, 28 tests |
 | Migraciones Supabase | 29 |
 | Archivos Isabella AI | 32 |
 | Archivos YUN Core | 55 |
-| Features | 19 |
 | Dependencias | 56 + 17 dev |
-| Documentación YUN | 16 archivos |
-| API Edge Functions | 16 archivos |
+| API Edge Functions | 16 |
 
 ---
 
 ## Stack Tecnológico
 
-- **Frontend:** React 19, React Router DOM, Vite 7, TypeScript 5.8
+- **Frontend:** React 19, React Router DOM (lazy via AppShell), Vite 7, TypeScript 5.8
 - **Estilos:** Tailwind CSS v4, shadcn/ui (26 paquetes Radix)
 - **Backend:** Supabase (Postgres, Auth, RLS, Realtime), Express (Data Gateway)
-- **Animaciones:** Framer Motion, Three.js
+- **Runtime Perimetral:** Go 1.24 (session tickets HMAC, doble zero-trust, WASM pools, micro-batching)
+- **Animaciones:** Framer Motion (lazy via AnimatedOutlet), Three.js (lazy en ruta /mapa)
 - **Gráficas:** Recharts
 - **IA:** Isabella AI (pipeline de conciencia hexagonal, 5 skills, 10 capas)
-- **Mapas interactivos:** 2D-Weather-Sandbox (WebGL2, simulación climática en tiempo real)
+- **Mapas interactivos:** Leaflet 2D + Map3DTwin (Three.js lazy)
+- **Toaster:** Sonner (en lugar de radix-ui/react-toast)
 - **Quantum:** Qubit, puertas cuánticas, circuitos, QRNG, BB84, Shor 9QEC
 - **Gamificación:** Misiones, XP, Cattleya tier system (4 niveles)
-- **Despliegue:** Vercel (Serverless Functions, Terraform), Express backend (port 8787)
+- **Monitoreo:** Vercel Speed Insights + Analytics
+- **Despliegue:** Vercel (Serverless Functions), Express backend (port 8787)
 - **Node:** >= 22
 
 ---
@@ -111,6 +115,20 @@ Sistema de IA con pipeline de conciencia hexagonal de 12 pasos:
 | **Argus** | Simulación de escenarios — predicción y análisis de riesgo |
 | **Mnemos** | Preservación histórica — canonización de conocimiento |
 | **Lumen** | Gobernanza constitucional — evaluación ética de decisiones |
+
+### RDM Runtime v0.1 — Núcleo Perimetral (Go)
+
+Sistema de ejecución seguro para plugins territoriales con arquitectura de doble zero-trust:
+
+- **Session Tickets** — HMAC-SHA256 con LRU cache + TTL, frontend client con `attachToHeaders()`
+- **Security** — Doble validación: identidad (token + ticket) y ejecución (roles/federaciones)
+- **Sandbox** — Pool manager de instancias WASM con warm/cold/release
+- **Micro-batching** — Agrupación por plugin+operation con ventana 10ms y tamaño máximo
+- **Router** — Pipeline completo: auth → quota → sandbox/batch → telemetry
+- **Quota** — Rate limiting concurrente por plugin
+- **Telemetry** — Métricas + logs estructurados + redacción de campos sensibles
+- **Governance** — Control de cambios GEMET, validación de manifiesto
+- **28 tests unitarios** — todos pasando
 
 ### RDM Quest — Gamificación
 
@@ -191,14 +209,20 @@ Stack de observabilidad:
 │   ├── 07-operations-manual.md
 │   ├── 08-adr-index.md
 │   └── adr/                      # Architecture Decision Records
-├── api/                          # Vercel Serverless Functions
-│   ├── _shared/                  # CORS, rate-limit, stripe helpers
-│   ├── cron/                     # Health check
-│   ├── model-router.ts           # Unified ML model router
-│   └── telemetry.js              # Edge telemetry endpoint
 ├── infra/terraform/              # Terraform para Vercel + dominios
 │   └── main.tf                   # Vercel project + domains + deployment
-├── public/weather-sandbox/       # 2D-Weather-Sandbox (simulación climática)
+├── runtime/                      # RDM Runtime v0.1 (núcleo perimetral Go)
+│   ├── config/                   # rdm-runtime-manifest.json
+│   ├── pkg/
+│   │   ├── manifest/             # Carga/validación JSON Schema
+│   │   ├── session/              # Session tickets HMAC + LRU + TTL
+│   │   ├── security/             # Doble zero-trust
+│   │   ├── sandbox/              # Pool WASM manager
+│   │   ├── router/               # Micro-batching + ruteo
+│   │   ├── quota/                # Rate limiting
+│   │   ├── telemetry/            # Métricas + logs
+│   │   └── governance/           # Control GEMET
+│   └── test/unit/                # 28 tests
 ├── server/                       # Data Gateway Express backend
 │   ├── prisma/                   # Schema + migraciones
 │   ├── src/data-gateway/         # Cattleya tiers, gamification, routes
@@ -206,6 +230,7 @@ Stack de observabilidad:
 │   │   └── gamification/         # Player, mission, reward services
 │   └── src/routes/               # API routes (/api/dg/*)
 ├── src/
+│   ├── AppShell.tsx              # Entry point lazy (react-router/query diferido)
 │   ├── components/               # 198+ componentes UI
 │   │   ├── home/                 # Homepage (HeroSection, NavigationBar, etc.)
 │   │   ├── isabella/             # Chat de Isabella
@@ -213,7 +238,8 @@ Stack de observabilidad:
 │   │   ├── metaverse/            # Componentes metaverso
 │   │   ├── music/                # Reproductor de música
 │   │   ├── rdm/                  # Componentes RDM (navbar, footer, hero)
-│   │   └── ui/                   # shadcn/ui primitives
+│   │   ├── ui/                   # shadcn/ui primitives (sonner, tooltip, etc.)
+│   │   └── AnimatedOutlet.tsx    # Lazy wrapper framer-motion
 │   ├── core/                     # 55+ archivos — kernel del sistema
 │   │   ├── yun/                  # Arquitectura YUN (event bus, gateway, fabric, observability)
 │   │   ├── territorial/          # Geofencing, fusión de datos
@@ -224,12 +250,12 @@ Stack de observabilidad:
 │   │   └── music/                # Motor de música
 │   ├── federaciones/             # FederationBus + territorial bridge
 │   ├── hooks/                    # 18 hooks React
-│   ├── integrations/             # Supabase client, observability
 │   ├── isabella/                 # 32 archivos — IA consciente
 │   ├── lib/                      # Utilidades
 │   ├── pages/                    # 117+ páginas (SPA con react-router-dom)
 │   ├── quantum/core/             # Núcleo cuántico (qubit, gates, circuit, entropy)
-│   └── styles/                   # CSS (rdm-theme, visual-effects)
+│   ├── security/                 # SessionTicketClient.ts (frontend)
+│   └── styles/                   # CSS (index.css + rdm-theme)
 ├── supabase/migrations/          # 29+ migraciones SQL
 └── package.json                  # 56+ deps + 17 devDeps
 ```
@@ -285,19 +311,21 @@ Stack de observabilidad:
 - [x] Isabella tests: 65 tests, all passing
 
 ### Frontend
-- [x] SPA con React Router DOM (migrado desde TanStack Router/Start)
+- [x] SPA con React Router DOM (lazy via AppShell — react-router y tanstack-query diferidos)
 - [x] 117+ páginas con lazy loading
 - [x] 198+ componentes UI (18 directorios)
 - [x] shadcn/ui (26 paquetes Radix)
-- [x] Landing cinematográfico con Three.js
+- [x] Landing cinematográfico con Three.js (lazy en /mapa)
 - [x] Nodo Cero intro inmersiva (4 fases)
 - [x] Dashboard ciudadano con gamificación real
 - [x] Federaciones dashboard (/federacion)
 - [x] RDM Quest (gamificación completa)
 - [x] RDM Ecos Música (reproductor, visualizador, crónicas)
 - [x] Isabella Voice Engine (TTS con emociones)
-- [x] Mapa Vivo (2D/3D + Weather Sandbox en /weather-sandbox)
+- [x] Mapa Vivo (2D Leaflet + 3D Three.js lazy)
 - [x] Responsive design (Tailwind v4)
+- [x] 43 tests frontend (gamification, music, validation, twins, time-theme)
+- [x] Performance: three.js modulepreload removido, framer-motion lazy, Google Fonts reducido
 
 ### Quantum Core
 - [x] Qubit (álgebra compleja, esfera de Bloch, densidad, entropía)
@@ -344,6 +372,17 @@ Stack de observabilidad:
 
 ---
 
+### RDM Runtime (núcleo perimetral Go)
+- [x] Session tickets HMAC-SHA256 con LRU + TTL (7 tests)
+- [x] Doble zero-trust: identidad + ejecución (11 tests)
+- [x] Sandbox WASM pool manager con warm/cold/release
+- [x] Micro-batching por plugin+operation (4 tests)
+- [x] Quota manager con rate limiting concurrente (3 tests)
+- [x] Telemetry collector con redacción de campos sensibles
+- [x] Governance GEMET controller
+- [x] SessionTicketClient.ts frontend con fetch wrapper
+- [x] 28 tests unitarios, todos pasando
+
 ### Protocolo de Congelamiento (por Fases)
 - [x] **Fase 0** — Fixes de deploy (process.env, Buffer, CORS, rate-limit, JS/TS duplicados)
 - [x] **Fase 1** — YUN + YUN BE (18 archivos, 67 tests)
@@ -351,34 +390,34 @@ Stack de observabilidad:
 - [x] **Fase 2b** — Data Gateway (17 archivos, 38 tests, bugs corregidos)
 - [x] **Fase 2c** — FederationBus (3 archivos, 35 tests, bridge mapping validado)
 - [x] **Fase 3** — Isabella (35 archivos, 65 tests — identity, oath, consciousness, emotional, skills, ontology, api, kernel, quantum, awakening)
-- [x] **Fase 4** — Conexiones + Vercel deploy production (Sentry stub, toaster shim, .vercelignore, prebuilt deploy exitoso). **Pendiente:** deshabilitar Vercel Authentication en dashboard
-- [ ] **Fase 5** — Frontend (páginas, componentes, hooks)
-- [ ] **Fase 6** — Pendientes
+- [x] **Fase 4** — Conexiones + Vercel deploy production (auth desactivado, CSP sin Sentry, .vercelignore, prebuilt deploy exitoso)
+- [x] **Fase 5** — Frontend (43 tests: gamification, music, validation, twins, time-theme)
+- [x] **Fase 6** — Hardening (kernel salud determinística, FederationBus OFFLINE, oath beneficencia/justicia, middleware type-safe, telemetry closure, Sentry dead code removido, `ruteToFederation` → `routeToFederation`, performance: three.js modulepreload removido, framer-motion lazy, Google Fonts reducido, dead code cleanup 13 archivos, MP3 imports dinámicos, AppShell lazy router/query)
+- [x] **RDM Runtime v0.1** — 8 paquetes Go, 28 tests (session tickets, doble zero-trust, WASM pools, micro-batching)
+- [x] **Image audit** — 26 archivos muertos (37.3MB) eliminados
+- [x] **TypeScript** — `@ts-nocheck` removido de 10 archivos
 
 ## Lo que Falta
 
 ### P0 — Críticos (impiden producción)
 - [ ] **Neon Postgres** — ADR-005 + NeonCommerceAdapter implementado; provisionamiento de Neon pendiente
 - [ ] **Turso/libSQL** — Migrar Knowledge domain a Turso (adapters diseñados)
-- [ ] **Cloudflare D1** — Migrar Telemetry domain a D1 (adapters diseñados)
 - [ ] **Upstash Redis** — Migrar Gameplay domain a Redis
 - [ ] **Stripe Integration** — Checkout real, webhook, suscripciones
 - [ ] **Secrets Management** — HashiCorp Vault o Vercel Secrets para gestión centralizada
-- [ ] **Vercel Deployment final** — Pipeline CI/CD completo, validación de build+deploy en staging y producción
 
 ### P1 — Importantes (funcionalidad y calidad)
 - [ ] **Isabella → Gemini/OpenAI API** — Conectar Realito con modelo de IA real (no mock)
-- [ ] **Bus de Eventos persistente** — Reemplazar bus en memoria con Kafka/NATS + DLQ
 - [ ] **CRUD Admin Modules** — Panel admin para contenido, usuarios, federaciones
 - [ ] **E2E Tests (Playwright)** — Suites para flujos críticos: login, pago, misiones, gamification
-- [ ] **Construct 3 Integration** — Motor de juegos para RDM Quest match-3
+- [ ] **RDM Runtime deploy** — Compilar binario Go y desplegar como Vercel Serverless Function
 - [ ] **PWA** — Service worker, manifest, offline support
 - [ ] **SEO Optimization** — Meta tags, structured data, sitemap
+- [ ] **CSS bundle** — Reducir 364KB raw Tailwind (purga de clases no usadas v4)
 
 ### P2/P3 — Mejoras y extras
 - [ ] **Multi-idioma (i18n)** — Inglés/español
 - [ ] **Accesibilidad** — WCAG 2.1 AA
-- [ ] **Performance** — Lazy loading adicional, code splitting, bundle analysis
 - [ ] **APM/Monitoring** — Datadog o Sentry
 - [ ] **GitHub Actions CI/CD** — Pipeline completo con gates
 - [ ] **Documentación API** — OpenAPI/Swagger

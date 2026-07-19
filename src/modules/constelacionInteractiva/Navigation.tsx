@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";

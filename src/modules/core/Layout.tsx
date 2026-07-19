@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,7 +42,6 @@ const Layout: React.FC<LayoutProps> = ({
         </main>
 
         <Toaster />
-        <Sonner />
       </div>
     </TooltipProvider>
   );

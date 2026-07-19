@@ -77,13 +77,13 @@ export const telemetryExamples = {
   quickClick: () => build('link_click', 'engagement', { url: window.location.href, time: Date.now() }),
 
   // Métrica de memoria de visualización en el cliente para budgets de RAM
-  memory: () => build('client_memory_mb', 'performance', {
+  memory: () => {
     const mem = (typeof window !== 'undefined' && (window.performance as any)?.memory);
-    return {
+    return build('client_memory_mb', 'performance', {
       used: mem ? Math.round(mem.usedJSHeapSize / 1048576) : 0,
       total: mem ? Math.round(mem.jsHeapSizeLimit / 1048576) : 0,
-    };
-  }),
+    });
+  },
 };
 
 // Registro de métricas a una función reportadora central (puede ser fuente de datos, beacon, o logger)

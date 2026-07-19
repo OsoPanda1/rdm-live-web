@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion";
 import { Music as MusicIcon, Play, Pause, Heart } from "lucide-react";
 import { Link } from "react-router-dom";

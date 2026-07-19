@@ -1,0 +1,108 @@
+{
+  "manifest_version": "1.0.0",
+  "runtime_identity": {
+    "node_id": "rdm-runtime-001",
+    "federation": "DEKATEOTL",
+    "version": "0.1.0",
+    "boot_timestamp": ""
+  },
+  "security_global_defaults": {
+    "zero_trust_level": "STRICT",
+    "deny_by_default_on_ambiguity": true,
+    "allow_dynamic_loading": false,
+    "token_validation": {
+      "enabled": true,
+      "min_key_strength": "PQC_LEVEL3",
+      "session_ttl_seconds": 300
+    },
+    "cors": {
+      "allowed_origins": ["https://rdm-digital-hub-ldtocs.vercel.app", "https://visitarealdelmonte.online"],
+      "allow_credentials": true
+    }
+  },
+  "trusted_domains": [
+    "rdm-digital-hub-ldtocs.vercel.app",
+    "visitarealdelmonte.online",
+    "www.visitarealdelmonte.online",
+    "*.vercel.app"
+  ],
+  "failure_policies": {
+    "on_exceeded_quota": "REJECT_REQUEST",
+    "on_sandbox_crash": "RESTART_INSTANCE",
+    "on_network_timeout": "RETRY_UPSTREAM",
+    "max_retries": 3,
+    "circuit_breaker": {
+      "enabled": true,
+      "failure_threshold": 10,
+      "recovery_timeout_ms": 30000
+    }
+  },
+  "telemetry_policies": {
+    "metrics_enabled": true,
+    "logs_enabled": true,
+    "traces_enabled": true,
+    "sampling_rate": 0.1,
+    "redact_fields": ["original_token", "coordinates", "ip_address"],
+    "exporters": {
+      "prometheus": { "endpoint": "/metrics", "enabled": true },
+      "otel_grpc": { "endpoint": "", "enabled": false }
+    }
+  },
+  "performance_policies": {
+    "max_concurrent_invokes": 100,
+    "max_batch_window_ms": 10,
+    "max_batch_size": 50,
+    "enable_batching": true,
+    "session_cache_ttl_seconds": 300,
+    "wasm_pool": {
+      "min_warm_instances": 2,
+      "max_instances": 10,
+      "idle_timeout_seconds": 60,
+      "max_concurrent_per_plugin": 5
+    }
+  },
+  "plugins": [
+    {
+      "id": "sdmd-ledger",
+      "risk_level": "HIGH",
+      "sandbox_profile": "WASM_SECCOMP",
+      "allowed_roles": ["admin", "operator"],
+      "allowed_federations": ["DEKATEOTL", "ANUBIS", "BOOKPI_DATAGIT"],
+      "quotas": {
+        "max_memory_mb": 128,
+        "max_cpu_ms": 500,
+        "max_concurrent": 5,
+        "timeout_ms": 10000
+      },
+      "supports_batching": true
+    },
+    {
+      "id": "identity-verifier",
+      "risk_level": "CRITICAL",
+      "sandbox_profile": "CRITICAL_GVISOR",
+      "allowed_roles": ["*"],
+      "allowed_federations": ["*"],
+      "quotas": {
+        "max_memory_mb": 64,
+        "max_cpu_ms": 200,
+        "max_concurrent": 10,
+        "timeout_ms": 5000
+      },
+      "supports_batching": false
+    },
+    {
+      "id": "territorial-graph",
+      "risk_level": "MEDIUM",
+      "sandbox_profile": "WASM_DEFAULT",
+      "allowed_roles": ["viewer", "operator", "admin"],
+      "allowed_federations": ["DEKATEOTL", "MDD_TAMV"],
+      "quotas": {
+        "max_memory_mb": 256,
+        "max_cpu_ms": 1000,
+        "max_concurrent": 3,
+        "timeout_ms": 15000
+      },
+      "supports_batching": true
+    }
+  ]
+}

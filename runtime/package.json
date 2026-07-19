@@ -1,0 +1,19 @@
+{
+  "name": "@rdm/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:unit": "vitest run --dir test/unit",
+    "test:load": "node test/load/run-k6.mjs"
+  },
+  "dependencies": {
+    "pino": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.0"
+  }
+}

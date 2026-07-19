@@ -35,18 +35,20 @@ import { recommendTracks, recommendCronicas, recommendEvents } from "@/features/
 import { recordMusicAction } from "@/features/music/api"
 import type { MusicTrack, MusicCronica, MusicEvent } from "@/features/music/types"
 
-import aMimadreMp3 from "@/assets/musica/a_mimadre.mp3"
-import reinaTrejoMp3 from "@/assets/musica/reina_trejo.mp3"
-import tumiradaMp3 from "@/assets/musica/tumirada.mp3"
-import adictedToyouMp3 from "@/assets/musica/adicted_toyou).mp3"
-import cadaNocheMp3 from "@/assets/musica/cada_noche.mp3"
-import elSenaladoMp3 from "@/assets/musica/el_señalado.mp3"
-import legadoMp3 from "@/assets/musica/Legado (1).mp3"
-import patioDetierraMp3 from "@/assets/musica/patio_detierra.mp3"
-import puroDolorMp3 from "@/assets/musica/puro_dolor.mp3"
-import shootingStarMp3 from "@/assets/musica/shooting_star.mp3"
-import rdmYoteadoroMp3 from "@/assets/musica/rdm_yoteadoro.mp3"
-import rdmintroMp3 from "@/assets/musica/rdmintro (2).mp3"
+const TRACK_SOURCES: Record<string, string> = {
+  a_mimadre: new URL("./assets/musica/a_mimadre.mp3", import.meta.url).href,
+  reina_trejo: new URL("./assets/musica/reina_trejo.mp3", import.meta.url).href,
+  tumirada: new URL("./assets/musica/tumirada.mp3", import.meta.url).href,
+  adicted_toyou: new URL("./assets/musica/adicted_toyou).mp3", import.meta.url).href,
+  cada_noche: new URL("./assets/musica/cada_noche.mp3", import.meta.url).href,
+  el_senalado: new URL("./assets/musica/el_señalado.mp3", import.meta.url).href,
+  legado: new URL("./assets/musica/Legado (1).mp3", import.meta.url).href,
+  patio_detierra: new URL("./assets/musica/patio_detierra.mp3", import.meta.url).href,
+  puro_dolor: new URL("./assets/musica/puro_dolor.mp3", import.meta.url).href,
+  shooting_star: new URL("./assets/musica/shooting_star.mp3", import.meta.url).href,
+  rdm_yoteadoro: new URL("./assets/musica/rdm_yoteadoro.mp3", import.meta.url).href,
+  rdmintro: new URL("./assets/musica/rdmintro (2).mp3", import.meta.url).href,
+};
 
 const PLAYLIST: Track[] = [
   {
@@ -54,7 +56,7 @@ const PLAYLIST: Track[] = [
     title: "El Real (Legend)",
     artist: "Edwin Castillo",
     description: "Tema principal del intro de la plataforma.",
-    src: aMimadreMp3,
+    src: TRACK_SOURCES.a_mimadre,
     duration: 210,
     bpm: 70,
     mood: "Emotivo",
@@ -64,7 +66,7 @@ const PLAYLIST: Track[] = [
     title: "A Mi Madre",
     artist: "RDM Digital",
     description: "Homenaje musical a mi madre, al amor incondicional y al sacrificio silencioso.",
-    src: reinaTrejoMp3,
+    src: TRACK_SOURCES.reina_trejo,
     duration: 275,
     bpm: 70,
     mood: "Emotivo",
@@ -74,7 +76,7 @@ const PLAYLIST: Track[] = [
     title: "Tu Mirada",
     artist: "RDM Digital",
     description: "Melodía íntima que captura la esencia de una mirada que lo dice todo.",
-    src: tumiradaMp3,
+    src: TRACK_SOURCES.tumirada,
     duration: 240,
     bpm: 72,
     mood: "Melancólico",
@@ -85,7 +87,7 @@ const PLAYLIST: Track[] = [
     artist: "Edwin Castillo",
     description:
       "Canción que explora la adicción emocional que nace del corazón y se niega a soltar los recuerdos del ayer.",
-    src: adictedToyouMp3,
+    src: TRACK_SOURCES.adicted_toyou,
     duration: 220,
     bpm: 85,
     mood: "Pasional",
@@ -95,7 +97,7 @@ const PLAYLIST: Track[] = [
     title: "Cada Noche",
     artist: "Edwin Castillo",
     description: "Ritmo nocturno que evoca las madrugadas de insomnio y reflexión.",
-    src: cadaNocheMp3,
+    src: TRACK_SOURCES.cada_noche,
     duration: 230,
     bpm: 78,
     mood: "Nocturno",
@@ -105,7 +107,7 @@ const PLAYLIST: Track[] = [
     title: "El Señalado",
     artist: "Edwin Castillo",
     description: "Narrativa musical sobre llevar una marca distinta y encontrar fuerza en la propia identidad.",
-    src: elSenaladoMp3,
+    src: TRACK_SOURCES.el_senalado,
     duration: 240,
     bpm: 82,
     mood: "Intenso",
@@ -116,7 +118,7 @@ const PLAYLIST: Track[] = [
     artist: "RDM Digital",
     description:
       "Como deseo ser recordado, que dejo como legado, una pregunta que vive a diario en mi mente.",
-    src: legadoMp3,
+    src: TRACK_SOURCES.legado,
     duration: 260,
     bpm: 80,
     mood: "Épico",
@@ -126,7 +128,7 @@ const PLAYLIST: Track[] = [
     title: "Patio de Tierra",
     artist: "Edwin Castillo",
     description: "Melodía que evoca los patios de las casas antiguas y las memorias que ahí habitan.",
-    src: patioDetierraMp3,
+    src: TRACK_SOURCES.patio_detierra,
     duration: 200,
     bpm: 65,
     mood: "Nostálgico",
@@ -136,7 +138,7 @@ const PLAYLIST: Track[] = [
     title: "Puro Dolor",
     artist: "Edwin Castillo",
     description: "Balada que transforma el dolor en arte y catarsis musical.",
-    src: puroDolorMp3,
+    src: TRACK_SOURCES.puro_dolor,
     duration: 250,
     bpm: 68,
     mood: "Triste",
@@ -147,7 +149,7 @@ const PLAYLIST: Track[] = [
     artist: "Edwin Castillo",
     description:
       "Inspirado en la estrella fugaz que iluminó mi andar y cruza el cielo de Real del Monte.",
-    src: shootingStarMp3,
+    src: TRACK_SOURCES.shooting_star,
     duration: 225,
     bpm: 88,
     mood: "Inspirador",
@@ -157,7 +159,7 @@ const PLAYLIST: Track[] = [
     title: "RDM Yo Te Adoro",
     artist: "RDM Digital",
     description: "Declaración de amor al Pueblo Mágico de Real del Monte.",
-    src: rdmYoteadoroMp3,
+    src: TRACK_SOURCES.rdm_yoteadoro,
     duration: 210,
     bpm: 76,
     mood: "Emotivo",
@@ -167,7 +169,7 @@ const PLAYLIST: Track[] = [
     title: "RDM Intro (Versión Extendida)",
     artist: "RDM Digital",
     description: "Melodía de apertura extendida de la plataforma RDM Digital.",
-    src: rdmintroMp3,
+    src: TRACK_SOURCES.rdmintro,
     duration: 195,
     bpm: 70,
     mood: "Épico",

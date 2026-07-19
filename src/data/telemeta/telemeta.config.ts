@@ -78,8 +78,11 @@ export const telemetryExamples = {
 
   // Métrica de memoria de visualización en el cliente para budgets de RAM
   memory: () => build('client_memory_mb', 'performance', {
-    used: (typeof window !== 'undefined' && (window.performance as any)?.memory?.usedJSHeapSize) ?? 0 / 1048576,
-    total: (typeof window !== 'undefined' && (window.performance as any)?.memory?.jsHeapSizeLimit) ?? 0 / 1048576,
+    const mem = (typeof window !== 'undefined' && (window.performance as any)?.memory);
+    return {
+      used: mem ? Math.round(mem.usedJSHeapSize / 1048576) : 0,
+      total: mem ? Math.round(mem.jsHeapSizeLimit / 1048576) : 0,
+    };
   }),
 };
 

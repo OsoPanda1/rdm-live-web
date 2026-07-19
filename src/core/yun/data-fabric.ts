@@ -10,6 +10,7 @@ export interface SagaStep<TInput = unknown, TOutput = unknown> {
 }
 export interface SagaResult<T> { success: boolean; result?: T; error?: Error; completedSteps: string[]; compensatedSteps: string[]; }
 
+// Orchestrated saga — centralized executor (legacy, maintained for compatibility)
 export async function executeSaga<TFinal>(steps: SagaStep[], initialInput: unknown, config: Partial<DataFabricConfig> = {}): Promise<SagaResult<TFinal>> {
   const cfg = { ...DEFAULT_CONFIG, ...config };
   const completedSteps: string[] = []; const compensatedSteps: string[] = []; const stepOutputs: unknown[] = [];

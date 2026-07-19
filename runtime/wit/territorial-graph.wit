@@ -1,0 +1,54 @@
+// RDM Digital Hub — Territorial Graph WASM Interface (WIT)
+// Defines the spatial query contract between WASM kernels and the
+// Territorial Data Collector / Geofencer.
+// No direct access to raw geometry or PII — only typed spatial queries.
+
+package rdm:territorial-graph@0.1.0;
+
+/// ---- Types ----
+
+record coordinate {
+  lat: f64,
+  lng: f64,
+}
+
+record bounding-box {
+  north: f64,
+  south: f64,
+  east: f64,
+  west: f64,
+}
+
+/// A territorial point of interest.
+record poi {
+  id: string,
+  name: string,
+  location: coordinate,
+  category: string,
+  tags: list<string>,
+}
+
+/// Geometry for spatial queries.
+variant geometry {
+  point(coordinate),
+  circle(center: coordinate, radius-meters: f64),
+  bounding-box(bounding-box),
+}
+
+/// Query result.
+record spatial-query-result {
+  matches: list<poi>,
+  count: u32,
+  truncated: bool,
+}
+
+/// ---- Host Functions (imported by guest) ----
+
+/// Query POIs within a geometry.
+query-pois: func(within: geometry, max-results: u32) -> spatial-query-result;
+
+/// Check if a coordinate falls within a named zone.
+point-in-zone: func(point: coordinate, zone-name: string) -> bool;
+
+/// Calculate the great-circle distance between two coordinates.
+haversine-distance: func(a: coordinate, b: coordinate) -> f64;

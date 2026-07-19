@@ -1,16 +1,19 @@
 import type { PluginConfig } from "../manifest/types.js";
 import type { InstancePool, InvocationContext, InvocationResult, PoolConfig, PoolStats, WasmInstance } from "./types.js";
+import { WitHostAdapter, Capability, type WitHostImports } from "./wit-host-adapter.js";
 
-class SimplePool implements InstancePool {
+class WITCompliantPool implements InstancePool {
   private active = 0;
   private idle: WasmInstance[] = [];
   private invocations = 0;
   private totalLatency = 0;
   private rejections = 0;
   private readonly config: PoolConfig;
+  private readonly pluginId: string;
 
   constructor(config: PoolConfig) {
     this.config = config;
+    this.pluginId = config.pluginId;
   }
 
   async acquire(): Promise<WasmInstance> {
@@ -60,6 +63,51 @@ class SimplePool implements InstancePool {
   }
 
   private async createInstance(): Promise<WasmInstance> {
+    // Create a minimal WASM runtime instance with WIT-defined imports
+    const hostImports: WitHostImports = {
+      log: (level, message) => {
+        this.checkCapability(Capability.LogTelemetry, "log");
+        const prefix = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"][level] ?? "UNKNOWN";
+        console.log(`[WASM:${this.pluginId}] ${prefix}: ${message}`);
+      },
+      kvGet: (key) => {
+        this.checkCapability(Capability.ReadKv, "kvGet");
+        return null;
+      },
+      kvSet: (_key, _value) => {
+        this.checkCapability(Capability.WriteKv, "kvSet");
+      },
+      kvDelete: (_key) => {
+        this.checkCapability(Capability.WriteKv, "kvDelete");
+      },
+      emitMetric: (_name, _value, _labels) => {
+        this.checkCapability(Capability.LogTelemetry, "emitMetric");
+      },
+      routeToFederation: (_event) => {
+        this.checkCapability(Capability.EmitSovereigntyEvent, "routeToFederation");
+        return "accepted";
+      },
+      queryPois: (_within, _maxResults) => {
+        this.checkCapability(Capability.QueryTerritorial, "queryPois");
+        return { matches: [], count: 0, truncated: false };
+      },
+    };
+
+    // Declared capabilities come from the plugin config's risk profile
+    const declaredCaps = this.resolveCapabilities(this.config.riskLevel);
+
+    // Create the inner instance and wrap with WIT adapter
+    return new WitHostAdapter(
+      this.createInnerInstance(),
+      this.pluginId,
+      declaredCaps,
+      hostImports,
+    );
+  }
+
+  private createInnerInstance(): WasmInstance {
+    // Stub WASM instance — in production, this loads the actual WASM binary
+    // via WebAssembly.instantiate() with the WIT-generated imports.
     return {
       invoke: async (ctx: InvocationContext, op: string, payload: unknown): Promise<InvocationResult> => {
         const start = Date.now();
@@ -76,6 +124,28 @@ class SimplePool implements InstancePool {
       },
       close: async () => {},
     };
+  }
+
+  private resolveCapabilities(riskLevel: string): Capability[] {
+    switch (riskLevel) {
+      case "sandboxed":
+        return [Capability.LogTelemetry];
+      case "low":
+        return [Capability.LogTelemetry, Capability.ReadKv, Capability.CryptoHash];
+      case "medium":
+        return [Capability.LogTelemetry, Capability.ReadKv, Capability.WriteKv, Capability.CryptoHash, Capability.QueryTerritorial];
+      case "high":
+        return Object.values(Capability);
+      default:
+        return [Capability.LogTelemetry];
+    }
+  }
+
+  private checkCapability(cap: Capability, method: string): void {
+    // Runtime capability check: thrown errors are caught by the WIT adapter
+    if (!this.resolveCapabilities(this.config.riskLevel).includes(cap)) {
+      throw new Error(`[WIT GUARD] Capability '${cap}' denied for ${this.pluginId} (risk=${this.config.riskLevel}) in ${method}`);
+    }
   }
 }
 
@@ -99,7 +169,7 @@ export class SandboxManager {
       sandboxProfile: config.sandbox_profile,
     };
 
-    const pool = new SimplePool(poolConfig);
+    const pool = new WITCompliantPool(poolConfig);
     this.pools.set(config.id, pool);
     return pool;
   }

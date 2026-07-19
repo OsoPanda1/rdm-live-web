@@ -1,0 +1,63 @@
+// RDM Digital Hub — FederationBus WASM Interface (WIT)
+// Defines the interaction contract between WASM kernels and the
+// Heptafederación YUN event bus.
+// All federation interaction MUST go through this typed interface.
+
+package rdm:federation-bus@0.1.0;
+
+/// ---- Types ----
+
+/// One of the 7 TAMV federations.
+enum federation-id {
+  DEKATEOTL,
+  ANUBIS,
+  BOOKPI-DATAGIT,
+  PHOENIX,
+  MDD-TAMV,
+  KAOS-HYPERRENDER,
+  CHRONOS,
+}
+
+/// Priority level for federation events.
+enum event-priority {
+  low,
+  normal,
+  high,
+  critical,
+}
+
+/// A federation-bound event.
+record federation-event {
+  source: federation-id,
+  target: federation-id,
+  event-type: string,
+  payload: list<u8>,
+  priority: event-priority,
+  ttl-ms: u64,
+}
+
+/// Result of a federation route attempt.
+variant route-result {
+  accepted,
+  queued(position: u32),
+  rejected(reason: string),
+  timed-out,
+}
+
+/// ---- Host Functions (imported by guest) ----
+
+/// Route an event to a target federation.
+/// The host validates the kernel's capability to emit to the target.
+route-to-federation: func(event: federation-event) -> route-result;
+
+/// Broadcast an event to all federations.
+broadcast: func(event-type: string, payload: list<u8>, priority: event-priority) -> ();
+
+/// Subscribe to events from a specific federation + event-type pattern.
+subscribe: func(source: federation-id, event-pattern: string) -> result;
+
+/// Poll for pending federation events addressed to this kernel.
+poll-events: func(max-count: u32) -> list<federation-event>;
+
+/// Get the health status of all federations.
+federation-health: func() -> list<tuple<federation-id, f64>>;

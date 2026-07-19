@@ -1,0 +1,81 @@
+// RDM Digital Hub — MD-X Kernel WASM Interface (WIT)
+// Defines the strict, typed contract between the host (Runtime Router)
+// and guest WASM kernels (MD-X4, MD-X5).
+// Privilege: MINIMAL — no network, no filesystem, no environment variables.
+
+package rdm:md-x-kernel@0.1.0;
+
+/// ---- Types ----
+
+/// A capability grants the kernel permission to perform a specific
+/// host-side operation. Each capability must be explicitly declared
+/// in the kernel manifest and is enforced at the host boundary.
+enum capability {
+  /// Emit a sovereignty event to the FederationBus
+  emit-sovereignty-event,
+  /// Read a key from the kernel-scoped KV store
+  read-kv,
+  /// Write a key to the kernel-scoped KV store
+  write-kv,
+  /// Query territorial geometry (point-in-polygon, distance, bbox)
+  query-territorial,
+  /// Compute a cryptographic hash (no signing)
+  crypto-hash,
+  /// Log a structured telemetry event
+  log-telemetry,
+}
+
+/// Execution mode determines the isolation and scheduling guarantees.
+enum execution-mode {
+  /// Real-time: deterministic, single-threaded, no blocking
+  realtime,
+  /// Normal: concurrent, bounded blocking, queue-based
+  normal,
+  /// Batch: deferred execution, aggregated results
+  batch,
+}
+
+/// Resource identifier within the territorial graph.
+record resource-id {
+  namespace: string,
+  type: string,
+  id: string,
+}
+
+/// A structured result returned by any kernel operation.
+variant kernel-result {
+  success(payload: list<u8>),
+  error(code: u32, message: string),
+  timeout,
+  capability-denied(missing: capability),
+}
+
+/// ---- Host Functions (imported by guest) ----
+
+/// Host-provided logging facility. Max message length: 4096 bytes.
+host-log: func(level: u8, message: string) -> ();
+
+/// Host-provided KV store (kernel-scoped).
+/// Keys are namespaced by kernel ID automatically.
+host-kv-get: func(key: string) -> option<list<u8>>;
+host-kv-set: func(key: string, value: list<u8>) -> result;
+host-kv-delete: func(key: string) -> result;
+
+/// Host-provided telemetry.
+host-emit-metric: func(name: string, value: f64, labels: list<tuple<string, string>>) -> result;
+
+/// ---- Guest Functions (exported by kernel) ----
+
+/// Initialize the kernel with its manifest config.
+/// Called once at load time. Returns the kernel's declared capabilities.
+initialize: func(config-json: string) -> list<capability>;
+
+/// Execute a single operation.
+/// The operation and payload are defined in the plugin manifest.
+invoke: func(operation: string, payload: list<u8>, deadline-ms: u64) -> kernel-result;
+
+/// Graceful shutdown. Kernel must release all resources.
+shutdown: func() -> ();
+
+/// Heartbeat / health check. Returns the kernel's internal health [0.0, 1.0].
+health: func() -> f64;

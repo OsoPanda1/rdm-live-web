@@ -23,6 +23,8 @@ export {
 } from "./gateway";
 export { dataFabric, YunDataFabric, executeSaga } from "./data-fabric";
 export type { SagaStep, SagaResult, DataHandler, DataAccessRequest } from "./data-fabric";
+export { SagaChoreographyParticipant, getParticipant, SAGA_EVENTS } from "./saga-choreography";
+export type { SagaContext, SagaStepEvent } from "./saga-choreography";
 export {
   recordMetric,
   incrementCounter,

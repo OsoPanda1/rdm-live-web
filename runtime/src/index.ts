@@ -7,7 +7,7 @@ export type * from "./session/types.js";
 export { validateIdentity, validateExecution, decodeToken, decodeBase64Url } from "./security/validator.js";
 export type * from "./security/types.js";
 
-export { SandboxManager } from "./sandbox/manager.js";
+export { SandboxManager, Capability, WitHostAdapter } from "./sandbox/manager.js";
 export type * from "./sandbox/types.js";
 
 export { Batcher } from "./router/batch.js";
@@ -21,6 +21,22 @@ export type { MetricSample, LogEntry, MetricLabels } from "./telemetry/metrics.j
 
 export { GovernanceController, getEffectiveRoles, isFederationAllowed } from "./governance/policies.js";
 export type { PolicyChange } from "./governance/policies.js";
+
+// Repository / DAO layer (S-NDTM abstraction)
+export { createSupabaseRegistry } from "./repository/supabase-impl.js";
+export type {
+  SNDTMRegistry, IIdentityRepository, ICommerceRepository,
+  IKnowledgeRepository, ITelemetryRepository, IGameplayRepository,
+  ITerritorialRepository, Repository, TransactionalRepository,
+  UserProfile, MerchantProfile, KnowledgeEntry, TerritorialPOI,
+} from "./repository/types.js";
+
+// Service facades (clean frontend boundary)
+export { TerritorialService } from "./services/territorial-service.js";
+export type { GeoBounds, Coordinate, POIQuery, ContributionInput, TerritorialSummary } from "./services/territorial-service.js";
+
+// WIT interface types
+export type { WitHostImports, WitKernelExports } from "./sandbox/wit-host-adapter.js";
 
 const RUNTIME_VERSION = "0.1.0";
 export { RUNTIME_VERSION };

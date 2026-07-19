@@ -1,115 +1,57 @@
 import { corsPreflightResponse, corsJsonResponse } from "./_shared/cors";
 import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit";
+import { storeTelemetry, isFederated } from "./_shared/telemetry-service";
+import { TelemetryPayload } from "./types";
+
+const NODE_ID = "nodo-cero-001";
+const FEDERATION_SCHEMA_COUNT = 7;
 
 export default async function handler(request: Request): Promise<Response> {
-  if (request.method === "OPTIONS") {
-    return corsPreflightResponse(request);
+  if (request.method === "OPTIONS") return corsPreflightResponse(request);
+
+  // 1. Rate Limiting
+  const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rateLimit = checkRateLimit(`telemetry:${clientIp}`, RATE_LIMITS.telemetry.limit, RATE_LIMITS.telemetry.windowMs);
+  
+  if (!rateLimit.allowed) {
+    return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+      status: 429,
+      headers: { "Retry-After": String(Math.ceil((rateLimit.retryAfter ?? 0) / 1000)) }
+    });
   }
 
-  const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const rateLimitKey = `telemetry:${clientIp}`;
-  const rateLimit = checkRateLimit(rateLimitKey, RATE_LIMITS.telemetry.limit, RATE_LIMITS.telemetry.windowMs);
-  if (!rateLimit.allowed) {
-    return new Response(
-      JSON.stringify({ error: "Rate limit exceeded", retryAfter: rateLimit.retryAfter }),
-      {
-        status: 429,
-        headers: {
-          "Content-Type": "application/json",
-          "Retry-After": String(Math.ceil((rateLimit.retryAfter ?? 0) / 1000)),
-        },
-      },
-    );
-  }
+  const baseResponse = {
+    infra_status: "operational" as const,
+    node_id: NODE_ID,
+    federation_schema_count: FEDERATION_SCHEMA_COUNT,
+    topology_state: isFederated ? "FEDERATED_ACTIVE" : "STANDALONE_MODAL",
+    edge_timestamp: new Date().toISOString(),
+    service: "nodo-cero-telemetry",
+  };
 
   try {
-    const netflowDbUrl = process.env.NETFLOW_DB_SUPABASE_URL || null;
-    const netflowAnonKey = process.env.NETFLOW_DB_SUPABASE_ANON_KEY || null;
-    const topologyState = netflowDbUrl ? "FEDERATED_ACTIVE" : "STANDALONE_MODAL";
+    if (request.method !== "POST") return corsJsonResponse(request, baseResponse);
 
-    const payloadBase = {
-      infra_status: "operational" as const,
-      node_id: "nodo-cero-001",
-      federation_schema_count: 7,
-      topology_state: topologyState,
-      edge_timestamp: new Date().toISOString(),
-      service: "nodo-cero-telemetry",
-    };
+    const body = await request.json().catch(() => null);
+    if (!body) return corsJsonResponse(request, { error: "Invalid JSON", ...baseResponse }, 400);
 
-    if (request.method === "POST") {
-      const body = await request.json().catch(() => null);
-      if (!body || typeof body !== "object") {
-        return corsJsonResponse(request, { error: "Invalid JSON body", ...payloadBase }, 400);
+    // 2. Validación simple (puedes usar Zod aquí para mayor robustez)
+    const required: (keyof TelemetryPayload)[] = ["flows_total", "packets_rx", "bytes_total", "cpu_percent", "memory_percent", "active_connections"];
+    for (const field of required) {
+      if (body[field] === undefined) {
+        return corsJsonResponse(request, { error: `Missing ${field}`, ...baseResponse }, 400);
       }
-
-      const requiredFields = [
-        "flows_total",
-        "packets_rx",
-        "bytes_total",
-        "cpu_percent",
-        "memory_percent",
-        "active_connections",
-      ] as const;
-
-      for (const field of requiredFields) {
-        if (body[field] === undefined) {
-          return corsJsonResponse(
-            request,
-            { error: `Missing required field: ${field}`, ...payloadBase },
-            400,
-          );
-        }
-      }
-
-      let stored = false;
-      if (netflowDbUrl && netflowAnonKey) {
-        try {
-          const { createClient } = await import("@supabase/supabase-js");
-          const supabase = createClient(netflowDbUrl, netflowAnonKey);
-
-          const insertPayload = {
-            flows_total: body.flows_total,
-            packets_rx: body.packets_rx,
-            bytes_total: body.bytes_total,
-            cpu_percent: body.cpu_percent,
-            memory_percent: body.memory_percent,
-            active_connections: body.active_connections,
-            last_flow_ts: body.last_flow_ts || null,
-            node_id: body.node_id || payloadBase.node_id,
-            status: body.status || payloadBase.infra_status,
-          };
-
-          const { error } = await supabase.from("telemetry_logs").insert(insertPayload);
-          if (!error) {
-            stored = true;
-          } else {
-            console.warn("telemetry_logs insert error:", error.message);
-          }
-        } catch (e) {
-          console.warn("Supabase telemetry_logs insert failed:", e instanceof Error ? e.message : e);
-        }
-      }
-
-      return corsJsonResponse(request, { accepted: true, stored, ...payloadBase });
     }
 
-    return corsJsonResponse(request, payloadBase);
+    // 3. Persistencia
+    const { stored, error } = await storeTelemetry(body as TelemetryPayload, NODE_ID);
+    if (error) console.warn("DB Log:", error);
+
+    return corsJsonResponse(request, { accepted: true, stored, ...baseResponse });
+
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown telemetry error";
-    return corsJsonResponse(
-      request,
-      {
-        error: message,
-        infra_status: "error",
-        node_id: "nodo-cero-001",
-        service: "nodo-cero-telemetry",
-        edge_timestamp: new Date().toISOString(),
-      },
-      500,
-    );
+    return corsJsonResponse(request, { error: err instanceof Error ? err.message : "Internal Error", ...baseResponse, infra_status: "error" }, 500);
   }
 }
 
-export const config = {
-  runtime: "edge",
-};
+export const config = { runtime: "edge" };

@@ -15,24 +15,7 @@
       "destination": "/index.html"
     }
   ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "visitarealdelmonte.online"
-        },
-        {
-          "type": "header",
-          "key": "x-forwarded-proto",
-          "value": "http"
-        }
-      ],
-      "destination": "https://www.visitarealdelmonte.online/$1",
-      "statusCode": 301
-    }
-  ],
+  "redirects": [],
   "headers": [
     {
       "source": "/(.*)",

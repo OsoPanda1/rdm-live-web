@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 interface AuthResult {
   authenticated: boolean;
@@ -6,7 +6,7 @@ interface AuthResult {
   role?: string;
   userId?: string;
   email?: string;
-  supabase?: ReturnType<typeof createClient>;
+  supabase?: SupabaseClient;
   errorResponse?: Response;
 }
 

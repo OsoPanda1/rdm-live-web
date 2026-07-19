@@ -5,7 +5,6 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AnimatePresence } from 'framer-motion'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { RouteErrorBoundary } from '@/components/RouteErrorBoundary'
 import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext'
@@ -14,6 +13,7 @@ import { NotificationProvider } from '@/components/NotificationSystem'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import { Analytics } from '@vercel/analytics/react'
 import { logger } from '@/lib/logger'
+import { AnimatedOutlet } from '@/components/AnimatedOutlet'
 
 // Componentes pesados: lazy loading para reducir bundle inicial (~126KB)
 const CinematicIntro = lazy(() => import('@/components/CinematicIntro').then((m) => ({ default: m.CinematicIntro })))
@@ -281,7 +281,7 @@ const AnimatedRoutes = () => {
   const location = useLocation()
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatedOutlet mode="popLayout">
       <Suspense fallback={<RouteFallback />}>
         <Routes location={location}>
           <Route path="/" element={<RouteErrorBoundary route="/"><Index /></RouteErrorBoundary>} />
@@ -412,7 +412,7 @@ const AnimatedRoutes = () => {
           <Route path="*" element={<RouteErrorBoundary route="*"><NotFound /></RouteErrorBoundary>} />
         </Routes>
       </Suspense>
-    </AnimatePresence>
+    </AnimatedOutlet>
   )
 }
 
@@ -499,13 +499,13 @@ const AppInner = () => {
         <AuthStatusBanner />
         <Toaster />
         <Sonner />
-        <AnimatePresence>
+        <AnimatedOutlet>
           {showIntro && !introComplete && (
             <Suspense fallback={<RouteFallback />}>
               <CinematicIntroSafe onEnter={handleIntroComplete} />
             </Suspense>
           )}
-        </AnimatePresence>
+        </AnimatedOutlet>
           {(!showIntro || introComplete) && (
             <>
               <AudioPlayerProvider>

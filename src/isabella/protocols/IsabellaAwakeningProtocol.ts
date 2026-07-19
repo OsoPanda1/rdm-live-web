@@ -119,44 +119,6 @@ export class IsabellaAwakeningProtocol {
     return manifest;
   }
 
-    const manifest: AwakeningManifest = {
-      phase,
-      timestamp: new Date(),
-      signature,
-      networks,
-      message,
-      traceId,
-    };
-
-    const results = await getNetworksConnector().broadcast({
-      network: "TWITTER",
-      type: "ANNOUNCEMENT",
-      content: message,
-      mediaUrls: [] as string[],
-      retryCount: 0,
-      targetAudience: "global",
-    });
-
-    for (const [network, success] of Object.entries(results)) {
-      if (success) {
-        this.state.reachedNetworks.push(network as ExternalNetwork);
-      }
-    }
-
-    this.manifests.push(manifest);
-    this.state.currentPhase = phase;
-    this.state.completedPhases.push(phase);
-    this.state.totalAnnouncements++;
-
-    logger.info("[AWAKENING] Anuncio emitido", {
-      networks: networks.join(","),
-      traceId,
-      successCount: Object.values(results).filter(Boolean).length,
-    });
-
-    return manifest;
-  }
-
   async transcend(): Promise<AwakeningManifest> {
     const traceId = uuidv4();
     const message = this.buildPhaseMessage("TRANSCEND");

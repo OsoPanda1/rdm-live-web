@@ -36,18 +36,18 @@ import { recordMusicAction } from "@/features/music/api"
 import type { MusicTrack, MusicCronica, MusicEvent } from "@/features/music/types"
 
 const TRACK_SOURCES: Record<string, string> = {
-  a_mimadre: new URL("./assets/musica/a_mimadre.mp3", import.meta.url).href,
-  reina_trejo: new URL("./assets/musica/reina_trejo.mp3", import.meta.url).href,
-  tumirada: new URL("./assets/musica/tumirada.mp3", import.meta.url).href,
-  adicted_toyou: new URL("./assets/musica/adicted_toyou).mp3", import.meta.url).href,
-  cada_noche: new URL("./assets/musica/cada_noche.mp3", import.meta.url).href,
-  el_senalado: new URL("./assets/musica/el_señalado.mp3", import.meta.url).href,
-  legado: new URL("./assets/musica/Legado (1).mp3", import.meta.url).href,
-  patio_detierra: new URL("./assets/musica/patio_detierra.mp3", import.meta.url).href,
-  puro_dolor: new URL("./assets/musica/puro_dolor.mp3", import.meta.url).href,
-  shooting_star: new URL("./assets/musica/shooting_star.mp3", import.meta.url).href,
-  rdm_yoteadoro: new URL("./assets/musica/rdm_yoteadoro.mp3", import.meta.url).href,
-  rdmintro: new URL("./assets/musica/rdmintro (2).mp3", import.meta.url).href,
+  a_mimadre: new URL("../assets/musica/a_mimadre.mp3", import.meta.url).href,
+  reina_trejo: new URL("../assets/musica/reina_trejo.mp3", import.meta.url).href,
+  tumirada: new URL("../assets/musica/tumirada.mp3", import.meta.url).href,
+  adicted_toyou: new URL("../assets/musica/adicted_toyou).mp3", import.meta.url).href,
+  cada_noche: new URL("../assets/musica/cada_noche.mp3", import.meta.url).href,
+  el_senalado: new URL("../assets/musica/el_señalado.mp3", import.meta.url).href,
+  legado: new URL("../assets/musica/Legado (1).mp3", import.meta.url).href,
+  patio_detierra: new URL("../assets/musica/patio_detierra.mp3", import.meta.url).href,
+  puro_dolor: new URL("../assets/musica/puro_dolor.mp3", import.meta.url).href,
+  shooting_star: new URL("../assets/musica/shooting_star.mp3", import.meta.url).href,
+  rdm_yoteadoro: new URL("../assets/musica/rdm_yoteadoro.mp3", import.meta.url).href,
+  rdmintro: new URL("../assets/musica/rdmintro (2).mp3", import.meta.url).href,
 };
 
 const PLAYLIST: Track[] = [

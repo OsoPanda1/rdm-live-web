@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { config } from "../config.js";
 import { prisma } from "../lib/prisma.js";
+import { buildOperationalGovernanceReport } from "../services/governance-ops.service.js";
 
 const systemRouter = Router();
 
@@ -82,6 +83,10 @@ systemRouter.get("/master-report", (_req, res) => {
       { phase: "offline-pwa-sync", targetDays: 5, priority: "P2" },
     ],
   });
+});
+
+systemRouter.get("/governance/ops", (_req, res) => {
+  return res.json(buildOperationalGovernanceReport());
 });
 
 export default systemRouter;

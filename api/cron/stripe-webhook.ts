@@ -1,7 +1,7 @@
 export const config = { runtime: "nodejs" };
 
-import { getCorsHeaders } from "../_shared/cors";
-import { verifyWebhookSignature } from "../_shared/stripe";
+import { getCorsHeaders } from "../_shared/cors.js";
+import { verifyWebhookSignature } from "../_shared/stripe.js";
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== "POST") {

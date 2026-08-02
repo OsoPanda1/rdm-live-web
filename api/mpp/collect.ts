@@ -1,5 +1,5 @@
-import { getMppStripe } from "../_shared/stripe";
-import { handleCors } from "../_shared/cors";
+import { getMppStripe } from "../_shared/stripe.js";
+import { handleCors } from "../_shared/cors.js";
 
 export default async function handler(req: Request) {
   const cors = handleCors(req);

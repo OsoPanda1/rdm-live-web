@@ -6,6 +6,7 @@ import { journalService } from "../services/journal.service.js";
 import { cacheService } from "../services/cache.service.js";
 import { requireAuth } from "../../middleware/auth.js";
 import type { AuthenticatedRequest } from "../../types/auth.js";
+import { isEntityType } from "../types.js";
 
 const router = Router();
 
@@ -16,6 +17,10 @@ function buildContext(req: AuthenticatedRequest) {
     role: req.user?.role,
     sourceIp: req.ip,
   };
+}
+
+function firstParam(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? value[0] : (value ?? "");
 }
 
 router.get("/health", async (_req, res) => {
@@ -71,7 +76,9 @@ router.delete("/cache", requireAuth, async (_req: AuthenticatedRequest, res) => 
 
 router.get("/:entity/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
-    const { entity, id } = req.params;
+    const entity = firstParam(req.params.entity);
+    const id = firstParam(req.params.id);
+    if (!isEntityType(entity)) return res.status(400).json({ error: "Invalid entity" });
     const result = await gateway.findById(entity, id, buildContext(req));
     if (!result) return res.status(404).json({ error: "Not found" });
     return res.json(result);
@@ -82,7 +89,8 @@ router.get("/:entity/:id", requireAuth, async (req: AuthenticatedRequest, res) =
 
 router.get("/:entity", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
-    const { entity } = req.params;
+    const entity = firstParam(req.params.entity);
+    if (!isEntityType(entity)) return res.status(400).json({ error: "Invalid entity" });
     const filters = req.query.filters ? JSON.parse(req.query.filters as string) : undefined;
     const sort = req.query.sort ? JSON.parse(req.query.sort as string) : undefined;
     const options = {
@@ -100,7 +108,8 @@ router.get("/:entity", requireAuth, async (req: AuthenticatedRequest, res) => {
 
 router.post("/:entity", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
-    const { entity } = req.params;
+    const entity = firstParam(req.params.entity);
+    if (!isEntityType(entity)) return res.status(400).json({ error: "Invalid entity" });
     const result = await gateway.create(entity, req.body, buildContext(req));
     return res.status(201).json(result);
   } catch (e) {
@@ -110,7 +119,9 @@ router.post("/:entity", requireAuth, async (req: AuthenticatedRequest, res) => {
 
 router.patch("/:entity/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
-    const { entity, id } = req.params;
+    const entity = firstParam(req.params.entity);
+    const id = firstParam(req.params.id);
+    if (!isEntityType(entity)) return res.status(400).json({ error: "Invalid entity" });
     const result = await gateway.update(entity, id, req.body, buildContext(req));
     if (!result) return res.status(404).json({ error: "Not found" });
     return res.json(result);
@@ -121,7 +132,9 @@ router.patch("/:entity/:id", requireAuth, async (req: AuthenticatedRequest, res)
 
 router.delete("/:entity/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
-    const { entity, id } = req.params;
+    const entity = firstParam(req.params.entity);
+    const id = firstParam(req.params.id);
+    if (!isEntityType(entity)) return res.status(400).json({ error: "Invalid entity" });
     const result = await gateway.delete(entity, id, buildContext(req));
     if (!result) return res.status(404).json({ error: "Not found" });
     return res.status(204).end();

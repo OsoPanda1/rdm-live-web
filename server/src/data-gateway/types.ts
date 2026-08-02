@@ -3,17 +3,77 @@ import type { AuthUser } from "../types/auth.js";
 // ─── Data Source Interface ───────────────────────────────────────────────────
 
 export type EntityType =
-  | "user" | "profile" | "business" | "donation" | "interaction"
-  | "digitalTwin" | "twinEvent"
-  | "socialPost" | "socialComment" | "socialChannel" | "directMessage"
-  | "streamRoom" | "videoCallRoom"
-  | "ledger" | "membership" | "tokenBalance"
-  | "protocolRun" | "msrEvent" | "bookpiNarrative" | "guardianAlert"
+  | "user"
+  | "profile"
+  | "business"
+  | "donation"
+  | "interaction"
+  | "digitalTwin"
+  | "twinEvent"
+  | "socialPost"
+  | "socialComment"
+  | "socialChannel"
+  | "directMessage"
+  | "streamRoom"
+  | "videoCallRoom"
+  | "ledger"
+  | "membership"
+  | "tokenBalance"
+  | "protocolRun"
+  | "msrEvent"
+  | "bookpiNarrative"
+  | "guardianAlert"
   | "dreamspace"
-  | "yunBeEvent" | "yunBeJournal" | "yunBeRecoveryReport"
-  | "gamificationPlayer" | "gamificationMission" | "gamificationQuestLog"
-  | "gamificationReward" | "gamificationGuardian" | "emotionState"
-  | "dgAuditLog" | "dgCacheEntry";
+  | "yunBeEvent"
+  | "yunBeJournal"
+  | "yunBeRecoveryReport"
+  | "gamificationPlayer"
+  | "gamificationMission"
+  | "gamificationQuestLog"
+  | "gamificationReward"
+  | "gamificationGuardian"
+  | "emotionState"
+  | "dgAuditLog"
+  | "dgCacheEntry";
+
+export const entityTypes = [
+  "user",
+  "profile",
+  "business",
+  "donation",
+  "interaction",
+  "digitalTwin",
+  "twinEvent",
+  "socialPost",
+  "socialComment",
+  "socialChannel",
+  "directMessage",
+  "streamRoom",
+  "videoCallRoom",
+  "ledger",
+  "membership",
+  "tokenBalance",
+  "protocolRun",
+  "msrEvent",
+  "bookpiNarrative",
+  "guardianAlert",
+  "dreamspace",
+  "yunBeEvent",
+  "yunBeJournal",
+  "yunBeRecoveryReport",
+  "gamificationPlayer",
+  "gamificationMission",
+  "gamificationQuestLog",
+  "gamificationReward",
+  "gamificationGuardian",
+  "emotionState",
+  "dgAuditLog",
+  "dgCacheEntry",
+] as const satisfies readonly EntityType[];
+
+export function isEntityType(value: unknown): value is EntityType {
+  return typeof value === "string" && (entityTypes as readonly string[]).includes(value);
+}
 
 export interface QueryFilter {
   field: string;
@@ -71,9 +131,15 @@ export interface GatewayConfig {
 
 export type JournalStatus = "PENDING" | "COMPLETED" | "FAILED" | "RECONCILED";
 export type JournalOperationType =
-  | "payment" | "card_issue" | "reward_claim" | "mission_complete"
-  | "profile_update" | "data_export" | "reputation_adjust"
-  | "benefit_grant" | "recovery_replay";
+  | "payment"
+  | "card_issue"
+  | "reward_claim"
+  | "mission_complete"
+  | "profile_update"
+  | "data_export"
+  | "reputation_adjust"
+  | "benefit_grant"
+  | "recovery_replay";
 
 export interface JournalEntry {
   id: string;

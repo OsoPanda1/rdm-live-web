@@ -9,12 +9,14 @@ interface YunBeEntry {
   payload: Record<string, unknown>;
   riskClass: string;
   federation: number;
-  status: string;
+  status: "pending" | "completed";
   createdAt: string;
   completedAt: string | null;
   metadata: Record<string, unknown>;
 }
 
+// Configuración de seguridad para el almacenamiento en memoria
+const MAX_STORE_SIZE = 2000;
 const store: YunBeEntry[] = [];
 
 function json(req: Request, body: unknown, status = 200): Response {
@@ -49,45 +51,72 @@ export default async function handler(req: Request): Promise<Response> {
     return json(req, { error: "method_not_allowed" }, 405);
   }
 
-  const body = await req.json().catch(() => ({}));
+  // Parseo seguro de JSON con control de excepciones
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return json(req, { error: "invalid_json_payload" }, 400);
+  }
+
   const action = typeof body.action === "string" ? body.action : "health";
 
   if (action === "journal") {
+    // Control de capacidad para prevenir fugas de memoria
+    if (store.length >= MAX_STORE_SIZE) {
+      store.shift();
+    }
+
     const entry: YunBeEntry = {
       id: `yunbe-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      operationType: body.operationType ?? "kernel_signal",
-      userId: body.userId,
-      sourceSystem: body.sourceSystem ?? "api/yun-be",
-      payload: body.payload ?? {},
-      riskClass: body.riskClass ?? "medium",
-      federation: body.federation ?? 1,
+      operationType: typeof body.operationType === "string" ? body.operationType : "kernel_signal",
+      userId: typeof body.userId === "string" ? body.userId : undefined,
+      sourceSystem: typeof body.sourceSystem === "string" ? body.sourceSystem : "api/yun-be",
+      payload: typeof body.payload === "object" && body.payload !== null ? (body.payload as Record<string, unknown>) : {},
+      riskClass: typeof body.riskClass === "string" ? body.riskClass : "medium",
+      federation: typeof body.federation === "number" ? body.federation : 1,
       status: "pending",
       createdAt: new Date().toISOString(),
       completedAt: null,
-      metadata: body.metadata ?? {},
+      metadata: typeof body.metadata === "object" && body.metadata !== null ? (body.metadata as Record<string, unknown>) : {},
     };
+
     store.push(entry);
     return json(req, { ok: true, entry }, 201);
   }
 
   if (action === "complete") {
-    if (!body.journalId) return json(req, { error: "journalId_required" }, 400);
-    const entry = store.find(e => e.id === body.journalId);
-    if (!entry) return json(req, { error: "not_found" }, 404);
+    const journalId = body.journalId;
+    if (typeof journalId !== "string" || !journalId.trim()) {
+      return json(req, { error: "journalId_required" }, 400);
+    }
+
+    const entry = store.find(e => e.id === journalId);
+    if (!entry) {
+      return json(req, { error: "not_found" }, 404);
+    }
+
     entry.status = "completed";
     entry.completedAt = new Date().toISOString();
-    entry.metadata = { ...entry.metadata, ...(body.metadata ?? {}) };
+    
+    if (typeof body.metadata === "object" && body.metadata !== null) {
+      entry.metadata = { ...entry.metadata, ...(body.metadata as Record<string, unknown>) };
+    }
+
     return json(req, { ok: true });
   }
 
   if (action === "recover") {
-    const limit = Number(body.limit ?? 25);
+    const parsedLimit = Number(body.limit ?? 25);
+    const limit = Number.isInteger(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 100) : 25;
+
     const pending = store.filter(e => e.status === "pending").slice(0, limit);
     const recovered = pending.map(e => {
       e.status = "completed";
       e.completedAt = new Date().toISOString();
       return e.id;
     });
+
     return json(req, { ok: true, recovered, count: recovered.length });
   }
 

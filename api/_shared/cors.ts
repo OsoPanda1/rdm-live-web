@@ -38,9 +38,21 @@ export function corsPreflightResponse(req: Request): Response {
   return new Response(null, { status: 204, headers: getCorsHeaders(req.headers.get("origin")) });
 }
 
-export function corsJsonResponse(req: Request, body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
+export function corsJsonResponse(
+  req: Request,
+  data: unknown,
+  status = 200,
+  extraHeaders?: Record<string, string>
+  ) : Response {
+  return new Response(JSON.stringify(data), {
     status,
-    headers: { "content-type": "application/json", ...getCorsHeaders(req.headers.get("origin")) },
+    headers: { 
+      "Content-Type": "application/json",
+      "Acccess-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods":
+"GET,POST,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      ...(extraHeaders ?? {}),
+    },
   });
 }

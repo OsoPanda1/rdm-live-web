@@ -27,36 +27,50 @@ import tamvRouter from "./tamv.js";
 import tamvThesisRouter from "./tamv-thesis.js";
 import tenochtitlanRouter from "./tenochtitlan.js";
 import dgRouter from "../data-gateway/routes/dg.js";
+import { listApiRouteMounts as selectRouteMountMetadata, type ApiRouteMount } from "./registry.js";
+
+const apiRouteMounts: ApiRouteMount[] = [
+  { path: "/auth", router: authRouter, layer: "L5", domain: "identity" },
+  { path: "/businesses", router: businessesRouter, layer: "L5", domain: "commerce" },
+  { path: "/donations", router: donationsRouter, layer: "L5", domain: "commerce" },
+  { path: "/weather", router: weatherRouter, layer: "L5", domain: "territory" },
+  { path: "/recommendations", router: recommendationsRouter, layer: "L5", domain: "territory" },
+  { path: "/ai", router: aiRouter, layer: "L2", domain: "decisioning" },
+  { path: "/digital-twins", router: digitalTwinsRouter, layer: "L4", domain: "xr-twins" },
+  { path: "/content", router: contentRouter, layer: "L6", domain: "shell-content" },
+  { path: "/realito", router: realitoRouter, layer: "L6", domain: "assistant" },
+  { path: "/users", router: usersRouter, layer: "L5", domain: "identity" },
+  { path: "/profiles", router: profilesRouter, layer: "L5", domain: "identity" },
+  { path: "/social", router: socialRouter, layer: "L5", domain: "social" },
+  { path: "/streams", router: streamsRouter, layer: "L5", domain: "social-streaming" },
+  { path: "/protocols", router: protocolsRouter, layer: "L2", domain: "protocols" },
+  { path: "/economy", router: economyRouter, layer: "L5", domain: "economy" },
+  { path: "/xr", router: xrRouter, layer: "L4", domain: "xr" },
+  { path: "/audit", router: auditRouter, layer: "L3", domain: "guardian-audit" },
+  { path: "/places", router: placesRouter, layer: "L5", domain: "territory" },
+  { path: "/merchants", router: merchantsRouter, layer: "L5", domain: "commerce" },
+  { path: "/twins", router: twinsRouter, layer: "L4", domain: "xr-twins" },
+  { path: "/experience", router: experienceRouter, layer: "L6", domain: "territorial-experience" },
+  { path: "/", router: systemRouter, layer: "L3", domain: "system-governance" },
+  { path: "/rdmx", router: rdmxStatusRouter, layer: "L3", domain: "system-status" },
+  { path: "/geolocation", router: geolocationRouter, layer: "L5", domain: "territory" },
+  { path: "/tamv", router: tamvRouter, layer: "L0", domain: "doctrine-governance" },
+  { path: "/tamv", router: tamvThesisRouter, layer: "L0", domain: "doctrine-thesis" },
+  {
+    path: "/tenochtitlan",
+    router: tenochtitlanRouter,
+    layer: "L4",
+    domain: "xr-civilizational-map",
+  },
+  { path: "/dg", router: dgRouter, layer: "L1", domain: "data-gateway" },
+];
 
 const apiRouter = Router();
 
-apiRouter.use("/auth", authRouter);
-apiRouter.use("/businesses", businessesRouter);
-apiRouter.use("/donations", donationsRouter);
-apiRouter.use("/weather", weatherRouter);
-apiRouter.use("/recommendations", recommendationsRouter);
-apiRouter.use("/ai", aiRouter);
-apiRouter.use("/digital-twins", digitalTwinsRouter);
-apiRouter.use("/content", contentRouter);
-apiRouter.use("/realito", realitoRouter);
-apiRouter.use("/users", usersRouter);
-apiRouter.use("/profiles", profilesRouter);
-apiRouter.use("/social", socialRouter);
-apiRouter.use("/streams", streamsRouter);
-apiRouter.use("/protocols", protocolsRouter);
-apiRouter.use("/economy", economyRouter);
-apiRouter.use("/xr", xrRouter);
-apiRouter.use("/audit", auditRouter);
-apiRouter.use("/places", placesRouter);
-apiRouter.use("/merchants", merchantsRouter);
-apiRouter.use("/twins", twinsRouter);
-apiRouter.use("/experience", experienceRouter);
-apiRouter.use("/", systemRouter);
-apiRouter.use("/rdmx", rdmxStatusRouter);
-apiRouter.use("/geolocation", geolocationRouter);
-apiRouter.use("/tamv", tamvRouter);
-apiRouter.use("/tamv", tamvThesisRouter);
-apiRouter.use("/tenochtitlan", tenochtitlanRouter);
-apiRouter.use("/dg", dgRouter);
+apiRouteMounts.forEach(({ path, router }) => apiRouter.use(path, router));
+
+export function listApiRouteMounts() {
+  return selectRouteMountMetadata(apiRouteMounts);
+}
 
 export default apiRouter;

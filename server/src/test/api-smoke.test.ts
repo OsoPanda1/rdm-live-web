@@ -66,3 +66,14 @@ test("realito + content + digital twins endpoints", async () => {
   const twinsRes = await fetch(`${base}/api/digital-twins/models`);
   assert.equal(twinsRes.status, 200);
 });
+
+test("system governance ops exposes cardinality controls", async () => {
+  const res = await fetch(`${base}/api/governance/ops`);
+  assert.equal(res.status, 200);
+  const payload = (await res.json()) as {
+    summary: { cardinalityControls: number };
+    doctrine: { deletionPolicy: string };
+  };
+  assert.equal(payload.doctrine.deletionPolicy, "no-delete-without-quarantine");
+  assert.ok(payload.summary.cardinalityControls >= 1);
+});

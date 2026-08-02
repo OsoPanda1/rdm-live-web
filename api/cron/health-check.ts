@@ -1,7 +1,7 @@
 export const config = { runtime: "edge" };
 
-import { getCorsHeaders, handleCors } from "../_shared/cors";
-import { checkRateLimit } from "../_shared/rate-limit";
+import { getCorsHeaders, handleCors } from "../_shared/cors.js";
+import { checkRateLimit } from "../_shared/rate-limit.js";
 
 export default async function handler(req: Request): Promise<Response> {
   const corsResponse = handleCors(req);

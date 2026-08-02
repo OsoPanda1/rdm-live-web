@@ -1,7 +1,7 @@
 import { corsPreflightResponse, corsJsonResponse } from "./_shared/cors.js";
 import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
-import { storeTelemetry, isFederated } from "./_shared/telemetry-service";
-import type { TelemetryPayload } from "./types";
+import { storeTelemetry, isFederated } from "./_shared/telemetry-service.js";
+import type { TelemetryPayload } from "./types.js";
 
 const NODE_ID = "nodo-cero-001";
 const FEDERATION_SCHEMA_COUNT = 7;

@@ -5,7 +5,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { requireAuth } from "./_shared/auth.js";
 import { checkRateLimit, RATE_LIMITS } from "./_shared/rate-limit.js";
-import { sendWebResponse, vercelRequestToWebRequest } from "./_edge-adapter";
+import { sendWebResponse, vercelRequestToWebRequest } from "./_edge-adapter.js";
 
 type ModelProvider = "huggingface" | "openllm" | "fallback";
 

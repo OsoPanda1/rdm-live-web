@@ -94,15 +94,18 @@ export default async function handler(request: Request): Promise<Response> {
       "active_connections",
     ];
 
+    
     for (const field of required) {
-      if (payload[field] === undefined || payload[field] === null) {
-        return corsJsonResponse(
-          request,
-          { error: `Missing ${field}`, ...baseResponse },
-          400
-        );
-      }
-    }
+  const key = String(field);
+
+  if (payload[field] === undefined || payload[field] === null) {
+    return corsJsonResponse(
+      request,
+      { error: `Missing ${key}`, ...baseResponse },
+      400
+    );
+  }
+}
 
     // 5. Persistencia
     const { stored, error } = await storeTelemetry(

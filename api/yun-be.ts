@@ -1,5 +1,5 @@
-import { handleCors, getCorsHeaders } from "./_shared/cors";
-import { checkRateLimit } from "./_shared/rate-limit";
+import { handleCors, getCorsHeaders } from "./_shared/cors.js";
+import { checkRateLimit } from "./_shared/rate-limit.js";
 
 interface YunBeEntry {
   id: string;

@@ -38,7 +38,6 @@ export interface DonationRecord {
   createdAt: string;
 }
 
-
 export interface TwinRecord {
   id: string;
   modelId: string;
@@ -48,7 +47,11 @@ export interface TwinRecord {
   state: {
     desired: Record<string, string | number | boolean>;
     reported: Record<string, string | number | boolean>;
-    telemetry: Record<string, number> & { occupancy: number; avgStayMinutes: number; queueMinutes: number };
+    telemetry: Record<string, number> & {
+      occupancy: number;
+      avgStayMinutes: number;
+      queueMinutes: number;
+    };
   };
   scene: {
     renderer: "webgl" | "webxr" | "webgpu";
@@ -208,6 +211,41 @@ export interface DreamspaceRecord {
   createdAt: string;
 }
 
+export interface AuditChecklistItemRecord {
+  id: string;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  modulePath: string;
+  description: string;
+  risk: string;
+  priority: "P0" | "P1" | "P2" | "P3";
+  owner: string;
+  status: "pending" | "in_review" | "blocked" | "approved" | "requires_remediation";
+  notes: string;
+  evidenceIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuditEvidenceRecord {
+  id: string;
+  itemId: string;
+  actorId: string;
+  command?: string;
+  result?: "pass" | "warning" | "fail";
+  notes: string;
+  sourceUrl?: string;
+  createdAt: string;
+}
+
+export interface FreezeDecisionRecord {
+  id: string;
+  actorId: string;
+  ready: boolean;
+  blockers: Array<{ itemId: string; modulePath: string; reason: string }>;
+  totals: Record<"P0" | "P1" | "P2" | "P3", { total: number; closed: number }>;
+  createdAt: string;
+}
+
 export const db = {
   users: new Map<string, UserRecord>(),
   usersByEmail: new Map<string, string>(),
@@ -231,4 +269,7 @@ export const db = {
   bookpiNarratives: new Map<string, BookpiNarrativeRecord>(),
   guardianAlerts: new Map<string, GuardianAlertRecord>(),
   dreamspaces: new Map<string, DreamspaceRecord>(),
+  auditChecklistItems: new Map<string, AuditChecklistItemRecord>(),
+  auditEvidence: new Map<string, AuditEvidenceRecord>(),
+  freezeDecisions: new Map<string, FreezeDecisionRecord>(),
 };

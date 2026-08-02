@@ -1,6 +1,6 @@
-import { getMppStripe } from "../_shared/stripe";
-import { handleCors } from "../_shared/cors";
-import { checkRateLimit } from "../_shared/rate-limit";
+import { getMppStripe } from "../_shared/stripe.js";
+import { handleCors } from "../_shared/cors.js";
+import { checkRateLimit } from "../_shared/rate-limit.js";
 
 interface Payload {
   amount: number;

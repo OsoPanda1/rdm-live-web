@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { TelemetryPayload } from "./types";
+import { TelemetryPayload } from "./types.js";
 
 const netflowDbUrl = process.env.NETFLOW_DB_SUPABASE_URL;
 const netflowAnonKey = process.env.NETFLOW_DB_SUPABASE_ANON_KEY;

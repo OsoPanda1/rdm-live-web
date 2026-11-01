@@ -35,7 +35,7 @@
     "express": "^4.18.0",
     "prom-client": "^15.0.0",
     "winston": "^3.11.0",
-    "zod": "^3.22.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
